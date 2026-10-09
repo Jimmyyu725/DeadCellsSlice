@@ -1,6 +1,7 @@
 using DeadCells.Combat;
 using DeadCells.Core;
 using DeadCells.FX;
+using DeadCells.Meta;
 using UnityEngine;
 
 namespace DeadCells.Player
@@ -16,6 +17,9 @@ namespace DeadCells.Player
         Block,
         Hurt,
         Dead,
+        Mantle,
+        WakeUp,
+        Frozen,
     }
 
     /// <summary>
@@ -67,6 +71,13 @@ namespace DeadCells.Player
         public float hurtDuration = 0.28f;
         public float hurtInvulnerability = 0.9f;
 
+        [Header("Ledge mantle")]
+        public float mantleTime = 0.16f;
+        public float mantleMaxHeight = 2.3f;
+
+        [Header("Stats")]
+        public float baseMaxHealth = 200f;
+
         [Header("References")]
         public CharacterAnimator anim;
         public SquashStretch squash;
@@ -88,6 +99,7 @@ namespace DeadCells.Player
         Rigidbody2D body;
         CapsuleCollider2D capsule;
         Health health;
+        int blockSlot;
         PlayerCombat combat;
         MaterialPropertyBlock flameBlock;
 
@@ -108,13 +120,24 @@ namespace DeadCells.Player
         float footstepTimer;
         Vector2 hurtKnockback;
         bool poundImpactDone;
+        Vector2 mantleFrom, mantleTo;
+        Vector3 lastSafePosition;
+        float lastSafeTime;
+
+        /// <summary>Last grounded spot away from hazards (pits and liquids send you back here).</summary>
+        public Vector3 LastSafePosition => lastSafePosition;
+        public bool InControl => State == PlayerState.Locomotion || State == PlayerState.Attack;
+        public PlayerCombat Combat => combat;
 
         static readonly int LeanId = Shader.PropertyToID("_Lean");
 
         public event System.Action Died;
 
+        public static PlayerController Main { get; private set; }
+
         void Awake()
         {
+            Main = this;
             body = GetComponent<Rigidbody2D>();
             capsule = GetComponent<CapsuleCollider2D>();
             health = GetComponent<Health>();
@@ -138,6 +161,8 @@ namespace DeadCells.Player
         {
             if (InputSource != null)
                 Input = InputSource.Read();
+            if (Cheats.GodMode && State != PlayerState.Dead)
+                health.InvulnerableUntil = Mathf.Max(health.InvulnerableUntil, Time.time + 0.2f);
             var input = Input;
             if (input.jumpPressed)
                 lastJumpPressedTime = Time.time;
@@ -183,7 +208,7 @@ namespace DeadCells.Player
                         EnterState(PlayerState.Locomotion);
                     break;
                 case PlayerState.Block:
-                    if (!input.shieldHeld || !Grounded)
+                    if (combat.HeldShield(input) < 0 || !Grounded)
                     {
                         combat.EndBlock();
                         EnterState(PlayerState.Locomotion);
@@ -197,6 +222,14 @@ namespace DeadCells.Player
                     if (StateTime >= hurtDuration)
                         EnterState(PlayerState.Locomotion);
                     break;
+                case PlayerState.Mantle:
+                    if (StateTime >= mantleTime)
+                        EnterState(PlayerState.Locomotion);
+                    break;
+                case PlayerState.WakeUp:
+                    if (StateTime >= anim.Length("Wake_Up") - 0.05f)
+                        EnterState(PlayerState.Locomotion);
+                    break;
             }
             UpdateFlameLean();
         }
@@ -206,20 +239,32 @@ namespace DeadCells.Player
             if (input.moveX != 0f)
                 anim.SetFacing((int)input.moveX);
 
-            if (input.swapWeaponPressed)
-                combat.SwapWeapon();
             if (TryGroundPound(input) || TryDodge(input))
                 return;
-            if (input.shieldHeld && Grounded && combat.CanBlock)
+            int shield = combat.HeldShield(input);
+            if (shield >= 0 && Grounded)
             {
+                blockSlot = shield;
                 EnterState(PlayerState.Block);
                 return;
             }
-            if (combat.TryStartAttack())
+            if (combat.TryStartAction())
             {
                 EnterState(PlayerState.Attack);
                 return;
             }
+            if (Grounded && combat.TryDrink())
+            {
+                EnterState(PlayerState.Attack);
+                return;
+            }
+            if (input.interactPressed && Run.Interactable.Current != null)
+            {
+                Run.Interactable.Current.Interact(this);
+                return;
+            }
+            if (TryMantle(input))
+                return;
 
             if (Grounded)
             {
@@ -255,6 +300,12 @@ namespace DeadCells.Player
                 airDashAvailable = true;
                 if (!wasGrounded)
                     OnLanded(fallSpeedBeforeLanding);
+                if (groundCollider != null && groundCollider.gameObject.layer == DCLayers.Ground && Time.time - lastSafeTime > 0.25f
+                    && State == PlayerState.Locomotion && Physics2D.OverlapCircle(transform.position + Vector3.up * 0.5f, 1.2f, HazardMask) == null)
+                {
+                    lastSafePosition = transform.position;
+                    lastSafeTime = Time.time;
+                }
             }
             fallSpeedBeforeLanding = Mathf.Min(preVy, 0f);
 
@@ -292,11 +343,25 @@ namespace DeadCells.Player
                     v.y = ApplyGravity(v.y, dt, 1f);
                     break;
                 case PlayerState.Dead:
+                case PlayerState.WakeUp:
+                case PlayerState.Frozen:
                     v.x = Mathf.MoveTowards(v.x, 0f, groundDeceleration * dt);
                     v.y = ApplyGravity(v.y, dt, 1f);
                     break;
+                case PlayerState.Mantle:
+                    float m = Mathf.Clamp01(StateTime / mantleTime);
+                    float e = 1f - (1f - m) * (1f - m);
+                    // Up first, then over the lip.
+                    Vector2 target = new Vector2(Mathf.Lerp(mantleFrom.x, mantleTo.x, Mathf.Clamp01(e * 1.6f - 0.6f)),
+                        Mathf.Lerp(mantleFrom.y, mantleTo.y, Mathf.Clamp01(e * 1.4f)));
+                    body.MovePosition(target);
+                    v = Vector2.zero;
+                    break;
             }
-            body.linearVelocity = v;
+            if (State != PlayerState.Mantle)
+                body.linearVelocity = v;
+            else
+                body.linearVelocity = Vector2.zero;
 
             if (droppingThrough != null && Time.time > dropThroughUntil)
             {
@@ -383,6 +448,37 @@ namespace DeadCells.Player
                 isJumping = false;
                 return;
             }
+        }
+
+        static int HazardMask => 1 << DCLayers.Fx | 1 << DCLayers.Pickup;
+
+        /// <summary>Dead Cells-style automatic ledge climb when jumping into a wall top.</summary>
+        bool TryMantle(InputFrame input)
+        {
+            if (Grounded || input.moveX == 0f || body.linearVelocity.y > 7f)
+                return false;
+            int dir = (int)input.moveX;
+            Bounds b = capsule.bounds;
+            Vector2 chest = new Vector2(b.center.x, b.min.y + 0.9f);
+            if (Physics2D.Raycast(chest, Vector2.right * dir, b.extents.x + 0.3f, DCLayers.SolidMask).collider == null)
+                return false;
+            Vector2 probe = new Vector2(b.center.x + dir * (b.extents.x + 0.4f), b.min.y + mantleMaxHeight + 0.15f);
+            if (Physics2D.OverlapPoint(probe, DCLayers.SolidMask) != null)
+                return false;
+            var hit = Physics2D.Raycast(probe, Vector2.down, mantleMaxHeight - 0.35f, DCLayers.SolidMask);
+            if (hit.collider == null || hit.normal.y < 0.7f)
+                return false;
+            float rise = hit.point.y - b.min.y;
+            if (rise < 0.45f || rise > mantleMaxHeight)
+                return false;
+            Vector2 standAt = new Vector2(probe.x + dir * 0.15f, hit.point.y + 0.02f);
+            if (Physics2D.OverlapBox(standAt + new Vector2(0f, 0.95f), new Vector2(0.5f, 1.6f), 0f, DCLayers.SolidMask) != null)
+                return false;
+            mantleFrom = transform.position;
+            mantleTo = standAt;
+            anim.SetFacing(dir);
+            EnterState(PlayerState.Mantle);
+            return true;
         }
 
         void DropThrough(Collider2D platform)
@@ -488,7 +584,20 @@ namespace DeadCells.Player
                     PoundImpact();
                     break;
                 case PlayerState.Block:
-                    combat.BeginBlock();
+                    combat.BeginBlock(blockSlot);
+                    break;
+                case PlayerState.Mantle:
+                    anim.Restart("Jump_Rise", 0f);
+                    squash.Punch(new Vector2(0.85f, 1.15f));
+                    isJumping = false;
+                    break;
+                case PlayerState.WakeUp:
+                    anim.Restart("Wake_Up", 0f);
+                    break;
+                case PlayerState.Frozen:
+                    combat.CancelAttack();
+                    combat.EndBlock();
+                    anim.Play("Idle", 0.1f);
                     break;
                 case PlayerState.Locomotion:
                     if (prev == PlayerState.PoundLand)
@@ -522,7 +631,9 @@ namespace DeadCells.Player
                 dir.y = Mathf.Max(dir.y, 0.45f);
                 var info = new DamageInfo
                 {
-                    amount = poundDamage,
+                    amount = poundDamage * combat.DamageMultiplier * (Cheats.OneHitKills ? 9999f : 1f),
+                    weaponId = "slam",
+                    effect = -1,
                     knockback = dir.normalized * 9f,
                     hitPoint = target.transform.position + Vector3.up,
                     source = gameObject,
@@ -566,17 +677,52 @@ namespace DeadCells.Player
         void OnDied(DamageInfo info)
         {
             combat.CancelAttack();
-            anim.Restart("Hurt", 0f);
-            anim.SetSpeed(0.35f);
+            combat.EndBlock();
             EnterState(PlayerState.Dead);
-            anim.SetSpeed(0.35f);
+            anim.Restart("Death", 0f);
             Died?.Invoke();
         }
 
-        public void Respawn(Vector3 position)
+        /// <summary>Max health from meta upgrades (Collector) and this run's vitality scrolls.</summary>
+        public void RecalculateStats(bool refill)
+        {
+            var d = SaveSystem.Data;
+            float max = baseMaxHealth * (1f + 0.1f * d.meta.vitalityLevel) * (1f + 0.15f * d.run.scrollsVitality);
+            float ratio = health.maxHealth > 0f ? health.Current / health.maxHealth : 1f;
+            health.maxHealth = Mathf.Round(max);
+            if (refill)
+                health.ResetHealth();
+            else
+                health.SetCurrent(health.maxHealth * ratio);
+        }
+
+        public void Freeze(bool frozen)
+        {
+            if (frozen)
+            {
+                if (State != PlayerState.Dead)
+                    EnterState(PlayerState.Frozen);
+            }
+            else if (State == PlayerState.Frozen)
+            {
+                EnterState(PlayerState.Locomotion);
+            }
+        }
+
+        public void Teleport(Vector3 position)
         {
             transform.position = position;
+            body.position = position;
             body.linearVelocity = Vector2.zero;
+            lastSafePosition = position;
+            secondaryMotion?.ResetPose();
+        }
+
+        public void PlayWakeUp() => EnterState(PlayerState.WakeUp);
+
+        public void Respawn(Vector3 position)
+        {
+            Teleport(position);
             health.ResetHealth();
             health.InvulnerableUntil = Time.time + 1.5f;
             gameObject.layer = DCLayers.Player;
@@ -595,6 +741,12 @@ namespace DeadCells.Player
             flameRenderer.GetPropertyBlock(flameBlock);
             flameBlock.SetVector(LeanId, lean);
             flameRenderer.SetPropertyBlock(flameBlock);
+        }
+
+        void OnDestroy()
+        {
+            if (Main == this)
+                Main = null;
         }
 
         void OnDrawGizmosSelected()

@@ -23,6 +23,10 @@ namespace DeadCells.Combat
         public float hitStop;         // global freeze on connection
         public float shake;           // camera trauma added on connection
         public Color sparkColor;
+        public string weaponId;       // for stats/achievements (player hits)
+        public bool projectile;
+        public int effect;            // -1 none, else (int)Items.SkillEffect
+        public float effectDuration;
     }
 
     /// <summary>Anything that can be damaged; owners may veto or convert hits (shield).</summary>
@@ -50,9 +54,17 @@ namespace DeadCells.Combat
                 current = maxHealth;
         }
 
+        /// <summary>Damage multiplier applied to Blocked hits (shields set this).</summary>
+        public float blockMultiplier = 0.2f;
+
         public void ResetHealth()
         {
             current = maxHealth;
+        }
+
+        public void SetCurrent(float value)
+        {
+            current = Mathf.Clamp(value, 0f, maxHealth);
         }
 
         public DamageResult TakeDamage(DamageInfo info)
@@ -72,7 +84,7 @@ namespace DeadCells.Combat
                     return result;
                 }
                 if (result == DamageResult.Blocked)
-                    info.amount *= 0.2f;
+                    info.amount *= blockMultiplier;
             }
 
             current = Mathf.Max(0f, current - info.amount);

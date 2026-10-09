@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb884fccea0f24f2fb6e3722d4c4348c, type: 3}
+  m_Name: skill_ice_grenade
+  m_EditorClassIdentifier: DeadCells.Runtime::DeadCells.Items.ItemDef
+  id: skill_ice_grenade
+  kind: 3
+  visual: {fileID: 6445758446933584495, guid: c702741a4cbb44b8dbdf3eee2c098fc5, type: 3}
+  offhandVisual: {fileID: 0}
+  mount: 0
+  icon: {fileID: 0}
+  unlockCost: 35
+  basePrice: 150
+  tier: 2
+  crit: 0
+  critMultiplier: 1.5
+  animSpeed: 1
+  arcColor: {r: 1.2, g: 2.6, b: 3.2, a: 1}
+  arcCore: {r: 6, g: 6, b: 6, a: 1}
+  sparkColor: {r: 2.5, g: 2.2, b: 1.6, a: 1}
+  dualWield: 0
+  bladeLength: 0.78
+  combo: []
+  parryWindow: 0.18
+  blockReduction: 0.8
+  parryDamage: 18
+  projectile: {fileID: 2506838706546655262, guid: 7c87b2903342849818aeccf02236edad, type: 3}
+  projectileSpeed: 15
+  projectileGravity: 30
+  launchAngle: 32
+  damage: 10
+  cooldown: 12
+  hasEffect: 1
+  effect: 1
+  effectDuration: 3.5
+  radius: 2.8
+  pierce: 0
+  spin: 1
+  effectColor: {r: 0.9, g: 2.2, b: 3.4, a: 1}

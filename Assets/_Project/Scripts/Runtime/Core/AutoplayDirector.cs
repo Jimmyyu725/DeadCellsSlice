@@ -1,106 +1,118 @@
 using System.Collections.Generic;
 using System.IO;
 using DeadCells.Enemies;
+using DeadCells.Meta;
 using DeadCells.Player;
+using DeadCells.Run;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace DeadCells.Core
 {
     /// <summary>
-    /// Demo/verification driver, enabled by the -autoplay command-line flag
-    /// (or the inspector toggle). Plays a scripted showcase of every move, then
-    /// a simple seek-and-fight bot; saves screenshots to -captureDir and quits
-    /// after -autoplaySeconds. Writes a short run log next to the captures.
+    /// Verification driver enabled by -autoplay. Survives scene loads: walks
+    /// the main menu (optional captures), starts a run and plays it with a
+    /// path-finding bot over the generated tile graph (fight, skills, flask,
+    /// exit doors). Captures screenshots, logs errors, area entries and
+    /// timings, and quits after -autoplaySeconds.
+    ///
+    /// Args: -autoplay -captureDir D -autoplaySeconds S -captureInterval I
+    ///       -burst t0 t1 -autoplayBiome N -autoplayDifficulty easy|normal|hard
+    ///       -autoplayMenu (capture menu pages) -autoplayGod (cheat god mode)
+    ///       -autoplaySkip S (skip to the next area every S seconds: screenshot tour)
+    ///       -autoplayLang en|zh
     /// </summary>
     public class AutoplayDirector : MonoBehaviour, IInputSource
     {
-        public PlayerController player;
-        public bool forceEnable;
-        public float duration = 26f;
-        public float captureInterval = 0.5f;
+        public static bool Active { get; private set; }
+        public static AutoplayDirector Instance { get; private set; }
+
+        public float duration = 60f;
+        public float captureInterval = 1f;
         public string captureDir = "Captures";
-        [Tooltip("Dense capture window (seconds since start) for inspecting animation/FX timing.")]
         public Vector2 burstWindow = new Vector2(-1f, -1f);
         public float burstInterval = 1f / 30f;
+        public int startBiome;
+        public BaseDifficulty difficulty = BaseDifficulty.Normal;
+        public bool captureMenu;
+        public bool god;
+        public float skipEvery;
+        public string language = "";
+        public bool warpBoss;
+        public bool uiTour;
+        public bool dieTest;
+        public bool noVsync;
+        bool uiTourDone;
+        string warpedArea = "";
 
-        struct Step
-        {
-            public float start, length;
-            public float moveX;
-            public bool down, jump, attack, dodge, shield, swap, flame;
-        }
-
-        /// <summary>Signed direction to the nearest living zombie (0 if none).</summary>
-        float AimAtNearest()
-        {
-            var z = Nearest(out _);
-            return z == null ? 0f : Mathf.Sign(z.transform.position.x - player.transform.position.x);
-        }
-
-        ZombieEnemy Nearest(out float score)
-        {
-            ZombieEnemy target = null;
-            score = float.MaxValue;
-            foreach (var z in FindObjectsByType<ZombieEnemy>())
-            {
-                if (z.IsDead || !z.gameObject.activeInHierarchy)
-                    continue;
-                float d = Mathf.Abs(z.transform.position.x - player.transform.position.x) + Mathf.Abs(z.transform.position.y - player.transform.position.y) * 2f;
-                if (d < score)
-                {
-                    score = d;
-                    target = z;
-                }
-            }
-            return target;
-        }
-
-        readonly List<Step> script = new List<Step>();
         float startTime;
         float nextCapture;
         int captureIndex;
-        bool active;
         StreamWriter log;
-        int prevStep = -1;
-        float botAttackTimer;
-        float botJumpTimer;
         int errors;
+        float lastSkip;
+        string lastArea = "";
+        // Bot state.
+        float attackTimer, jumpHoldUntil, skillTimer, stuckTimer, pathTimer;
+        Vector3 lastProgressPos;
+        readonly List<Vector2Int> path = new List<Vector2Int>();
+        int pathIndex;
+        float dropUntil;
+        float jumpDir = 1f;
+        readonly FrameTiming[] frameTimings = new FrameTiming[1];
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        static void Boot()
+        {
+            var args = System.Environment.GetCommandLineArgs();
+            if (System.Array.IndexOf(args, "-autoplay") < 0)
+                return;
+            var go = new GameObject("AutoplayDirector");
+            go.SetActive(false); // configure before Awake opens the log in the capture folder
+            DontDestroyOnLoad(go);
+            var d = go.AddComponent<AutoplayDirector>();
+            for (int i = 0; i < args.Length; i++)
+            {
+                string next = i + 1 < args.Length ? args[i + 1] : "";
+                switch (args[i])
+                {
+                    case "-captureDir": d.captureDir = next; break;
+                    case "-autoplaySeconds": float.TryParse(next, out d.duration); break;
+                    case "-captureInterval": float.TryParse(next, out d.captureInterval); break;
+                    case "-autoplayBiome": int.TryParse(next, out d.startBiome); break;
+                    case "-autoplaySkip": float.TryParse(next, out d.skipEvery); break;
+                    case "-autoplayMenu": d.captureMenu = true; break;
+                    case "-autoplayGod": d.god = true; break;
+                    case "-autoplayLang": d.language = next; break;
+                    case "-autoplayWarpBoss": d.warpBoss = true; break;
+                    case "-autoplayUiTour": d.uiTour = true; break;
+                    case "-autoplayDie": d.dieTest = true; break;
+                    case "-autoplayNoVsync": d.noVsync = true; break;
+                    case "-autoplayDifficulty":
+                        d.difficulty = next == "easy" ? BaseDifficulty.Easy : next == "hard" ? BaseDifficulty.Hard : BaseDifficulty.Normal;
+                        break;
+                    case "-burst":
+                        if (i + 2 < args.Length && float.TryParse(args[i + 1], out float b0) && float.TryParse(args[i + 2], out float b1))
+                            d.burstWindow = new Vector2(b0, b1);
+                        break;
+                }
+            }
+            Active = true;
+            Instance = d;
+            go.SetActive(true);
+        }
 
         void Awake()
         {
-            var args = System.Environment.GetCommandLineArgs();
-            for (int i = 0; i < args.Length; i++)
-            {
-                if (args[i] == "-autoplay")
-                    active = true;
-                else if (args[i] == "-captureDir" && i + 1 < args.Length)
-                    captureDir = args[i + 1];
-                else if (args[i] == "-autoplaySeconds" && i + 1 < args.Length && float.TryParse(args[i + 1], out float s))
-                    duration = s;
-                else if (args[i] == "-captureInterval" && i + 1 < args.Length && float.TryParse(args[i + 1], out float c))
-                    captureInterval = c;
-                else if (args[i] == "-burst" && i + 2 < args.Length && float.TryParse(args[i + 1], out float b0) && float.TryParse(args[i + 2], out float b1))
-                    burstWindow = new Vector2(b0, b1);
-            }
-            active |= forceEnable;
-            if (!active)
-            {
-                enabled = false;
-                return;
-            }
             Directory.CreateDirectory(captureDir);
-            log = new StreamWriter(Path.Combine(captureDir, "autoplay_log.txt"), false);
+            log = new StreamWriter(Path.Combine(captureDir, "autoplay_log.txt"), false) { AutoFlush = true };
             Application.logMessageReceived += OnLog;
-            BuildScript();
-        }
-
-        void Start()
-        {
-            if (!active)
-                return;
-            player.InputSource = this;
-            startTime = Time.time;
-            nextCapture = startTime + 0.6f;
+            startTime = Time.realtimeSinceStartup;
+            nextCapture = 1f;
+            if (language == "en") SaveSystem.Data.settings.language = Language.English;
+            if (language == "zh") SaveSystem.Data.settings.language = Language.Chinese;
+            Loc.Current = SaveSystem.Data.settings.language;
+            SceneManager.sceneLoaded += (s, _) => log.WriteLine($"[{Elapsed:F1}] scene {s.name}");
         }
 
         void OnDestroy()
@@ -109,144 +121,506 @@ namespace DeadCells.Core
             log?.Dispose();
         }
 
+        float Elapsed => Time.realtimeSinceStartup - startTime;
+
         void OnLog(string condition, string stackTrace, LogType type)
         {
             if (type == LogType.Error || type == LogType.Exception || type == LogType.Assert)
             {
                 errors++;
-                log?.WriteLine($"[{Time.time:F2}] {type}: {condition}\n{stackTrace}");
+                log?.WriteLine($"[{Elapsed:F2}] {type}: {condition}\n{stackTrace}");
+            }
+            else if (condition.StartsWith("[DC]"))
+            {
+                log?.WriteLine($"[{Elapsed:F2}] {condition}");
             }
         }
 
-        void Add(float start, float length, float moveX = 0f, bool down = false, bool jump = false, bool attack = false,
-            bool dodge = false, bool shield = false, bool swap = false, bool flame = false)
+        /// <summary>Main menu asks this to start the run the bot will play.</summary>
+        public void StartRun()
         {
-            script.Add(new Step { start = start, length = length, moveX = moveX, down = down, jump = jump, attack = attack, dodge = dodge, shield = shield, swap = swap, flame = flame });
+            RunManager.NewRun(difficulty, 0);
+            SaveSystem.Data.run.biome = Mathf.Clamp(startBiome, 0, 4);
+            SaveSystem.Save();
+            SceneFlow.LoadGame();
         }
 
-        void BuildScript()
+        public void Capture(string tag)
         {
-            Add(0.0f, 1.0f);                                   // idle: breathing, scarf
-            Add(1.0f, 1.1f, moveX: 1f);                        // run right
-            Add(2.1f, 0.6f, moveX: 1f, jump: true);            // running jump
-            Add(2.7f, 0.5f, moveX: 1f);
-            Add(3.2f, 0.4f, moveX: 1f, dodge: true);           // dodge roll
-            Add(3.6f, 0.4f);
-            Add(4.0f, 0.35f, jump: true);                      // jump...
-            Add(4.35f, 0.9f, down: true, jump: true);          // ...ground pound
-            Add(5.25f, 0.5f);
-            Add(5.75f, 0.12f, attack: true);                   // combo in the air-free spot
-            Add(5.95f, 0.12f, attack: true);
-            Add(6.25f, 0.12f, attack: true);
-            Add(6.9f, 0.7f, shield: true);                     // shield raise
-            Add(7.6f, 0.1f, flame: true);                      // flame preset cycle
-            Add(7.8f, 0.4f, moveX: -1f);
-            Add(8.2f, 0.1f, swap: true);                       // broadsword
-            Add(8.4f, 0.12f, attack: true);
-            Add(8.8f, 0.12f, attack: true);
-            Add(9.3f, 0.12f, attack: true);
-            Add(10.2f, 0.1f, swap: true);                      // back to rusty sword
-            Add(10.3f, 0.1f, flame: true);
-            Add(10.4f, 0.1f, flame: true);
+            string path = Path.Combine(captureDir, $"frame_{captureIndex++:000}_{Elapsed:000.0}s_{tag}.png");
+            ScreenCapture.CaptureScreenshot(path);
+            log?.WriteLine($"[{Elapsed:F1}] capture {path}");
         }
 
-        public InputFrame Read()
-        {
-            var f = new InputFrame();
-            float t = Time.time - startTime;
-            int stepIndex = -1;
-            for (int i = 0; i < script.Count; i++)
-            {
-                if (t >= script[i].start && t < script[i].start + script[i].length)
-                    stepIndex = i;
-            }
-            if (stepIndex >= 0)
-            {
-                var s = script[stepIndex];
-                bool first = stepIndex != prevStep;
-                f.moveX = s.moveX;
-                // Showcase attacks and blocks turn towards the nearest zombie on their first frame.
-                if (first && (s.attack || s.shield) && s.moveX == 0f)
-                    f.moveX = AimAtNearest();
-                f.down = s.down;
-                f.jumpHeld = s.jump;
-                f.jumpPressed = s.jump && first;
-                f.attackPressed = s.attack && first;
-                f.dodgePressed = s.dodge && first;
-                f.shieldHeld = s.shield;
-                f.shieldPressed = s.shield && first;
-                f.swapWeaponPressed = s.swap && first;
-                f.cycleFlamePressed = s.flame && first;
-                prevStep = stepIndex;
-                return f;
-            }
-            prevStep = -1;
-            if (t > script[script.Count - 1].start + 0.6f)
-                return Bot(f);
-            return f;
-        }
+        // ------------------------------------------------------------- loop
 
-        InputFrame Bot(InputFrame f)
+        void Update()
         {
-            var target = Nearest(out _);
-            if (target == null)
+            if (noVsync && QualitySettings.vSyncCount != 0)
             {
-                f.moveX = 1f;
-                return f;
+                QualitySettings.vSyncCount = 0;
+                Application.targetFrameRate = 1000;
             }
-            float dx = target.transform.position.x - player.transform.position.x;
-            float dy = target.transform.position.y - player.transform.position.y;
-            botAttackTimer -= Time.deltaTime;
-            botJumpTimer -= Time.deltaTime;
-            bool blocked = false;
-            if (Mathf.Abs(dx) > 1.6f)
+            var player = PlayerController.Main;
+            if (player != null && !ReferenceEquals(player.InputSource, this))
             {
-                f.moveX = Mathf.Sign(dx);
-                // A wall or ledge in the way: jump over it.
-                var hit = Physics2D.Raycast((Vector2)player.transform.position + Vector2.up * 0.4f, new Vector2(f.moveX, 0f), 0.8f, DCLayers.SolidMask);
-                blocked = hit.collider != null;
+                player.InputSource = this;
+                if (god)
+                    Cheats.SetGodMode(true);
             }
-            else
+            var rm = RunManager.Instance;
+            if (rm != null && rm.Current != null && rm.Level != null && !rm.Transitioning)
             {
-                if (Mathf.Sign(dx) != player.Facing)
-                    f.moveX = Mathf.Sign(dx);
-                if (botAttackTimer <= 0f)
+                string area = rm.Current.id + (rm.InPassage ? "/passage" : "");
+                if (area != lastArea)
                 {
-                    f.attackPressed = true;
-                    botAttackTimer = 0.17f;
+                    lastArea = area;
+                    lastSkip = Elapsed;
+                    path.Clear();
+                    log.WriteLine($"[{Elapsed:F1}] area {area} rooms={rm.Level.data.rooms.Count} size={rm.Level.data.width}x{rm.Level.data.height} enemies={rm.Level.enemies.Count} hp={player?.Health.Current:F0}");
+                    Invoke(nameof(CaptureArea), 2.5f);
+                    if (uiTour && !uiTourDone && !rm.InPassage)
+                    {
+                        uiTourDone = true;
+                        StartCoroutine(UiTour());
+                    }
+                }
+                if (warpBoss && warpedArea != area && Elapsed - lastSkip > 3f)
+                {
+                    warpedArea = area;
+                    WarpToBoss(rm);
+                }
+                if (skipEvery > 0f && Elapsed - lastSkip > skipEvery && !rm.Transitioning)
+                {
+                    lastSkip = Elapsed;
+                    log.WriteLine($"[{Elapsed:F1}] skip from {area} kills={SaveSystem.Data.run.kills}");
+                    rm.CheatSkipBiome();
                 }
             }
-            if ((dy > 1.2f || blocked) && botJumpTimer <= 0f && player.Grounded)
-            {
-                f.jumpPressed = true;
-                f.jumpHeld = true;
-                botJumpTimer = 0.8f;
-            }
-            else
-                f.jumpHeld = botJumpTimer > 0.35f;
-            return f;
         }
+
+        void CaptureArea() => Capture("area_" + lastArea.Replace('/', '_'));
+
+        /// <summary>Test hook: put the player at the entrance of this area's boss arena.</summary>
+        void WarpToBoss(RunManager rm)
+        {
+            var data = rm.Level.data;
+            foreach (var room in data.rooms)
+            {
+                if (room.kind == null || !room.kind.StartsWith("boss"))
+                    continue;
+                var p = PlayerController.Main;
+                var at = new Vector3(room.rect.xMin + 3.5f, room.rect.yMin + 2.05f, 0f);
+                p.Teleport(at);
+                if (rm.vcam != null)
+                    rm.vcam.PreviousStateIsValid = false;
+                log.WriteLine($"[{Elapsed:F1}] warped to {room.kind} at {at}");
+                return;
+            }
+        }
+
+        /// <summary>Test hook: open the in-game screens one by one and capture them.</summary>
+        System.Collections.IEnumerator UiTour()
+        {
+            var ui = UI.GameUI.Instance;
+            yield return new WaitForSecondsRealtime(4f);
+            ui.OpenPauseForTest();
+            yield return new WaitForSecondsRealtime(0.8f);
+            Capture("ui_pause");
+            yield return null;
+            yield return null;
+            ui.CloseAllForTest();
+            yield return new WaitForSecondsRealtime(0.3f);
+            ui.OpenMapForTest();
+            yield return new WaitForSecondsRealtime(0.8f);
+            Capture("ui_map");
+            yield return null;
+            yield return null;
+            ui.CloseAllForTest();
+            yield return new WaitForSecondsRealtime(0.3f);
+            ui.OpenCollector();
+            yield return new WaitForSecondsRealtime(0.8f);
+            Capture("ui_collector");
+            yield return null;
+            yield return null;
+            ui.CloseAllForTest();
+            yield return new WaitForSecondsRealtime(0.3f);
+            ui.ShowLore("oub1");
+            yield return new WaitForSecondsRealtime(0.8f);
+            Capture("ui_lore");
+            yield return null;
+            yield return null;
+            ui.CloseAllForTest();
+            if (dieTest)
+            {
+                yield return new WaitForSecondsRealtime(1f);
+                var p = PlayerController.Main;
+                Cheats.SetGodMode(false);
+                p.Health.InvulnerableUntil = 0f;
+                p.Health.TakeDamage(new Combat.DamageInfo { amount = 99999f, source = gameObject, effect = -1 });
+                yield return new WaitForSecondsRealtime(2.2f);
+                Capture("ui_death");
+            }
+        }
+
+        int intervalFrames, slowFrames;
+        float intervalTime, worstFrame;
 
         void LateUpdate()
         {
-            float t = Time.time - startTime;
-            if (Time.time >= nextCapture)
+            FrameTimingManager.CaptureFrameTimings();
+            float frame = Time.unscaledDeltaTime;
+            intervalFrames++;
+            intervalTime += frame;
+            worstFrame = Mathf.Max(worstFrame, frame);
+            if (frame > 0.02f)
+                slowFrames++;
+            float t = Elapsed;
+            if (t >= nextCapture)
             {
                 bool burst = t >= burstWindow.x && t <= burstWindow.y;
-                nextCapture = Time.time + (burst ? burstInterval : captureInterval);
-                string path = Path.Combine(captureDir, $"frame_{captureIndex++:000}_{t:00.00}s.png");
-                ScreenCapture.CaptureScreenshot(path);
-                log?.WriteLine($"[{t:F2}] capture {path} state={player.State} hp={player.Health.Current:F0} pos={player.transform.position}");
+                nextCapture = t + (burst ? burstInterval : captureInterval);
+                var p = PlayerController.Main;
+                string state = p != null ? $"state={p.State} hp={p.Health.Current:F0} pos={p.transform.position}" : "menu";
+                Capture("t");
+                FrameTimingManager.CaptureFrameTimings();
+                string timing = "";
+                if (FrameTimingManager.GetLatestTimings(1, frameTimings) > 0)
+                    timing = $" cpu={frameTimings[0].cpuFrameTime:F1}ms main={frameTimings[0].cpuMainThreadFrameTime:F1}ms render={frameTimings[0].cpuRenderThreadFrameTime:F1}ms gpu={frameTimings[0].gpuFrameTime:F1}ms";
+                float avg = intervalFrames / Mathf.Max(0.001f, intervalTime);
+                log.WriteLine($"[{t:F1}]   {state} fps~{avg:F0} worst={worstFrame * 1000f:F0}ms slow={slowFrames}/{intervalFrames}{timing}");
+                intervalFrames = slowFrames = 0;
+                intervalTime = worstFrame = 0f;
             }
             if (t >= duration)
             {
-                log?.WriteLine($"done. errors={errors} fps~{1f / Mathf.Max(0.0001f, Time.smoothDeltaTime):F0}");
-                log?.Flush();
+                var run = SaveSystem.Data.run;
+                log.WriteLine($"done. errors={errors} kills={run.kills} biome={run.biome} time={run.time:F0}s fps~{1f / Mathf.Max(0.0001f, Time.smoothDeltaTime):F0}");
+                log.Flush();
+                enabled = false;
                 Application.Quit();
 #if UNITY_EDITOR
                 UnityEditor.EditorApplication.isPlaying = false;
 #endif
-                enabled = false;
+            }
+        }
+
+        // ------------------------------------------------------------- bot
+
+        public InputFrame Read()
+        {
+            var f = new InputFrame();
+            var player = PlayerController.Main;
+            var rm = RunManager.Instance;
+            if (player == null || rm == null || rm.Level == null || rm.Transitioning)
+                return f;
+            float dt = Time.deltaTime;
+            attackTimer -= dt;
+            skillTimer -= dt;
+            pathTimer -= dt;
+            Vector3 pos = player.transform.position;
+
+            // Drink when low.
+            if (player.Health.Normalized < 0.35f && SaveSystem.Data.run.flaskCharges > 0)
+                f.flaskPressed = true;
+
+            var target = NearestEnemy(pos, 9f);
+            if (target != null && Mathf.Abs(target.transform.position.y - pos.y) < 2.2f)
+            {
+                float dx = target.transform.position.x - pos.x;
+                if (Mathf.Abs(dx) > 1.5f)
+                    f.moveX = Mathf.Sign(dx);
+                else if (Mathf.Sign(dx) != player.Facing)
+                    f.moveX = Mathf.Sign(dx);
+                if (Mathf.Abs(dx) < 2.2f && attackTimer <= 0f)
+                {
+                    f.primaryPressed = true;
+                    attackTimer = 0.16f;
+                }
+                if (skillTimer <= 0f && Mathf.Abs(dx) < 7f)
+                {
+                    f.skill1Pressed = true;
+                    f.skill2Pressed = Random.value < 0.5f;
+                    skillTimer = 1.5f;
+                }
+                if (Mathf.Abs(dx) < 3f && Random.value < 0.01f)
+                    f.dodgePressed = true;
+                return f;
+            }
+
+            // Interact with doors and teleporters on the way? Doors only (keeps the run moving).
+            var it = Interactable.Current;
+            if (it is ExitDoor || (it is ItemPickup pick && pick.price == 0 && rm.InPassage == false && Random.value < 0.02f))
+                f.interactPressed = true;
+
+            Navigate(player, rm, ref f);
+            return f;
+        }
+
+        EnemyBase NearestEnemy(Vector3 pos, float range)
+        {
+            EnemyBase best = null;
+            float bestD = range;
+            foreach (var e in RunManager.Instance.Level.enemies)
+            {
+                if (e == null || e.IsDead || !e.Engaged && !e.IsBoss)
+                    continue;
+                float d = Mathf.Abs(e.transform.position.x - pos.x) + Mathf.Abs(e.transform.position.y - pos.y) * 1.5f;
+                if (d < bestD)
+                {
+                    bestD = d;
+                    best = e;
+                }
+            }
+            return best;
+        }
+
+        void Navigate(PlayerController player, RunManager rm, ref InputFrame f)
+        {
+            var data = rm.Level.data;
+            Vector3 pos = player.transform.position;
+            Vector3 goal = rm.Level.exits.Count > 0 ? rm.Level.exits[rm.Level.exits.Count - 1] : new Vector3(data.width - 4, pos.y, 0f);
+            // Boss arenas: fight the boss first.
+            if (rm.Level.boss != null && !rm.Level.boss.IsDead)
+                goal = rm.Level.boss.transform.position;
+
+            if ((pos - lastProgressPos).sqrMagnitude > 1f)
+            {
+                lastProgressPos = pos;
+                stuckTimer = 0f;
+            }
+            else
+            {
+                stuckTimer += Time.deltaTime;
+            }
+
+            // Path search is throttled: at most every 0.6 s (or when stuck).
+            if (pathTimer <= 0f || (pathIndex >= path.Count && pathTimer < 0.4f) || stuckTimer > 2f)
+            {
+                pathTimer = 0.6f;
+                BotPath.Find(data, Cell(pos), Cell(goal), path);
+                pathIndex = 0;
+                if (stuckTimer > 2f)
+                {
+                    f.jumpPressed = true;
+                    f.jumpHeld = true;
+                    f.moveX = Random.value < 0.5f ? -1f : 1f;
+                    stuckTimer = 0f;
+                    return;
+                }
+            }
+            if (path.Count == 0)
+            {
+                f.moveX = Mathf.Sign(goal.x - pos.x);
+                return;
+            }
+            // Advance along the path.
+            Vector2Int me = Cell(pos);
+            while (pathIndex < path.Count - 1 && (path[pathIndex] - me).sqrMagnitude <= 1)
+                pathIndex++;
+            var wp = path[Mathf.Min(pathIndex, path.Count - 1)];
+            float wx = wp.x + 0.5f - pos.x;
+            int wy = wp.y - me.y;
+            f.moveX = Mathf.Abs(wx) > 0.25f ? Mathf.Sign(wx) : 0f;
+            if (wy > 0 && player.Grounded)
+            {
+                f.jumpPressed = true;
+                jumpHoldUntil = Time.time + 0.12f + wy * 0.1f;
+                jumpDir = f.moveX != 0f ? f.moveX : Mathf.Sign(wx);
+            }
+            // Keep pushing towards a ledge while airborne so the mantle triggers.
+            if (!player.Grounded && wy > 0 && f.moveX == 0f)
+                f.moveX = jumpDir;
+            f.jumpHeld = Time.time < jumpHoldUntil;
+            if (wy < -1 && Mathf.Abs(wx) < 0.8f && player.Grounded && Time.time > dropUntil)
+            {
+                f.down = true;
+                f.jumpPressed = true;
+                dropUntil = Time.time + 0.5f;
+            }
+            if (Vector2.Distance(pos, goal) < 2.2f && Interactable.Current is ExitDoor)
+                f.interactPressed = true;
+        }
+
+        static Vector2Int Cell(Vector3 p) => new Vector2Int(Mathf.FloorToInt(p.x), Mathf.FloorToInt(p.y + 0.1f));
+    }
+
+    /// <summary>
+    /// BFS over standable cells with the same movement model as
+    /// Tools/Rooms/validate_rooms.py (walk, fall, jump ≤3 up/≤4 across, drop
+    /// through one-way platforms).
+    /// </summary>
+    public static class BotPath
+    {
+        static bool Blocks(LevelData d, int x, int y) => d.At(x, y) == Tile.Solid;
+        static bool Free(LevelData d, int x, int y) => !Blocks(d, x, y) && d.At(x, y) != Tile.Liquid && d.At(x, y) != Tile.Spikes;
+        static bool Floor(LevelData d, int x, int y) => d.At(x, y) == Tile.Solid || d.At(x, y) == Tile.OneWay;
+
+        static bool Stand(LevelData d, int x, int y) => Free(d, x, y) && Free(d, x, y + 1) && Floor(d, x, y - 1);
+
+        static bool Column(LevelData d, int x, int y0, int y1)
+        {
+            for (int y = Mathf.Min(y0, y1); y <= Mathf.Max(y0, y1); y++)
+                if (Blocks(d, x, y))
+                    return false;
+            return true;
+        }
+
+        static Vector2Int Settle(LevelData d, Vector2Int c)
+        {
+            for (int i = 0; i < 30 && c.y > 0 && !Stand(d, c.x, c.y); i++)
+                c.y--;
+            return c;
+        }
+
+        static LevelData cachedLevel;
+        static readonly Dictionary<Vector2Int, Vector2Int[]> Graph = new Dictionary<Vector2Int, Vector2Int[]>();
+
+        /// <summary>Movement graph over every standable cell, built once per level.</summary>
+        static void EnsureGraph(LevelData d)
+        {
+            if (ReferenceEquals(cachedLevel, d))
+                return;
+            cachedLevel = d;
+            Graph.Clear();
+            var buffer = new List<Vector2Int>();
+            for (int x = 0; x < d.width; x++)
+            for (int y = 1; y < d.height - 1; y++)
+            {
+                if (!Stand(d, x, y))
+                    continue;
+                buffer.Clear();
+                buffer.AddRange(Neighbours(d, new Vector2Int(x, y)));
+                Graph[new Vector2Int(x, y)] = buffer.ToArray();
+            }
+        }
+
+        public static void Find(LevelData d, Vector2Int from, Vector2Int to, List<Vector2Int> result)
+        {
+            result.Clear();
+            EnsureGraph(d);
+            from = Settle(d, from);
+            to = Settle(d, to);
+            if (!Graph.ContainsKey(from))
+                return;
+            var prev = new Dictionary<Vector2Int, Vector2Int>();
+            var q = new Queue<Vector2Int>();
+            q.Enqueue(from);
+            prev[from] = from;
+            Vector2Int best = from;
+            float bestD = float.MaxValue;
+            while (q.Count > 0)
+            {
+                var c = q.Dequeue();
+                float dist = Mathf.Abs(c.x - to.x) + Mathf.Abs(c.y - to.y) * 2f;
+                if (dist < bestD)
+                {
+                    bestD = dist;
+                    best = c;
+                }
+                if (c == to)
+                    break;
+                if (!Graph.TryGetValue(c, out var edges))
+                    continue;
+                foreach (var n in edges)
+                {
+                    if (prev.ContainsKey(n))
+                        continue;
+                    prev[n] = c;
+                    q.Enqueue(n);
+                }
+            }
+            var cur = best;
+            while (cur != from)
+            {
+                result.Add(cur);
+                cur = prev[cur];
+            }
+            result.Reverse();
+        }
+
+        static IEnumerable<Vector2Int> Neighbours(LevelData d, Vector2Int c)
+        {
+            int x = c.x, y = c.y;
+            for (int dx = -1; dx <= 1; dx += 2)
+            {
+                int nx = x + dx;
+                if (Blocks(d, nx, y) || Blocks(d, nx, y + 1))
+                    continue;
+                if (Stand(d, nx, y))
+                {
+                    yield return new Vector2Int(nx, y);
+                    continue;
+                }
+                int fy = y;
+                while (fy > 0 && !Floor(d, nx, fy - 1) && !Blocks(d, nx, fy - 1))
+                    fy--;
+                if (Stand(d, nx, fy))
+                    yield return new Vector2Int(nx, fy);
+            }
+            if (d.At(x, y - 1) == Tile.OneWay)
+            {
+                int fy = y - 1;
+                while (fy > 0 && !(Floor(d, x, fy - 1) && fy - 1 != y - 1) && !Blocks(d, x, fy - 1))
+                    fy--;
+                if (fy < y && Stand(d, x, fy))
+                    yield return new Vector2Int(x, fy);
+            }
+            for (int dy = 1; dy <= 3; dy++)
+            {
+                for (int dx = -4; dx <= 4; dx++)
+                {
+                    if (dy == 3 && Mathf.Abs(dx) > 3)
+                        continue;
+                    int nx = x + dx, ny = y + dy;
+                    if (!Stand(d, nx, ny))
+                        continue;
+                    if (!Column(d, x, y, ny + 1) || !Column(d, nx, ny, ny + 1))
+                        continue;
+                    bool ok = true;
+                    int step = dx > 0 ? 1 : -1;
+                    for (int cx = x; dx != 0 && cx != nx + step; cx += step)
+                        if (Blocks(d, cx, ny) || Blocks(d, cx, ny + 1))
+                        {
+                            ok = false;
+                            break;
+                        }
+                    if (ok)
+                        yield return new Vector2Int(nx, ny);
+                }
+            }
+            // Ledge mantle: jump beside a wall and climb its lip (up to 4 above the feet).
+            for (int dx = -1; dx <= 1; dx += 2)
+            {
+                for (int dy = 4; dy >= 3; dy--)
+                {
+                    int nx = x + dx, ny = y + dy;
+                    if (Stand(d, nx, ny) && Blocks(d, nx, ny - 1) && Column(d, x, y, ny + 1))
+                        yield return new Vector2Int(nx, ny);
+                }
+            }
+            // Gap jumps at the same level or lower.
+            for (int dx = -5; dx <= 5; dx++)
+            {
+                if (Mathf.Abs(dx) < 2)
+                    continue;
+                for (int dy = 0; dy >= -4; dy--)
+                {
+                    int nx = x + dx, ny = y + dy;
+                    if (!Stand(d, nx, ny))
+                        continue;
+                    bool ok = true;
+                    int step = dx > 0 ? 1 : -1;
+                    for (int cx = x; cx != nx + step; cx += step)
+                        if (Blocks(d, cx, y + 1) || Blocks(d, cx, y + 2))
+                        {
+                            ok = false;
+                            break;
+                        }
+                    if (ok)
+                        yield return new Vector2Int(nx, ny);
+                    break;
+                }
             }
         }
     }

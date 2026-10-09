@@ -494,7 +494,8 @@ def project_sheet(bm, bvh, *, offset=0.022, lump=None, tuck_verts=(), tuck=0.003
 
 def moss_net(bvh, xs, top_ys, front_ts, drape, *, y_out=-1.3, z_out=1.3, z_ref=1.0,
              side_ys=None, side_drape=None, side_x_out=None,
-             offset=0.022, lump=None, zmax=None, zmax_xrange=(-0.01, 1.01), tuck=0.003, smooth=1):
+             offset=0.022, lump=None, zmax=None, zmax_xrange=(-0.01, 1.01), tuck=0.003, smooth=1,
+             tuck_back=False):
     """Moss sheet = folded box net (top + front [+ one side]) shrink-projected
     onto an envelope.  Rows are generated outside the envelope and pulled to
     the nearest surface point + offset along the outward direction.
@@ -515,6 +516,11 @@ def moss_net(bvh, xs, top_ys, front_ts, drape, *, y_out=-1.3, z_out=1.3, z_ref=1
                [[(side_x_out, y, z_ref - t * side_drape(y)) for y in ys] for t in front_ts]
         grids.append(side)
         tuck_pts += side[-1]
+    if tuck_back:
+        # covering that stops part-way back: feather its back edge into the surface
+        tuck_pts += top[0]
+        if side_ys is not None:
+            tuck_pts += [row[-1] for row in grids[-1]]
     bm, keyed = sheet_from_grids(grids)
     tv = [keyed[key_of(p)] for p in tuck_pts if key_of(p) in keyed]
     return project_sheet(bm, bvh, offset=offset, lump=lump, tuck_verts=tv, tuck=tuck, smooth=smooth,

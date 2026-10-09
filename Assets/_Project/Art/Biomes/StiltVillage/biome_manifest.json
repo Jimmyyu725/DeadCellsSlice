@@ -1,0 +1,697 @@
+{
+  "biome": "StiltVillage",
+  "generator": "Tools/Blender/build_biome.py --biome StiltVillage",
+  "unity_axes": "Unity (x,y,z) = Blender (x,z,y)",
+  "atlases": {
+    "StiltVillage_Kit": {
+      "albedo": "Assets/_Project/Art/Biomes/StiltVillage/Textures/StiltVillage_Kit_Albedo.png",
+      "normal": "Assets/_Project/Art/Biomes/StiltVillage/Textures/StiltVillage_Kit_Normal.png",
+      "orm": "Assets/_Project/Art/Biomes/StiltVillage/Textures/StiltVillage_Kit_ORM.png",
+      "emission": "Assets/_Project/Art/Biomes/StiltVillage/Textures/StiltVillage_Kit_Emission.png"
+    },
+    "StiltVillage_BG": {
+      "albedo": "Assets/_Project/Art/Biomes/StiltVillage/Textures/StiltVillage_BG_Albedo.png",
+      "normal": "Assets/_Project/Art/Biomes/StiltVillage/Textures/StiltVillage_BG_Normal.png",
+      "orm": "Assets/_Project/Art/Biomes/StiltVillage/Textures/StiltVillage_BG_ORM.png",
+      "emission": "Assets/_Project/Art/Biomes/StiltVillage/Textures/StiltVillage_BG_Emission.png"
+    }
+  },
+  "materials": {
+    "StiltVillage_Kit": "M_StiltVillage_Kit",
+    "StiltVillage_BG": "M_StiltVillage_BG"
+  },
+  "emission_colors": {
+    "paper lanterns / shoji": "#FFB25A",
+    "red paper": "#FF7A3A",
+    "BG windows/lanterns": "#FFB25A"
+  },
+  "tile_checks_blender": {
+    "StiltVillage_Fill_A": {
+      "max_z": 1.0,
+      "min_y": -0.9576,
+      "min_x": 0.0179,
+      "max_x": 0.9831,
+      "min_z": 0.0225
+    },
+    "StiltVillage_Fill_B": {
+      "max_z": 1.0,
+      "min_y": -0.9198,
+      "min_x": 0.015,
+      "max_x": 0.985,
+      "min_z": 0.012
+    },
+    "StiltVillage_Fill_C": {
+      "max_z": 1.0,
+      "min_y": -0.9605,
+      "min_x": 0.004,
+      "max_x": 0.996,
+      "min_z": 0.012
+    },
+    "StiltVillage_Top_A": {
+      "max_z": 1.0159,
+      "min_y": -0.9675,
+      "min_x": -0.0001,
+      "max_x": 1.0,
+      "min_z": 0.0195
+    },
+    "StiltVillage_Top_B": {
+      "max_z": 1.0145,
+      "min_y": -0.9664,
+      "min_x": -0.0075,
+      "max_x": 1.007,
+      "min_z": 0.0168
+    },
+    "StiltVillage_Edge_L": {
+      "max_z": 1.0167,
+      "min_y": -0.979,
+      "min_x": -0.0269,
+      "max_x": 1.0,
+      "min_z": 0.0
+    },
+    "StiltVillage_Edge_R": {
+      "max_z": 1.0167,
+      "min_y": -0.979,
+      "min_x": -0.0,
+      "max_x": 1.0269,
+      "min_z": 0.0
+    }
+  },
+  "contract_checks_blender": {
+    "StiltVillage_Fill_A": {
+      "size_blender": [
+        0.965,
+        2.558,
+        0.977
+      ],
+      "top_z<=1.06": true,
+      "front_overhang<=0.08": true
+    },
+    "StiltVillage_Fill_B": {
+      "size_blender": [
+        0.97,
+        2.52,
+        0.988
+      ],
+      "top_z<=1.06": true,
+      "front_overhang<=0.08": true
+    },
+    "StiltVillage_Fill_C": {
+      "size_blender": [
+        0.992,
+        2.561,
+        0.988
+      ],
+      "top_z<=1.06": true,
+      "front_overhang<=0.08": true
+    },
+    "StiltVillage_Top_A": {
+      "size_blender": [
+        1.0,
+        2.567,
+        0.996
+      ],
+      "top_z<=1.06": true,
+      "front_overhang<=0.08": true
+    },
+    "StiltVillage_Top_B": {
+      "size_blender": [
+        1.014,
+        2.566,
+        0.998
+      ],
+      "top_z<=1.06": true,
+      "front_overhang<=0.08": true
+    },
+    "StiltVillage_Edge_L": {
+      "size_blender": [
+        1.027,
+        2.579,
+        1.017
+      ],
+      "top_z<=1.06": true,
+      "front_overhang<=0.08": true
+    },
+    "StiltVillage_Edge_R": {
+      "size_blender": [
+        1.027,
+        2.579,
+        1.017
+      ],
+      "top_z<=1.06": true,
+      "front_overhang<=0.08": true
+    },
+    "StiltVillage_Platform": {
+      "size_blender": [
+        0.984,
+        1.652,
+        0.81
+      ],
+      "deck_top=1": true,
+      "deck_thickness<=0.2": true
+    },
+    "StiltVillage_BackWall": {
+      "size_blender": [
+        4.0,
+        0.247,
+        4.0
+      ],
+      "4x4": true,
+      "depth<=0.4": true,
+      "front_y~0": true,
+      "tris<=3600": true
+    },
+    "StiltVillage_Pillar": {
+      "size_blender": [
+        0.99,
+        1.05,
+        4.98
+      ],
+      "width<=1": true,
+      "height~5": true
+    },
+    "StiltVillage_Arch": {
+      "size_blender": [
+        6.9,
+        0.647,
+        5.77
+      ],
+      "width~6": true,
+      "height~5.5": true
+    },
+    "StiltVillage_Light": {
+      "size_blender": [
+        0.432,
+        0.783,
+        0.97
+      ],
+      "LightSocket": true
+    },
+    "StiltVillage_Hang": {
+      "size_blender": [
+        0.33,
+        0.33,
+        2.581
+      ],
+      "top_at_pivot": true,
+      "length_2_3m": true
+    },
+    "StiltVillage_Door": {
+      "size_blender": [
+        2.604,
+        1.195,
+        3.23
+      ],
+      "width~2.4": true,
+      "height~3.2": true,
+      "recess<=0.8": true
+    },
+    "StiltVillage_Prop_A": {
+      "size_blender": [
+        0.831,
+        1.106,
+        0.95
+      ],
+      "height<=1.2": true
+    },
+    "StiltVillage_Prop_B": {
+      "size_blender": [
+        1.446,
+        0.642,
+        0.957
+      ],
+      "height<=1.2": true
+    },
+    "StiltVillage_Prop_C": {
+      "size_blender": [
+        1.151,
+        0.61,
+        0.92
+      ],
+      "height<=1.2": true
+    },
+    "StiltVillage_Stilt": {
+      "size_blender": [
+        0.932,
+        1.57,
+        6.116
+      ]
+    },
+    "StiltVillage_BG_Near": {
+      "size_blender": [
+        20.245,
+        4.012,
+        10.037
+      ],
+      "~20x10": true
+    },
+    "StiltVillage_BG_Far_A": {
+      "size_blender": [
+        5.8,
+        4.93,
+        22.01
+      ],
+      "height_16_25": true
+    },
+    "StiltVillage_BG_Far_B": {
+      "size_blender": [
+        12.356,
+        4.095,
+        16.355
+      ],
+      "height_16_25": true
+    },
+    "StiltVillage_Pagoda": {
+      "size_blender": [
+        9.452,
+        8.064,
+        18.428
+      ]
+    }
+  },
+  "modules": [
+    {
+      "name": "StiltVillage_Fill_A",
+      "role": "Fill_A",
+      "fbx": "Assets/_Project/Art/Biomes/StiltVillage/Meshes/StiltVillage_Fill_A.fbx",
+      "atlas": "StiltVillage_Kit",
+      "unity_bounds_min": [
+        0.0179,
+        0.0225,
+        -0.9576
+      ],
+      "unity_bounds_max": [
+        0.9831,
+        1.0,
+        1.6
+      ],
+      "sockets": {},
+      "tris": 1118,
+      "usage": "1x1 tile, pivot bottom-left, top y=1; stacked rope-lashed timbers"
+    },
+    {
+      "name": "StiltVillage_Fill_B",
+      "role": "Fill_B",
+      "fbx": "Assets/_Project/Art/Biomes/StiltVillage/Meshes/StiltVillage_Fill_B.fbx",
+      "atlas": "StiltVillage_Kit",
+      "unity_bounds_min": [
+        0.015,
+        0.012,
+        -0.9198
+      ],
+      "unity_bounds_max": [
+        0.985,
+        1.0,
+        1.6
+      ],
+      "sockets": {},
+      "tris": 846,
+      "usage": "1x1 tile, pivot bottom-left, top y=1; crate wall (two crates)"
+    },
+    {
+      "name": "StiltVillage_Fill_C",
+      "role": "Fill_C",
+      "fbx": "Assets/_Project/Art/Biomes/StiltVillage/Meshes/StiltVillage_Fill_C.fbx",
+      "atlas": "StiltVillage_Kit",
+      "unity_bounds_min": [
+        0.004,
+        0.012,
+        -0.9605
+      ],
+      "unity_bounds_max": [
+        0.996,
+        1.0,
+        1.6
+      ],
+      "sockets": {},
+      "tris": 1116,
+      "usage": "1x1 tile, pivot bottom-left, top y=1; vertical plank wall with battens"
+    },
+    {
+      "name": "StiltVillage_Top_A",
+      "role": "Top_A",
+      "fbx": "Assets/_Project/Art/Biomes/StiltVillage/Meshes/StiltVillage_Top_A.fbx",
+      "atlas": "StiltVillage_Kit",
+      "unity_bounds_min": [
+        -0.0001,
+        0.0195,
+        -0.9675
+      ],
+      "unity_bounds_max": [
+        1.0,
+        1.0159,
+        1.6
+      ],
+      "sockets": {},
+      "tris": 1066,
+      "usage": "1x1 tile, pivot bottom-left, top y=1; wet deck, purple wine-stain lip"
+    },
+    {
+      "name": "StiltVillage_Top_B",
+      "role": "Top_B",
+      "fbx": "Assets/_Project/Art/Biomes/StiltVillage/Meshes/StiltVillage_Top_B.fbx",
+      "atlas": "StiltVillage_Kit",
+      "unity_bounds_min": [
+        -0.0075,
+        0.0168,
+        -0.9664
+      ],
+      "unity_bounds_max": [
+        1.007,
+        1.0145,
+        1.6
+      ],
+      "sockets": {},
+      "tris": 1402,
+      "usage": "1x1 tile, pivot bottom-left, top y=1; wet deck with shingle eave lip"
+    },
+    {
+      "name": "StiltVillage_Edge_L",
+      "role": "Edge_L",
+      "fbx": "Assets/_Project/Art/Biomes/StiltVillage/Meshes/StiltVillage_Edge_L.fbx",
+      "atlas": "StiltVillage_Kit",
+      "unity_bounds_min": [
+        -0.0269,
+        0.0,
+        -0.979
+      ],
+      "unity_bounds_max": [
+        1.0,
+        1.0167,
+        1.6
+      ],
+      "sockets": {},
+      "tris": 1406,
+      "usage": "1x1 tile, pivot bottom-left, top y=1; deck end with corner post"
+    },
+    {
+      "name": "StiltVillage_Edge_R",
+      "role": "Edge_R",
+      "fbx": "Assets/_Project/Art/Biomes/StiltVillage/Meshes/StiltVillage_Edge_R.fbx",
+      "atlas": "StiltVillage_Kit",
+      "unity_bounds_min": [
+        -0.0,
+        0.0,
+        -0.979
+      ],
+      "unity_bounds_max": [
+        1.0269,
+        1.0167,
+        1.6
+      ],
+      "sockets": {},
+      "tris": 1406,
+      "usage": "right platform end (mirror of Edge_L)"
+    },
+    {
+      "name": "StiltVillage_Platform",
+      "role": "Platform",
+      "fbx": "Assets/_Project/Art/Biomes/StiltVillage/Meshes/StiltVillage_Platform.fbx",
+      "atlas": "StiltVillage_Kit",
+      "unity_bounds_min": [
+        0.0052,
+        0.2,
+        -0.62
+      ],
+      "unity_bounds_max": [
+        0.989,
+        1.01,
+        1.0319
+      ],
+      "sockets": {},
+      "tris": 1096,
+      "usage": "one-way plank platform, rope-lashed, deck top y=1"
+    },
+    {
+      "name": "StiltVillage_BackWall",
+      "role": "BackWall",
+      "fbx": "Assets/_Project/Art/Biomes/StiltVillage/Meshes/StiltVillage_BackWall.fbx",
+      "atlas": "StiltVillage_Kit",
+      "unity_bounds_min": [
+        0.0,
+        0.0,
+        -0.0665
+      ],
+      "unity_bounds_max": [
+        4.0,
+        4.0,
+        0.18
+      ],
+      "sockets": {},
+      "tris": 654,
+      "usage": "4x4 vertical board wall with battens, seamless"
+    },
+    {
+      "name": "StiltVillage_Pillar",
+      "role": "Pillar",
+      "fbx": "Assets/_Project/Art/Biomes/StiltVillage/Meshes/StiltVillage_Pillar.fbx",
+      "atlas": "StiltVillage_Kit",
+      "unity_bounds_min": [
+        -0.495,
+        0.0,
+        -0.18
+      ],
+      "unity_bounds_max": [
+        0.495,
+        4.98,
+        0.87
+      ],
+      "sockets": {},
+      "tris": 1788,
+      "usage": "lacquered pagoda column with bracket set and talismans"
+    },
+    {
+      "name": "StiltVillage_Arch",
+      "role": "Arch",
+      "fbx": "Assets/_Project/Art/Biomes/StiltVillage/Meshes/StiltVillage_Arch.fbx",
+      "atlas": "StiltVillage_Kit",
+      "unity_bounds_min": [
+        -3.45,
+        0.0,
+        0.0766
+      ],
+      "unity_bounds_max": [
+        3.45,
+        5.77,
+        0.7234
+      ],
+      "sockets": {},
+      "tris": 3520,
+      "usage": "torii-like gate 6.9 m wide with chimes and lanterns"
+    },
+    {
+      "name": "StiltVillage_Light",
+      "role": "Light",
+      "fbx": "Assets/_Project/Art/Biomes/StiltVillage/Meshes/StiltVillage_Light.fbx",
+      "atlas": "StiltVillage_Kit",
+      "unity_bounds_min": [
+        -0.216,
+        -0.054,
+        -0.783
+      ],
+      "unity_bounds_max": [
+        0.216,
+        0.9161,
+        0.0
+      ],
+      "sockets": {
+        "LightSocket": [
+          0.0,
+          0.4185,
+          -0.567
+        ]
+      },
+      "tris": 964,
+      "usage": "paper lantern on a bracket; LightSocket = lantern centre (warm)"
+    },
+    {
+      "name": "StiltVillage_Hang",
+      "role": "Hang",
+      "fbx": "Assets/_Project/Art/Biomes/StiltVillage/Meshes/StiltVillage_Hang.fbx",
+      "atlas": "StiltVillage_Kit",
+      "unity_bounds_min": [
+        -0.165,
+        -2.58,
+        -0.165
+      ],
+      "unity_bounds_max": [
+        0.165,
+        0.0005,
+        0.165
+      ],
+      "sockets": {},
+      "tris": 1112,
+      "usage": "rope with two wind chimes and a bronze bell, pivot top, ~2.6 m"
+    },
+    {
+      "name": "StiltVillage_Door",
+      "role": "Door",
+      "fbx": "Assets/_Project/Art/Biomes/StiltVillage/Meshes/StiltVillage_Door.fbx",
+      "atlas": "StiltVillage_Kit",
+      "unity_bounds_min": [
+        -1.302,
+        -0.05,
+        -0.415
+      ],
+      "unity_bounds_max": [
+        1.302,
+        3.18,
+        0.78
+      ],
+      "sockets": {},
+      "tris": 2064,
+      "usage": "pagoda doorway with glowing shoji (one open), recess 0.78 m"
+    },
+    {
+      "name": "StiltVillage_Prop_A",
+      "role": "Prop_A",
+      "fbx": "Assets/_Project/Art/Biomes/StiltVillage/Meshes/StiltVillage_Prop_A.fbx",
+      "atlas": "StiltVillage_Kit",
+      "unity_bounds_min": [
+        -0.4156,
+        0.0,
+        0.0
+      ],
+      "unity_bounds_max": [
+        0.4156,
+        0.95,
+        1.1056
+      ],
+      "sockets": {},
+      "tris": 1806,
+      "usage": "wine barrel with purple overflow"
+    },
+    {
+      "name": "StiltVillage_Prop_B",
+      "role": "Prop_B",
+      "fbx": "Assets/_Project/Art/Biomes/StiltVillage/Meshes/StiltVillage_Prop_B.fbx",
+      "atlas": "StiltVillage_Kit",
+      "unity_bounds_min": [
+        -0.6887,
+        -0.0016,
+        0.0
+      ],
+      "unity_bounds_max": [
+        0.7569,
+        0.955,
+        0.6424
+      ],
+      "sockets": {},
+      "tris": 1872,
+      "usage": "rope coil and bronze bell stand"
+    },
+    {
+      "name": "StiltVillage_Prop_C",
+      "role": "Prop_C",
+      "fbx": "Assets/_Project/Art/Biomes/StiltVillage/Meshes/StiltVillage_Prop_C.fbx",
+      "atlas": "StiltVillage_Kit",
+      "unity_bounds_min": [
+        -0.5,
+        0.0,
+        0.0
+      ],
+      "unity_bounds_max": [
+        0.6512,
+        0.92,
+        0.61
+      ],
+      "sockets": {},
+      "tris": 1304,
+      "usage": "crate, fish baskets and paper lantern"
+    },
+    {
+      "name": "StiltVillage_Stilt",
+      "role": "Stilt",
+      "fbx": "Assets/_Project/Art/Biomes/StiltVillage/Meshes/StiltVillage_Stilt.fbx",
+      "atlas": "StiltVillage_Kit",
+      "unity_bounds_min": [
+        -0.466,
+        -6.1161,
+        -0.7547
+      ],
+      "unity_bounds_max": [
+        0.466,
+        0.0,
+        0.8151
+      ],
+      "sockets": {},
+      "tris": 1512,
+      "usage": "bird-like stilt leg, pivot at top, extends to y=-6"
+    },
+    {
+      "name": "StiltVillage_BG_Near",
+      "role": "BG_Near",
+      "fbx": "Assets/_Project/Art/Biomes/StiltVillage/Meshes/StiltVillage_BG_Near.fbx",
+      "atlas": "StiltVillage_BG",
+      "unity_bounds_min": [
+        -10.2425,
+        -0.0369,
+        -0.5
+      ],
+      "unity_bounds_max": [
+        10.0025,
+        10.0,
+        3.512
+      ],
+      "sockets": {},
+      "tris": 1526,
+      "usage": "stilt huts on decks 20x10 m (Unity z=5)"
+    },
+    {
+      "name": "StiltVillage_BG_Far_A",
+      "role": "BG_Far_A",
+      "fbx": "Assets/_Project/Art/Biomes/StiltVillage/Meshes/StiltVillage_BG_Far_A.fbx",
+      "atlas": "StiltVillage_BG",
+      "unity_bounds_min": [
+        -2.9,
+        -0.0097,
+        -0.665
+      ],
+      "unity_bounds_max": [
+        2.9,
+        22.0,
+        4.265
+      ],
+      "sockets": {},
+      "tris": 502,
+      "usage": "lantern watchtower on stilts ~22 m (z=10)"
+    },
+    {
+      "name": "StiltVillage_BG_Far_B",
+      "role": "BG_Far_B",
+      "fbx": "Assets/_Project/Art/Biomes/StiltVillage/Meshes/StiltVillage_BG_Far_B.fbx",
+      "atlas": "StiltVillage_BG",
+      "unity_bounds_min": [
+        -6.3281,
+        -0.0549,
+        -0.4351
+      ],
+      "unity_bounds_max": [
+        6.0281,
+        16.3,
+        3.66
+      ],
+      "sockets": {},
+      "tris": 890,
+      "usage": "stacked stilt houses ~16 m (z=16)"
+    },
+    {
+      "name": "StiltVillage_Pagoda",
+      "role": "Pagoda",
+      "fbx": "Assets/_Project/Art/Biomes/StiltVillage/Meshes/StiltVillage_Pagoda.fbx",
+      "atlas": "StiltVillage_BG",
+      "unity_bounds_min": [
+        -4.8662,
+        -0.0584,
+        -1.032
+      ],
+      "unity_bounds_max": [
+        4.5862,
+        18.37,
+        7.032
+      ],
+      "sockets": {},
+      "tris": 1028,
+      "usage": "far three-tier pagoda roof tower ~21 m"
+    }
+  ]
+}

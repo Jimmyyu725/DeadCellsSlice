@@ -1,0 +1,90 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb884fccea0f24f2fb6e3722d4c4348c, type: 3}
+  m_Name: melee_spear
+  m_EditorClassIdentifier: DeadCells.Runtime::DeadCells.Items.ItemDef
+  id: melee_spear
+  kind: 0
+  visual: {fileID: 2512170490175907719, guid: f9647ca8dc4944288b16173a7e9d0b8a, type: 3}
+  offhandVisual: {fileID: 0}
+  mount: 0
+  icon: {fileID: 0}
+  unlockCost: 40
+  basePrice: 170
+  tier: 2
+  crit: 1
+  critMultiplier: 1.9
+  animSpeed: 1
+  arcColor: {r: 0.9, g: 2.6, b: 2.2, a: 1}
+  arcCore: {r: 5, g: 6.5, b: 6, a: 1}
+  sparkColor: {r: 2, g: 2.8, b: 2.6, a: 1}
+  dualWield: 0
+  bladeLength: 1.86
+  combo:
+  - clip: Spear_Thrust_1
+    totalFrames: 16
+    activeFrames: {x: 4, y: 7}
+    cancelFrame: 8
+    lungeFrames: {x: 3, y: 6}
+    lungeSpeed: 5.5
+    damage: 15
+    hitboxOffset: {x: 1.8, y: 1.1}
+    hitboxSize: {x: 3.4, y: 0.9}
+    knockback: 4
+    stun: 0.12
+    hitStopWeight: 0.3
+    shake: 0.15
+    finisher: 0
+  - clip: Spear_Thrust_2
+    totalFrames: 16
+    activeFrames: {x: 4, y: 7}
+    cancelFrame: 8
+    lungeFrames: {x: 3, y: 6}
+    lungeSpeed: 5.5
+    damage: 17
+    hitboxOffset: {x: 1.8, y: 1.2}
+    hitboxSize: {x: 3.4, y: 0.9}
+    knockback: 4.5
+    stun: 0.15
+    hitStopWeight: 0.35
+    shake: 0.18
+    finisher: 0
+  - clip: Spear_Thrust_3
+    totalFrames: 22
+    activeFrames: {x: 5, y: 9}
+    cancelFrame: 12
+    lungeFrames: {x: 4, y: 8}
+    lungeSpeed: 9
+    damage: 30
+    hitboxOffset: {x: 2.1, y: 1.1}
+    hitboxSize: {x: 4, y: 1}
+    knockback: 10
+    stun: 0.35
+    hitStopWeight: 1
+    shake: 0.45
+    finisher: 1
+  parryWindow: 0.18
+  blockReduction: 0.8
+  parryDamage: 18
+  projectile: {fileID: 0}
+  projectileSpeed: 26
+  projectileGravity: 0
+  launchAngle: 0
+  damage: 14
+  cooldown: 0.45
+  hasEffect: 0
+  effect: 0
+  effectDuration: 3
+  radius: 0
+  pierce: 0
+  spin: 0
+  effectColor: {r: 3, g: 1.3, b: 0.3, a: 1}

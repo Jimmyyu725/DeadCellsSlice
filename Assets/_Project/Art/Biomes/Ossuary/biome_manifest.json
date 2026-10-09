@@ -1,0 +1,701 @@
+{
+  "biome": "Ossuary",
+  "generator": "Tools/Blender/build_biome.py --biome Ossuary",
+  "unity_axes": "Unity (x,y,z) = Blender (x,z,y)",
+  "atlases": {
+    "Ossuary_Kit": {
+      "albedo": "Assets/_Project/Art/Biomes/Ossuary/Textures/Ossuary_Kit_Albedo.png",
+      "normal": "Assets/_Project/Art/Biomes/Ossuary/Textures/Ossuary_Kit_Normal.png",
+      "orm": "Assets/_Project/Art/Biomes/Ossuary/Textures/Ossuary_Kit_ORM.png",
+      "emission": "Assets/_Project/Art/Biomes/Ossuary/Textures/Ossuary_Kit_Emission.png"
+    },
+    "Ossuary_BG": {
+      "albedo": "Assets/_Project/Art/Biomes/Ossuary/Textures/Ossuary_BG_Albedo.png",
+      "normal": "Assets/_Project/Art/Biomes/Ossuary/Textures/Ossuary_BG_Normal.png",
+      "orm": "Assets/_Project/Art/Biomes/Ossuary/Textures/Ossuary_BG_ORM.png",
+      "emission": "Assets/_Project/Art/Biomes/Ossuary/Textures/Ossuary_BG_Emission.png"
+    }
+  },
+  "materials": {
+    "Ossuary_Kit": "M_Ossuary_Kit",
+    "Ossuary_BG": "M_Ossuary_BG"
+  },
+  "emission_colors": {
+    "candle flames": "#7DFF8A",
+    "tallow (faint)": "#2E7A3A",
+    "BG windows/niches": "#7DFF8A"
+  },
+  "tile_checks_blender": {
+    "Ossuary_Fill_A": {
+      "max_z": 1.0,
+      "min_y": -0.9001,
+      "min_x": 0.0168,
+      "max_x": 0.9901,
+      "min_z": 0.0181
+    },
+    "Ossuary_Fill_B": {
+      "max_z": 1.0,
+      "min_y": -0.9375,
+      "min_x": 0.0147,
+      "max_x": 0.992,
+      "min_z": 0.0164
+    },
+    "Ossuary_Fill_C": {
+      "max_z": 1.0,
+      "min_y": -0.979,
+      "min_x": 0.0088,
+      "max_x": 0.991,
+      "min_z": 0.0131
+    },
+    "Ossuary_Top_A": {
+      "max_z": 1.0345,
+      "min_y": -0.977,
+      "min_x": -0.0001,
+      "max_x": 1.0,
+      "min_z": 0.0112
+    },
+    "Ossuary_Top_B": {
+      "max_z": 1.0334,
+      "min_y": -0.965,
+      "min_x": -0.0001,
+      "max_x": 1.0,
+      "min_z": 0.0106
+    },
+    "Ossuary_Edge_L": {
+      "max_z": 1.0327,
+      "min_y": -0.9688,
+      "min_x": -0.0772,
+      "max_x": 1.0001,
+      "min_z": 0.011
+    },
+    "Ossuary_Edge_R": {
+      "max_z": 1.0327,
+      "min_y": -0.9688,
+      "min_x": -0.0001,
+      "max_x": 1.0772,
+      "min_z": 0.011
+    }
+  },
+  "contract_checks_blender": {
+    "Ossuary_Fill_A": {
+      "size_blender": [
+        0.973,
+        2.5,
+        0.982
+      ],
+      "top_z<=1.06": true,
+      "front_overhang<=0.08": true
+    },
+    "Ossuary_Fill_B": {
+      "size_blender": [
+        0.977,
+        2.538,
+        0.984
+      ],
+      "top_z<=1.06": true,
+      "front_overhang<=0.08": true
+    },
+    "Ossuary_Fill_C": {
+      "size_blender": [
+        0.982,
+        2.579,
+        0.987
+      ],
+      "top_z<=1.06": true,
+      "front_overhang<=0.08": true
+    },
+    "Ossuary_Top_A": {
+      "size_blender": [
+        1.0,
+        2.577,
+        1.023
+      ],
+      "top_z<=1.06": true,
+      "front_overhang<=0.08": true
+    },
+    "Ossuary_Top_B": {
+      "size_blender": [
+        1.0,
+        2.565,
+        1.023
+      ],
+      "top_z<=1.06": true,
+      "front_overhang<=0.08": true
+    },
+    "Ossuary_Edge_L": {
+      "size_blender": [
+        1.077,
+        2.569,
+        1.022
+      ],
+      "top_z<=1.06": true,
+      "front_overhang<=0.08": true
+    },
+    "Ossuary_Edge_R": {
+      "size_blender": [
+        1.077,
+        2.569,
+        1.022
+      ],
+      "top_z<=1.06": true,
+      "front_overhang<=0.08": true
+    },
+    "Ossuary_Platform": {
+      "size_blender": [
+        0.999,
+        1.636,
+        0.722
+      ],
+      "deck_top=1": true,
+      "deck_thickness<=0.2": true
+    },
+    "Ossuary_BackWall": {
+      "size_blender": [
+        4.0,
+        0.422,
+        4.0
+      ],
+      "4x4": true,
+      "depth<=0.4": true,
+      "front_y~0": true,
+      "tris<=3600": true
+    },
+    "Ossuary_SkullWall": {
+      "size_blender": [
+        4.0,
+        0.321,
+        4.0
+      ],
+      "4x4": true,
+      "depth<=0.4": true,
+      "front_y~0": true,
+      "tris<=3600": true
+    },
+    "Ossuary_Pillar": {
+      "size_blender": [
+        1.0,
+        1.015,
+        5.13
+      ],
+      "width<=1": true,
+      "height~5": true
+    },
+    "Ossuary_Arch": {
+      "size_blender": [
+        6.06,
+        1.05,
+        5.816
+      ],
+      "width~6": true,
+      "height~5.5": true
+    },
+    "Ossuary_RibArch": {
+      "size_blender": [
+        9.1,
+        1.236,
+        7.306
+      ]
+    },
+    "Ossuary_Light": {
+      "size_blender": [
+        0.75,
+        0.399,
+        1.159
+      ],
+      "LightSocket": true
+    },
+    "Ossuary_Hang": {
+      "size_blender": [
+        0.349,
+        0.343,
+        2.64
+      ],
+      "top_at_pivot": true,
+      "length_2_3m": true
+    },
+    "Ossuary_Door": {
+      "size_blender": [
+        2.421,
+        0.945,
+        3.208
+      ],
+      "width~2.4": true,
+      "height~3.2": true,
+      "recess<=0.8": true
+    },
+    "Ossuary_Prop_A": {
+      "size_blender": [
+        1.229,
+        0.674,
+        0.708
+      ],
+      "height<=1.2": true
+    },
+    "Ossuary_Prop_B": {
+      "size_blender": [
+        1.178,
+        1.225,
+        1.059
+      ],
+      "height<=1.2": true
+    },
+    "Ossuary_Prop_C": {
+      "size_blender": [
+        0.834,
+        0.63,
+        1.0
+      ],
+      "height<=1.2": true
+    },
+    "Ossuary_BG_Near": {
+      "size_blender": [
+        20.0,
+        5.0,
+        10.055
+      ],
+      "~20x10": true
+    },
+    "Ossuary_BG_Far_A": {
+      "size_blender": [
+        13.546,
+        12.87,
+        21.364
+      ],
+      "height_16_25": true
+    },
+    "Ossuary_BG_Far_B": {
+      "size_blender": [
+        16.131,
+        8.006,
+        17.184
+      ],
+      "height_16_25": true
+    }
+  },
+  "modules": [
+    {
+      "name": "Ossuary_Fill_A",
+      "role": "Fill_A",
+      "fbx": "Assets/_Project/Art/Biomes/Ossuary/Meshes/Ossuary_Fill_A.fbx",
+      "atlas": "Ossuary_Kit",
+      "unity_bounds_min": [
+        0.0168,
+        0.0181,
+        -0.9001
+      ],
+      "unity_bounds_max": [
+        0.9901,
+        1.0,
+        1.6
+      ],
+      "sockets": {},
+      "tris": 684,
+      "usage": "1x1 tile, pivot bottom-left, top y=1, front z=-0.9"
+    },
+    {
+      "name": "Ossuary_Fill_B",
+      "role": "Fill_B",
+      "fbx": "Assets/_Project/Art/Biomes/Ossuary/Meshes/Ossuary_Fill_B.fbx",
+      "atlas": "Ossuary_Kit",
+      "unity_bounds_min": [
+        0.0147,
+        0.0164,
+        -0.9375
+      ],
+      "unity_bounds_max": [
+        0.992,
+        1.0,
+        1.6
+      ],
+      "sockets": {},
+      "tris": 1202,
+      "usage": "1x1 tile, pivot bottom-left, top y=1, front z=-0.9"
+    },
+    {
+      "name": "Ossuary_Fill_C",
+      "role": "Fill_C",
+      "fbx": "Assets/_Project/Art/Biomes/Ossuary/Meshes/Ossuary_Fill_C.fbx",
+      "atlas": "Ossuary_Kit",
+      "unity_bounds_min": [
+        0.0088,
+        0.0131,
+        -0.979
+      ],
+      "unity_bounds_max": [
+        0.991,
+        1.0,
+        1.6
+      ],
+      "sockets": {},
+      "tris": 814,
+      "usage": "1x1 tile, pivot bottom-left, top y=1, front z=-0.9"
+    },
+    {
+      "name": "Ossuary_Top_A",
+      "role": "Top_A",
+      "fbx": "Assets/_Project/Art/Biomes/Ossuary/Meshes/Ossuary_Top_A.fbx",
+      "atlas": "Ossuary_Kit",
+      "unity_bounds_min": [
+        -0.0001,
+        0.0112,
+        -0.977
+      ],
+      "unity_bounds_max": [
+        1.0,
+        1.0345,
+        1.6
+      ],
+      "sockets": {},
+      "tris": 1204,
+      "usage": "1x1 tile, pivot bottom-left, top y=1, front z=-0.9 ; bone-powder lip"
+    },
+    {
+      "name": "Ossuary_Top_B",
+      "role": "Top_B",
+      "fbx": "Assets/_Project/Art/Biomes/Ossuary/Meshes/Ossuary_Top_B.fbx",
+      "atlas": "Ossuary_Kit",
+      "unity_bounds_min": [
+        -0.0001,
+        0.0106,
+        -0.965
+      ],
+      "unity_bounds_max": [
+        1.0,
+        1.0334,
+        1.6
+      ],
+      "sockets": {},
+      "tris": 1188,
+      "usage": "1x1 tile, pivot bottom-left, top y=1, front z=-0.9 ; bone-powder lip"
+    },
+    {
+      "name": "Ossuary_Edge_L",
+      "role": "Edge_L",
+      "fbx": "Assets/_Project/Art/Biomes/Ossuary/Meshes/Ossuary_Edge_L.fbx",
+      "atlas": "Ossuary_Kit",
+      "unity_bounds_min": [
+        -0.0772,
+        0.011,
+        -0.9688
+      ],
+      "unity_bounds_max": [
+        1.0001,
+        1.0327,
+        1.6
+      ],
+      "sockets": {},
+      "tris": 1411,
+      "usage": "1x1 tile, pivot bottom-left, top y=1, front z=-0.9 ; bone-powder lip"
+    },
+    {
+      "name": "Ossuary_Edge_R",
+      "role": "Edge_R",
+      "fbx": "Assets/_Project/Art/Biomes/Ossuary/Meshes/Ossuary_Edge_R.fbx",
+      "atlas": "Ossuary_Kit",
+      "unity_bounds_min": [
+        -0.0001,
+        0.011,
+        -0.9688
+      ],
+      "unity_bounds_max": [
+        1.0772,
+        1.0327,
+        1.6
+      ],
+      "sockets": {},
+      "tris": 1411,
+      "usage": "right platform end (mirror of Edge_L)"
+    },
+    {
+      "name": "Ossuary_Platform",
+      "role": "Platform",
+      "fbx": "Assets/_Project/Art/Biomes/Ossuary/Meshes/Ossuary_Platform.fbx",
+      "atlas": "Ossuary_Kit",
+      "unity_bounds_min": [
+        0.0005,
+        0.2865,
+        -0.6688
+      ],
+      "unity_bounds_max": [
+        0.9995,
+        1.009,
+        0.9669
+      ],
+      "sockets": {},
+      "tris": 1310,
+      "usage": "one-way bone beam: two flat-topped long bones lashed, deck y=1"
+    },
+    {
+      "name": "Ossuary_BackWall",
+      "role": "BackWall",
+      "fbx": "Assets/_Project/Art/Biomes/Ossuary/Meshes/Ossuary_BackWall.fbx",
+      "atlas": "Ossuary_Kit",
+      "unity_bounds_min": [
+        0.0,
+        0.0,
+        -0.0222
+      ],
+      "unity_bounds_max": [
+        4.0,
+        4.0,
+        0.4
+      ],
+      "sockets": {},
+      "tris": 2400,
+      "usage": "4x4 umber catacomb wall with inlaid bones, seamless"
+    },
+    {
+      "name": "Ossuary_SkullWall",
+      "role": "SkullWall",
+      "fbx": "Assets/_Project/Art/Biomes/Ossuary/Meshes/Ossuary_SkullWall.fbx",
+      "atlas": "Ossuary_Kit",
+      "unity_bounds_min": [
+        0.0,
+        0.0,
+        0.0001
+      ],
+      "unity_bounds_max": [
+        4.0,
+        4.0,
+        0.3216
+      ],
+      "sockets": {},
+      "tris": 3530,
+      "usage": "4x4 back-wall variant: skull + femur rows, seamless"
+    },
+    {
+      "name": "Ossuary_Pillar",
+      "role": "Pillar",
+      "fbx": "Assets/_Project/Art/Biomes/Ossuary/Meshes/Ossuary_Pillar.fbx",
+      "atlas": "Ossuary_Kit",
+      "unity_bounds_min": [
+        -0.5,
+        0.0,
+        0.0
+      ],
+      "unity_bounds_max": [
+        0.5,
+        5.1298,
+        1.0147
+      ],
+      "sockets": {},
+      "tris": 5466,
+      "usage": "vertebral column on marble plinth, skull crown, candles"
+    },
+    {
+      "name": "Ossuary_Arch",
+      "role": "Arch",
+      "fbx": "Assets/_Project/Art/Biomes/Ossuary/Meshes/Ossuary_Arch.fbx",
+      "atlas": "Ossuary_Kit",
+      "unity_bounds_min": [
+        -3.03,
+        0.0,
+        -0.2504
+      ],
+      "unity_bounds_max": [
+        3.03,
+        5.8164,
+        0.8
+      ],
+      "sockets": {},
+      "tris": 3579,
+      "usage": "marble arch 6 m with rib-bone fan and impost candles"
+    },
+    {
+      "name": "Ossuary_RibArch",
+      "role": "RibArch",
+      "fbx": "Assets/_Project/Art/Biomes/Ossuary/Meshes/Ossuary_RibArch.fbx",
+      "atlas": "Ossuary_Kit",
+      "unity_bounds_min": [
+        -4.55,
+        0.0,
+        -0.2
+      ],
+      "unity_bounds_max": [
+        4.55,
+        7.306,
+        1.0362
+      ],
+      "sockets": {},
+      "tris": 4202,
+      "usage": "leviathan rib arch, 8 m span, ~7.3 m tall, pivot bottom-centre"
+    },
+    {
+      "name": "Ossuary_Light",
+      "role": "Light",
+      "fbx": "Assets/_Project/Art/Biomes/Ossuary/Meshes/Ossuary_Light.fbx",
+      "atlas": "Ossuary_Kit",
+      "unity_bounds_min": [
+        -0.375,
+        -0.2368,
+        -0.3987
+      ],
+      "unity_bounds_max": [
+        0.375,
+        0.9221,
+        0.0
+      ],
+      "sockets": {
+        "LightSocket": [
+          0.2375,
+          0.5125,
+          -0.25
+        ]
+      },
+      "tris": 1333,
+      "usage": "candle shrine; LightSocket = tallest flame (green)"
+    },
+    {
+      "name": "Ossuary_Hang",
+      "role": "Hang",
+      "fbx": "Assets/_Project/Art/Biomes/Ossuary/Meshes/Ossuary_Hang.fbx",
+      "atlas": "Ossuary_Kit",
+      "unity_bounds_min": [
+        -0.1737,
+        -2.6387,
+        -0.1628
+      ],
+      "unity_bounds_max": [
+        0.1758,
+        0.0011,
+        0.1801
+      ],
+      "sockets": {},
+      "tris": 3002,
+      "usage": "rope of vertebrae ending in a skull, pivot at top, ~2.6 m"
+    },
+    {
+      "name": "Ossuary_Door",
+      "role": "Door",
+      "fbx": "Assets/_Project/Art/Biomes/Ossuary/Meshes/Ossuary_Door.fbx",
+      "atlas": "Ossuary_Kit",
+      "unity_bounds_min": [
+        -1.2092,
+        -0.05,
+        -0.1651
+      ],
+      "unity_bounds_max": [
+        1.2121,
+        3.1583,
+        0.78
+      ],
+      "sockets": {},
+      "tris": 3298,
+      "usage": "doorway: femur jambs, jawbone lintel, skulls, recess 0.78 m"
+    },
+    {
+      "name": "Ossuary_Prop_A",
+      "role": "Prop_A",
+      "fbx": "Assets/_Project/Art/Biomes/Ossuary/Meshes/Ossuary_Prop_A.fbx",
+      "atlas": "Ossuary_Kit",
+      "unity_bounds_min": [
+        -0.5208,
+        0.0,
+        0.0
+      ],
+      "unity_bounds_max": [
+        0.708,
+        0.708,
+        0.6738
+      ],
+      "sockets": {},
+      "tris": 2154,
+      "usage": "skull pile with candles"
+    },
+    {
+      "name": "Ossuary_Prop_B",
+      "role": "Prop_B",
+      "fbx": "Assets/_Project/Art/Biomes/Ossuary/Meshes/Ossuary_Prop_B.fbx",
+      "atlas": "Ossuary_Kit",
+      "unity_bounds_min": [
+        -0.5935,
+        0.0,
+        0.0
+      ],
+      "unity_bounds_max": [
+        0.5846,
+        1.059,
+        1.2246
+      ],
+      "sockets": {},
+      "tris": 1016,
+      "usage": "broken marble stairs"
+    },
+    {
+      "name": "Ossuary_Prop_C",
+      "role": "Prop_C",
+      "fbx": "Assets/_Project/Art/Biomes/Ossuary/Meshes/Ossuary_Prop_C.fbx",
+      "atlas": "Ossuary_Kit",
+      "unity_bounds_min": [
+        -0.417,
+        0.0,
+        0.0
+      ],
+      "unity_bounds_max": [
+        0.417,
+        1.0,
+        0.6301
+      ],
+      "sockets": {},
+      "tris": 952,
+      "usage": "reliquary urn with skull finial"
+    },
+    {
+      "name": "Ossuary_BG_Near",
+      "role": "BG_Near",
+      "fbx": "Assets/_Project/Art/Biomes/Ossuary/Meshes/Ossuary_BG_Near.fbx",
+      "atlas": "Ossuary_BG",
+      "unity_bounds_min": [
+        -10.0,
+        -0.0548,
+        -2.6
+      ],
+      "unity_bounds_max": [
+        10.0,
+        10.0,
+        2.4
+      ],
+      "sockets": {},
+      "tris": 1547,
+      "usage": "catacomb wall 20x10 m with skull niches (Unity z=5)"
+    },
+    {
+      "name": "Ossuary_BG_Far_A",
+      "role": "BG_Far_A",
+      "fbx": "Assets/_Project/Art/Biomes/Ossuary/Meshes/Ossuary_BG_Far_A.fbx",
+      "atlas": "Ossuary_BG",
+      "unity_bounds_min": [
+        -6.773,
+        -0.0805,
+        -1.1627
+      ],
+      "unity_bounds_max": [
+        6.773,
+        21.2831,
+        11.707
+      ],
+      "sockets": {},
+      "tris": 2072,
+      "usage": "leviathan rib cage ~22 m (Unity z=10)"
+    },
+    {
+      "name": "Ossuary_BG_Far_B",
+      "role": "BG_Far_B",
+      "fbx": "Assets/_Project/Art/Biomes/Ossuary/Meshes/Ossuary_BG_Far_B.fbx",
+      "atlas": "Ossuary_BG",
+      "unity_bounds_min": [
+        -7.9944,
+        0.6155,
+        -0.9937
+      ],
+      "unity_bounds_max": [
+        8.1363,
+        17.8,
+        7.012
+      ],
+      "sockets": {},
+      "tris": 1030,
+      "usage": "leviathan skull temple ~18 m (Unity z=16)"
+    }
+  ]
+}

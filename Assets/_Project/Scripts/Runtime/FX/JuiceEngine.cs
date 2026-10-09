@@ -103,7 +103,8 @@ namespace DeadCells.FX
             Time.timeScale = 0f;
             while (Time.realtimeSinceStartup < stopUntil)
                 yield return null;
-            Time.timeScale = baseTimeScale;
+            // A pause opened during the freeze keeps the game stopped.
+            Time.timeScale = Core.GamePause.Paused ? 0f : baseTimeScale;
             stopRoutine = null;
         }
 
@@ -115,6 +116,9 @@ namespace DeadCells.FX
         /// <summary>Directional kick (impulse) + trauma (noise). strength ~0.1 light .. 1 huge.</summary>
         public void Shake(Vector2 direction, float strength)
         {
+            strength *= Meta.SaveSystem.Data.settings.screenShake;
+            if (strength <= 0f)
+                return;
             if (kickSource != null)
             {
                 Vector2 d = direction.sqrMagnitude > 1e-4f ? direction.normalized : Vector2.down;

@@ -72,7 +72,7 @@ Material:
     - _EmissionColor: {r: 3.2, g: 1.5, b: 0.35, a: 1}
     - _GlintColor: {r: 1, g: 0.95, b: 0.85, a: 1}
     - _HitFlashColor: {r: 2, g: 2, b: 2, a: 1}
-    - _OutlineColor: {r: 0.03, g: 0.02, b: 0.059999965, a: 1}
+    - _OutlineColor: {r: 0.03, g: 0.02, b: 0.05, a: 1}
     - _RimColor: {r: 0.5, g: 0.9, b: 0.7, a: 1}
     - _ShadowTint: {r: 0.24, g: 0.3, b: 0.38, a: 1}
   m_BuildTextureStacks: []

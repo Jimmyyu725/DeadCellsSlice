@@ -1,0 +1,392 @@
+{
+  "generator": "Tools/Blender/build_props.py",
+  "unity_axes": "Unity (x,y,z) = Blender (x,z,y)",
+  "atlases": {
+    "Props": {
+      "albedo": "Assets/_Project/Art/Props/Textures/Props_Albedo.png",
+      "normal": "Assets/_Project/Art/Props/Textures/Props_Normal.png",
+      "orm": "Assets/_Project/Art/Props/Textures/Props_ORM.png",
+      "emission": "Assets/_Project/Art/Props/Textures/Props_Emission.png"
+    }
+  },
+  "materials": {
+    "Props": "M_Props"
+  },
+  "emission_colors": {
+    "Teleporter ring channel": "#7FE8FF",
+    "Chest lock": "#C79BFF",
+    "Fountain_Liquid": "#FF2A3A",
+    "LoreTablet glyphs": "#7FE8FF",
+    "ExitDoor crack light": "#FFC870",
+    "MerchantStall lantern": "#FFB040",
+    "Collector monocle + cell vials": "#5FD4FF"
+  },
+  "modules": [
+    {
+      "name": "Teleporter",
+      "fbx": "Assets/_Project/Art/Props/Teleporter.fbx",
+      "atlas": "Props",
+      "unity_bounds_min": [
+        -1.0,
+        0.0,
+        -0.45
+      ],
+      "unity_bounds_max": [
+        1.0,
+        2.89,
+        0.45
+      ],
+      "sockets": {
+        "PortalSocket": [
+          0.0,
+          1.74,
+          0.0
+        ]
+      },
+      "tris": 5454,
+      "usage": "Chronometer Gate teleport statue. Pivot bottom centre; clock ring faces -Z (camera). Emission = inner ring channel. PortalSocket = ring centre."
+    },
+    {
+      "name": "Chest",
+      "fbx": "Assets/_Project/Art/Props/Chest.fbx",
+      "atlas": "Props",
+      "unity_bounds_min": [
+        -0.5236,
+        0.0,
+        -0.3566
+      ],
+      "unity_bounds_max": [
+        0.5236,
+        0.732,
+        0.328
+      ],
+      "sockets": {},
+      "tris": 3152,
+      "usage": "Iron-banded treasure chest 1.0 x 0.7 x 0.65 (Unity x,y,z). Chest_Lid pivot = hinge line (back top edge of the base); rotate about Unity +X (negative angle opens toward the back). Emission = glowing lock.",
+      "pieces": {
+        "Chest_Base": {
+          "pivot": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "unity_bounds_min": [
+            -0.5236,
+            0.0,
+            -0.333
+          ],
+          "unity_bounds_max": [
+            0.5236,
+            0.436,
+            0.328
+          ],
+          "tris": 1848
+        },
+        "Chest_Lid": {
+          "pivot": [
+            0.0,
+            0.42,
+            0.3
+          ],
+          "unity_bounds_min": [
+            -0.488,
+            0.39,
+            -0.3566
+          ],
+          "unity_bounds_max": [
+            0.488,
+            0.732,
+            0.3168
+          ],
+          "tris": 1304
+        }
+      }
+    },
+    {
+      "name": "Pedestal",
+      "fbx": "Assets/_Project/Art/Props/Pedestal.fbx",
+      "atlas": "Props",
+      "unity_bounds_min": [
+        -0.24,
+        0.0,
+        -0.24
+      ],
+      "unity_bounds_max": [
+        0.24,
+        0.75,
+        0.24
+      ],
+      "sockets": {
+        "ItemSocket": [
+          0.0,
+          1.2,
+          0.0
+        ]
+      },
+      "tris": 1422,
+      "usage": "Shop item stand (carved stone column + velvet cushion). Pivot bottom centre. ItemSocket 0.45 m above the cushion top. No emission."
+    },
+    {
+      "name": "Coin",
+      "fbx": "Assets/_Project/Art/Props/Coin.fbx",
+      "atlas": "Props",
+      "unity_bounds_min": [
+        -0.07,
+        -0.07,
+        -0.009
+      ],
+      "unity_bounds_max": [
+        0.07,
+        0.07,
+        0.009
+      ],
+      "sockets": {},
+      "tris": 1360,
+      "usage": "Gold coin pickup, 0.14 m, origin at its centre, faces -Z (camera). Spin about Unity +Y."
+    },
+    {
+      "name": "GoldPile",
+      "fbx": "Assets/_Project/Art/Props/GoldPile.fbx",
+      "atlas": "Props",
+      "unity_bounds_min": [
+        -0.3257,
+        0.0,
+        -0.3044
+      ],
+      "unity_bounds_max": [
+        0.3479,
+        0.2108,
+        0.3411
+      ],
+      "sockets": {},
+      "tris": 2506,
+      "usage": "Heap of coins ~0.6 m wide, pivot bottom centre. No emission."
+    },
+    {
+      "name": "Fountain",
+      "fbx": "Assets/_Project/Art/Props/Fountain.fbx",
+      "atlas": "Props",
+      "unity_bounds_min": [
+        -0.8318,
+        0.0,
+        -0.4879
+      ],
+      "unity_bounds_max": [
+        0.8318,
+        1.96,
+        0.6
+      ],
+      "sockets": {},
+      "tris": 2930,
+      "usage": "Health fountain. Fountain (stone basin + gargoyle stele) pivot bottom centre; Fountain_Liquid (surface + spout stream) pivot at the liquid surface centre so Unity can lower/hide it. Emission = red liquid.",
+      "pieces": {
+        "Fountain": {
+          "pivot": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "unity_bounds_min": [
+            -0.8318,
+            0.0,
+            -0.4879
+          ],
+          "unity_bounds_max": [
+            0.8318,
+            1.96,
+            0.6
+          ],
+          "tris": 2242
+        },
+        "Fountain_Liquid": {
+          "pivot": [
+            0.0,
+            0.56,
+            0.0
+          ],
+          "unity_bounds_min": [
+            -0.692,
+            0.54,
+            -0.3875
+          ],
+          "unity_bounds_max": [
+            0.692,
+            1.1668,
+            0.3875
+          ],
+          "tris": 688
+        }
+      }
+    },
+    {
+      "name": "LoreTablet",
+      "fbx": "Assets/_Project/Art/Props/LoreTablet.fbx",
+      "atlas": "Props",
+      "unity_bounds_min": [
+        -0.5,
+        0.0,
+        -0.3334
+      ],
+      "unity_bounds_max": [
+        0.5151,
+        1.276,
+        0.22
+      ],
+      "sockets": {},
+      "tris": 511,
+      "usage": "Cracked lore stone on a base, pivot bottom centre, glyph face toward -Z. Emission = engraved glyph lines."
+    },
+    {
+      "name": "ExitDoor",
+      "fbx": "Assets/_Project/Art/Props/ExitDoor.fbx",
+      "atlas": "Props",
+      "unity_bounds_min": [
+        -1.64,
+        0.0,
+        -0.55
+      ],
+      "unity_bounds_max": [
+        1.64,
+        4.22,
+        0.38
+      ],
+      "sockets": {},
+      "tris": 3829,
+      "usage": "Biome exit: double door in a stone frame, 3.2 x 4.2 m, pivot bottom centre. Door_Left/Door_Right pivots = outer hinge edges (rotate about Unity +Y). ExitDoor_Light is the glowing slab behind the leaves (shows through the cracks; hide/fade it independently). Emission = crack light.",
+      "pieces": {
+        "ExitDoor_Frame": {
+          "pivot": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "unity_bounds_min": [
+            -1.64,
+            0.0,
+            -0.55
+          ],
+          "unity_bounds_max": [
+            1.64,
+            4.22,
+            0.38
+          ],
+          "tris": 1549
+        },
+        "Door_Left": {
+          "pivot": [
+            -1.085,
+            0.12,
+            0.0
+          ],
+          "unity_bounds_min": [
+            -1.129,
+            0.13,
+            -0.1221
+          ],
+          "unity_bounds_max": [
+            -0.0195,
+            3.387,
+            0.065
+          ],
+          "tris": 1112
+        },
+        "Door_Right": {
+          "pivot": [
+            1.085,
+            0.12,
+            0.0
+          ],
+          "unity_bounds_min": [
+            0.0195,
+            0.13,
+            -0.1221
+          ],
+          "unity_bounds_max": [
+            1.129,
+            3.387,
+            0.065
+          ],
+          "tris": 1112
+        },
+        "ExitDoor_Light": {
+          "pivot": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "unity_bounds_min": [
+            -1.1,
+            0.12,
+            0.1
+          ],
+          "unity_bounds_max": [
+            1.1,
+            3.4,
+            0.12
+          ],
+          "tris": 56
+        }
+      }
+    },
+    {
+      "name": "MerchantStall",
+      "fbx": "Assets/_Project/Art/Props/MerchantStall.fbx",
+      "atlas": "Props",
+      "unity_bounds_min": [
+        -2.0025,
+        0.0,
+        -0.589
+      ],
+      "unity_bounds_max": [
+        2.006,
+        2.7488,
+        1.0
+      ],
+      "sockets": {
+        "LightSocket": [
+          0.95,
+          2.0,
+          -0.42
+        ]
+      },
+      "tris": 5956,
+      "usage": "Merchant counter ~3 m wide with canopy, potion shelves, crates, barrel and a hanging lantern. Pivot bottom centre; the merchant stands behind the counter (Unity z ~ +0.45). Emission = lantern. LightSocket = lantern centre."
+    },
+    {
+      "name": "Merchant",
+      "fbx": "Assets/_Project/Art/Props/Merchant.fbx",
+      "atlas": "Props",
+      "unity_bounds_min": [
+        -0.5988,
+        0.0018,
+        -0.7083
+      ],
+      "unity_bounds_max": [
+        0.5892,
+        1.8843,
+        0.5494
+      ],
+      "sockets": {},
+      "tris": 7832,
+      "usage": "Tavern-keeper merchant NPC, ~1.9 m, static mesh, pivot at the feet, faces -Z. Extra ribcages sprout through the apron as bone wind-chimes. No emission."
+    },
+    {
+      "name": "Collector",
+      "fbx": "Assets/_Project/Art/Props/Collector.fbx",
+      "atlas": "Props",
+      "unity_bounds_min": [
+        -0.5522,
+        0.0,
+        -0.864
+      ],
+      "unity_bounds_max": [
+        0.5033,
+        2.247,
+        0.65
+      ],
+      "sockets": {},
+      "tris": 7574,
+      "usage": "'The Horologist' meta-progression vendor, ~2.2 m, hunched robed figure, static, pivot at the feet, faces -Z. Emission = clockwork monocle lens + glowing cell vials in the backpack."
+    }
+  ]
+}

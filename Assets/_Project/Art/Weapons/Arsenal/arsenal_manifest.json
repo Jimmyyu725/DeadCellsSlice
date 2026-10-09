@@ -1,0 +1,206 @@
+{
+  "generator": "Tools/Blender/build_arsenal.py",
+  "unity_axes": "Unity (x,y,z) = Blender (x,z,y)",
+  "atlases": {
+    "Arsenal": {
+      "albedo": "Assets/_Project/Art/Weapons/Arsenal/Textures/Arsenal_Albedo.png",
+      "normal": "Assets/_Project/Art/Weapons/Arsenal/Textures/Arsenal_Normal.png",
+      "orm": "Assets/_Project/Art/Weapons/Arsenal/Textures/Arsenal_ORM.png",
+      "emission": "Assets/_Project/Art/Weapons/Arsenal/Textures/Arsenal_Emission.png"
+    }
+  },
+  "materials": {
+    "Arsenal": "M_Arsenal"
+  },
+  "emission_colors": {
+    "Cleaver runes": "#9B5CFF",
+    "Spear rune groove": "#7FD0FF",
+    "FireGrenade liquid": "#FF7A1A",
+    "IceGrenade liquid": "#5FE6FF",
+    "Harpoon crystal": "#9FE8FF",
+    "Flask liquid": "#FF2A3A",
+    "Scroll seal glyph": "#FFC94A"
+  },
+  "modules": [
+    {
+      "name": "Cleaver",
+      "fbx": "Assets/_Project/Art/Weapons/Arsenal/Cleaver.fbx",
+      "atlas": "Arsenal",
+      "unity_bounds_min": [
+        -0.064,
+        -0.1852,
+        -0.0233
+      ],
+      "unity_bounds_max": [
+        0.119,
+        0.6517,
+        0.0233
+      ],
+      "sockets": {},
+      "tris": 2578,
+      "usage": "Starting weapon (rusted executioner's cleaver). Grip centre at origin, blade along +Y, cutting edge toward +X, flats face +-Z. Emission = violet rune scratches on both flats."
+    },
+    {
+      "name": "Spear",
+      "fbx": "Assets/_Project/Art/Weapons/Arsenal/Spear.fbx",
+      "atlas": "Arsenal",
+      "unity_bounds_min": [
+        -0.0645,
+        -0.605,
+        -0.0298
+      ],
+      "unity_bounds_max": [
+        0.3207,
+        1.872,
+        0.0232
+      ],
+      "sockets": {},
+      "tris": 2696,
+      "usage": "Ash spear, grip point at origin (0.55 m from the butt); shaft y=-0.55..1.35, leaf head above. Emission = rune groove on the head."
+    },
+    {
+      "name": "Dagger",
+      "fbx": "Assets/_Project/Art/Weapons/Arsenal/Dagger.fbx",
+      "atlas": "Arsenal",
+      "unity_bounds_min": [
+        -0.0364,
+        -0.0976,
+        -0.0161
+      ],
+      "unity_bounds_max": [
+        0.0431,
+        0.262,
+        0.0172
+      ],
+      "sockets": {},
+      "tris": 1574,
+      "usage": "Curved tavern shiv (used as two instances for Twin Daggers). Grip centre at origin, blade +Y, edge on the concave +X side. No emission."
+    },
+    {
+      "name": "Bow",
+      "fbx": "Assets/_Project/Art/Weapons/Arsenal/Bow.fbx",
+      "atlas": "Arsenal",
+      "unity_bounds_min": [
+        -0.026,
+        -0.6864,
+        -0.0908
+      ],
+      "unity_bounds_max": [
+        0.026,
+        0.6864,
+        0.0831
+      ],
+      "sockets": {},
+      "tris": 1578,
+      "usage": "Spiked recurve bow. Grip at origin, limbs along +-Y, string on the +Z side 0.08 m behind the grip; a nocked arrow flies toward -Z. No emission."
+    },
+    {
+      "name": "Arrow",
+      "fbx": "Assets/_Project/Art/Weapons/Arsenal/Arrow.fbx",
+      "atlas": "Arsenal",
+      "unity_bounds_min": [
+        -0.0185,
+        -0.375,
+        -0.0208
+      ],
+      "unity_bounds_max": [
+        0.0235,
+        0.375,
+        0.0208
+      ],
+      "sockets": {},
+      "tris": 412,
+      "usage": "Arrow, 0.75 m along +Y, origin at its centre, head at +Y. No emission."
+    },
+    {
+      "name": "FireGrenade",
+      "fbx": "Assets/_Project/Art/Weapons/Arsenal/FireGrenade.fbx",
+      "atlas": "Arsenal",
+      "unity_bounds_min": [
+        -0.0764,
+        -0.0708,
+        -0.0758
+      ],
+      "unity_bounds_max": [
+        0.0764,
+        0.1626,
+        0.0758
+      ],
+      "sockets": {},
+      "tris": 1506,
+      "usage": "Thrown fire flask, origin at the flask centre, neck +Y. Emission = liquid (mask white; Unity applies the HDR colour)."
+    },
+    {
+      "name": "IceGrenade",
+      "fbx": "Assets/_Project/Art/Weapons/Arsenal/IceGrenade.fbx",
+      "atlas": "Arsenal",
+      "unity_bounds_min": [
+        -0.0764,
+        -0.0708,
+        -0.0758
+      ],
+      "unity_bounds_max": [
+        0.0764,
+        0.1386,
+        0.0758
+      ],
+      "sockets": {},
+      "tris": 1442,
+      "usage": "Thrown ice flask, origin at the flask centre, neck +Y. Emission = liquid (mask white; Unity applies the HDR colour)."
+    },
+    {
+      "name": "Harpoon",
+      "fbx": "Assets/_Project/Art/Weapons/Arsenal/Harpoon.fbx",
+      "atlas": "Arsenal",
+      "unity_bounds_min": [
+        -0.0847,
+        -0.6043,
+        -0.0389
+      ],
+      "unity_bounds_max": [
+        0.0925,
+        0.6,
+        0.0315
+      ],
+      "sockets": {},
+      "tris": 1250,
+      "usage": "Enemy projectile: harpoon forged from crystallized lightning. 1.2 m along +Y, origin at centre, head toward +Y. Emission = crystal (greyscale veins)."
+    },
+    {
+      "name": "Flask",
+      "fbx": "Assets/_Project/Art/Weapons/Arsenal/Flask.fbx",
+      "atlas": "Arsenal",
+      "unity_bounds_min": [
+        -0.0944,
+        0.0,
+        -0.0745
+      ],
+      "unity_bounds_max": [
+        0.1146,
+        0.219,
+        0.0705
+      ],
+      "sockets": {},
+      "tris": 1504,
+      "usage": "Health flask, origin at the bottom centre, 0.22 m tall. Emission = red liquid."
+    },
+    {
+      "name": "Scroll",
+      "fbx": "Assets/_Project/Art/Weapons/Arsenal/Scroll.fbx",
+      "atlas": "Arsenal",
+      "unity_bounds_min": [
+        -0.175,
+        -0.0831,
+        -0.0468
+      ],
+      "unity_bounds_max": [
+        0.175,
+        0.0377,
+        0.0377
+      ],
+      "sockets": {},
+      "tris": 2000,
+      "usage": "Scroll of Power pickup: rolled parchment 0.35 m along X, origin at the roll centre, wax seal toward the camera (-Z). Emission = seal glyph."
+    }
+  ]
+}

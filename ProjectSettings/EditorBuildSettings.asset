@@ -6,7 +6,10 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/_Project/Scenes/PrisonersQuarters.unity
-    guid: 8428f0d62c2e84bd6849dc57a9318107
+    path: Assets/_Project/Scenes/MainMenu.unity
+    guid: da536f2c81e344c1c881bb954ea0b66f
+  - enabled: 1
+    path: Assets/_Project/Scenes/Game.unity
+    guid: e79eded2f7c9a42afaba19403a5c1dcd
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}

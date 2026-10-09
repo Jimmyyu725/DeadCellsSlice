@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb884fccea0f24f2fb6e3722d4c4348c, type: 3}
+  m_Name: skill_harpoon
+  m_EditorClassIdentifier: DeadCells.Runtime::DeadCells.Items.ItemDef
+  id: skill_harpoon
+  kind: 3
+  visual: {fileID: 3840132490580468181, guid: 9925cb9f4e285498d83b9b466a31eb05, type: 3}
+  offhandVisual: {fileID: 0}
+  mount: 0
+  icon: {fileID: 0}
+  unlockCost: 60
+  basePrice: 200
+  tier: 3
+  crit: 0
+  critMultiplier: 1.5
+  animSpeed: 1
+  arcColor: {r: 1.2, g: 2.6, b: 3.2, a: 1}
+  arcCore: {r: 6, g: 6, b: 6, a: 1}
+  sparkColor: {r: 2.5, g: 2.2, b: 1.6, a: 1}
+  dualWield: 0
+  bladeLength: 0.78
+  combo: []
+  parryWindow: 0.18
+  blockReduction: 0.8
+  parryDamage: 18
+  projectile: {fileID: 6590482226928638818, guid: 4163471ef55024a9ca5a24b97d27a409, type: 3}
+  projectileSpeed: 34
+  projectileGravity: 0
+  launchAngle: 0
+  damage: 28
+  cooldown: 8
+  hasEffect: 1
+  effect: 2
+  effectDuration: 0.6
+  radius: 0
+  pierce: 1
+  spin: 0
+  effectColor: {r: 1.4, g: 2.2, b: 3.4, a: 1}

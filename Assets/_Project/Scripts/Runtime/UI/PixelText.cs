@@ -11,6 +11,9 @@ namespace DeadCells.UI
         [Tooltip("Screen pixels per font texel.")]
         public float pixelScale = 3f;
         public TextAnchor alignment = TextAnchor.MiddleLeft;
+        [Tooltip("Wrap words to the rect width; '\\n' always breaks.")]
+        public bool wrap;
+        public float lineSpacing = 3f;
 
         readonly List<Vector3> v = new List<Vector3>();
         readonly List<Vector2> uv = new List<Vector2>();
@@ -31,6 +34,45 @@ namespace DeadCells.UI
             }
         }
 
+        readonly List<string> lines = new List<string>();
+
+        void Layout(float width)
+        {
+            lines.Clear();
+            foreach (var para in text.Split('\n'))
+            {
+                if (!wrap)
+                {
+                    lines.Add(para);
+                    continue;
+                }
+                string line = "";
+                foreach (var word in para.Split(' '))
+                {
+                    string candidate = line.Length == 0 ? word : line + " " + word;
+                    if (line.Length > 0 && PixelFont.Width(candidate, pixelScale) > width)
+                    {
+                        lines.Add(line);
+                        line = word;
+                    }
+                    else
+                    {
+                        line = candidate;
+                    }
+                }
+                lines.Add(line);
+            }
+        }
+
+        public float PreferredHeight
+        {
+            get
+            {
+                Layout(rectTransform.rect.width);
+                return lines.Count * (PixelFont.GlyphH + lineSpacing) * pixelScale - lineSpacing * pixelScale;
+            }
+        }
+
         protected override void OnPopulateMesh(VertexHelper vh)
         {
             vh.Clear();
@@ -41,23 +83,30 @@ namespace DeadCells.UI
             c.Clear();
             t.Clear();
             Rect r = rectTransform.rect;
-            float w = PixelFont.Width(text, pixelScale);
-            float h = PixelFont.GlyphH * pixelScale;
-            float x = alignment switch
+            Layout(r.width);
+            float lineH = (PixelFont.GlyphH + lineSpacing) * pixelScale;
+            float h = lines.Count * lineH - lineSpacing * pixelScale;
+            float top = alignment switch
             {
-                TextAnchor.UpperCenter or TextAnchor.MiddleCenter or TextAnchor.LowerCenter => r.center.x - w * 0.5f,
-                TextAnchor.UpperRight or TextAnchor.MiddleRight or TextAnchor.LowerRight => r.xMax - w,
-                _ => r.xMin,
+                TextAnchor.UpperLeft or TextAnchor.UpperCenter or TextAnchor.UpperRight => r.yMax,
+                TextAnchor.LowerLeft or TextAnchor.LowerCenter or TextAnchor.LowerRight => r.yMin + h,
+                _ => r.center.y + h * 0.5f,
             };
-            float y = alignment switch
+            for (int i = 0; i < lines.Count; i++)
             {
-                TextAnchor.UpperLeft or TextAnchor.UpperCenter or TextAnchor.UpperRight => r.yMax - h,
-                TextAnchor.LowerLeft or TextAnchor.LowerCenter or TextAnchor.LowerRight => r.yMin,
-                _ => r.center.y - h * 0.5f,
-            };
-            x = Mathf.Round(x);
-            y = Mathf.Round(y);
-            PixelFont.AppendQuads(text, new Vector2(x, y), pixelScale, color, v, uv, c, t);
+                string line = lines[i];
+                if (line.Length == 0)
+                    continue;
+                float w = PixelFont.Width(line, pixelScale);
+                float x = alignment switch
+                {
+                    TextAnchor.UpperCenter or TextAnchor.MiddleCenter or TextAnchor.LowerCenter => r.center.x - w * 0.5f,
+                    TextAnchor.UpperRight or TextAnchor.MiddleRight or TextAnchor.LowerRight => r.xMax - w,
+                    _ => r.xMin,
+                };
+                float y = top - (i + 1) * lineH + lineSpacing * pixelScale;
+                PixelFont.AppendQuads(line, new Vector2(Mathf.Round(x), Mathf.Round(y)), pixelScale, color, v, uv, c, t);
+            }
             for (int i = 0; i < v.Count; i++)
                 vh.AddVert(v[i], c[i], uv[i]);
             for (int i = 0; i < t.Count; i += 3)

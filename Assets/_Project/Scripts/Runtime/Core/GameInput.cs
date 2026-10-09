@@ -11,12 +11,17 @@ namespace DeadCells.Core
         public bool up;
         public bool jumpPressed;
         public bool jumpHeld;
-        public bool attackPressed;
+        public bool primaryPressed;
+        public bool primaryHeld;
+        public bool secondaryPressed;
+        public bool secondaryHeld;
+        public bool skill1Pressed;
+        public bool skill2Pressed;
         public bool dodgePressed;
-        public bool shieldPressed;
-        public bool shieldHeld;
-        public bool swapWeaponPressed;
-        public bool cycleFlamePressed;
+        public bool interactPressed;
+        public bool flaskPressed;
+        public bool mapPressed;
+        public bool pausePressed;
     }
 
     public interface IInputSource
@@ -26,14 +31,18 @@ namespace DeadCells.Core
 
     /// <summary>
     /// Keyboard + gamepad bindings built in code (no asset dependency).
-    /// Keyboard: A/D or arrows move, Space jump, J or LMB attack, Shift or K dodge,
-    /// L or RMB shield, S + Space ground pound, Q swap weapon, F cycle flame colour.
-    /// Gamepad: stick/d-pad, South jump, West attack, East/RT dodge, LB/LT shield,
-    /// down + South ground pound, North swap, Select cycle flame.
+    /// Keyboard: A/D or arrows move, Space jump, J/LMB primary, K/RMB secondary,
+    /// Q/E skills, Shift/L roll, F interact, R flask, Tab/M map, Esc pause,
+    /// down + Space drop through / ground slam.
+    /// Gamepad: stick/d-pad, South jump, West primary, North secondary, East roll,
+    /// LT/RT skills, LB interact, RB flask, Select map, Start pause.
     /// </summary>
     public class GameInput : MonoBehaviour, IInputSource
     {
-        InputAction move, jump, attack, dodge, shield, swap, flame;
+        InputAction move, jump, primary, secondary, skill1, skill2, dodge, interact, flask, map, pause;
+
+        /// <summary>When false (menus open) the player receives an empty frame.</summary>
+        public static bool GameplayEnabled = true;
 
         void Awake()
         {
@@ -48,11 +57,15 @@ namespace DeadCells.Core
             move.AddBinding("<Gamepad>/dpad");
 
             jump = Button("Jump", "<Keyboard>/space", "<Gamepad>/buttonSouth");
-            attack = Button("Attack", "<Keyboard>/j", "<Mouse>/leftButton", "<Gamepad>/buttonWest");
-            dodge = Button("Dodge", "<Keyboard>/leftShift", "<Keyboard>/k", "<Gamepad>/buttonEast", "<Gamepad>/rightTrigger");
-            shield = Button("Shield", "<Keyboard>/l", "<Mouse>/rightButton", "<Gamepad>/leftShoulder", "<Gamepad>/leftTrigger");
-            swap = Button("Swap", "<Keyboard>/q", "<Gamepad>/buttonNorth");
-            flame = Button("Flame", "<Keyboard>/f", "<Gamepad>/select");
+            primary = Button("Primary", "<Keyboard>/j", "<Mouse>/leftButton", "<Gamepad>/buttonWest");
+            secondary = Button("Secondary", "<Keyboard>/k", "<Mouse>/rightButton", "<Gamepad>/buttonNorth");
+            skill1 = Button("Skill1", "<Keyboard>/q", "<Gamepad>/leftTrigger");
+            skill2 = Button("Skill2", "<Keyboard>/e", "<Gamepad>/rightTrigger");
+            dodge = Button("Dodge", "<Keyboard>/leftShift", "<Keyboard>/l", "<Gamepad>/buttonEast");
+            interact = Button("Interact", "<Keyboard>/f", "<Gamepad>/leftShoulder");
+            flask = Button("Flask", "<Keyboard>/r", "<Gamepad>/rightShoulder");
+            map = Button("Map", "<Keyboard>/tab", "<Keyboard>/m", "<Gamepad>/select");
+            pause = Button("Pause", "<Keyboard>/escape", "<Gamepad>/start");
         }
 
         static InputAction Button(string name, params string[] paths)
@@ -81,10 +94,12 @@ namespace DeadCells.Core
                 a.Dispose();
         }
 
-        InputAction[] All() => new[] { move, jump, attack, dodge, shield, swap, flame };
+        InputAction[] All() => new[] { move, jump, primary, secondary, skill1, skill2, dodge, interact, flask, map, pause };
 
         public InputFrame Read()
         {
+            if (!GameplayEnabled)
+                return default;
             Vector2 m = move.ReadValue<Vector2>();
             return new InputFrame
             {
@@ -93,12 +108,17 @@ namespace DeadCells.Core
                 up = m.y > 0.5f,
                 jumpPressed = jump.WasPressedThisFrame(),
                 jumpHeld = jump.IsPressed(),
-                attackPressed = attack.WasPressedThisFrame(),
+                primaryPressed = primary.WasPressedThisFrame(),
+                primaryHeld = primary.IsPressed(),
+                secondaryPressed = secondary.WasPressedThisFrame(),
+                secondaryHeld = secondary.IsPressed(),
+                skill1Pressed = skill1.WasPressedThisFrame(),
+                skill2Pressed = skill2.WasPressedThisFrame(),
                 dodgePressed = dodge.WasPressedThisFrame(),
-                shieldPressed = shield.WasPressedThisFrame(),
-                shieldHeld = shield.IsPressed(),
-                swapWeaponPressed = swap.WasPressedThisFrame(),
-                cycleFlamePressed = flame.WasPressedThisFrame(),
+                interactPressed = interact.WasPressedThisFrame(),
+                flaskPressed = flask.WasPressedThisFrame(),
+                mapPressed = map.WasPressedThisFrame(),
+                pausePressed = pause.WasPressedThisFrame(),
             };
         }
     }

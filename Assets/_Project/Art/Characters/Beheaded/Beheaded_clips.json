@@ -1,5 +1,8 @@
 {
+  "Bow_Shoot": 20,
+  "Death": 40,
   "Dodge_Roll": 20,
+  "Drink": 36,
   "Ground_Pound_Slam": 24,
   "Hurt": 14,
   "Idle": 61,
@@ -9,5 +12,10 @@
   "Shield_Block": 12,
   "Slash_Combo_1": 18,
   "Slash_Combo_2": 18,
-  "Slash_Combo_3": 24
+  "Slash_Combo_3": 24,
+  "Spear_Thrust_1": 16,
+  "Spear_Thrust_2": 16,
+  "Spear_Thrust_3": 22,
+  "Throw": 18,
+  "Wake_Up": 90
 }

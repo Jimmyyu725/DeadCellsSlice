@@ -70,6 +70,19 @@ namespace DeadCells.EditorTools
             };
         }
 
+        /// <summary>Generate every biome in edit mode and log geometry/light statistics.</summary>
+        public static void LevelStats()
+        {
+            UnityEditor.SceneManagement.EditorSceneManager.NewScene(UnityEditor.SceneManagement.NewSceneSetup.EmptyScene);
+            foreach (var id in new[] { "Oubliette", "Promenade", "Ossuary", "StiltVillage", "ClockLung", "Passage" })
+            {
+                var biome = AssetDatabase.LoadAssetAtPath<DeadCells.Run.BiomeDef>($"{DCContentBuilder.ContentDir}/Biomes/{id}.asset");
+                var data = DeadCells.Run.LevelGenerator.Generate(biome, 12345);
+                var built = DeadCells.Run.LevelBuilder.Build(data, biome, null, 12345);
+                Object.DestroyImmediate(built.root);
+            }
+        }
+
         public static void Setup()
         {
             DCProjectSetup.ConfigureAll();

@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 51db4c33a412745a5896f5706c20afd5, type: 3}
+  m_Name: ItemDatabase
+  m_EditorClassIdentifier: DeadCells.Runtime::DeadCells.Items.ItemDatabase
+  items:
+  - {fileID: 11400000, guid: 4183d581090374cbfb4f73f791ffe4df, type: 2}
+  - {fileID: 11400000, guid: 9df34ac7e6dcf4bf88224f43acb8947b, type: 2}
+  - {fileID: 11400000, guid: 091e4f2f522f54e5a899e8650eb6e1fc, type: 2}
+  - {fileID: 11400000, guid: 360790233b5cc4297a79ddef86433db9, type: 2}
+  - {fileID: 11400000, guid: 2a11d537c21974613bd29010a5d4f080, type: 2}
+  - {fileID: 11400000, guid: f8c994680dd7c4d18aa340417518d983, type: 2}
+  - {fileID: 11400000, guid: ad2cceb46d9534495baecd78a8cba97a, type: 2}
+  - {fileID: 11400000, guid: c39d8f0d7d6ae43cbbbea630036a5e87, type: 2}
+  - {fileID: 11400000, guid: 6e33a7f00292a4aa88c5354e18a63ea0, type: 2}
+  - {fileID: 11400000, guid: 105cb3b5c131c4d2f88faa95b00548fe, type: 2}
+  coinPrefab: {fileID: 3501257684351700819, guid: 77c395b43bd32426cb52a92bc482585d, type: 3}
+  cellPrefab: {fileID: 7605437714641940085, guid: 784bb6bf5a7034c58bf341acf98f7a7e, type: 3}
+  flaskPrefab: {fileID: 2038994953114026806, guid: 5f00b5e9973fe4f19af2469b0f4abd72, type: 3}
+  scrollPrefab: {fileID: 7763186552611612821, guid: 32ea56e50d27d4ca6a6a306c9d45dae6, type: 3}
+  itemDropPrefab: {fileID: 8195987820392747875, guid: 2643657c4fb644318893ed173aac1bfc, type: 3}

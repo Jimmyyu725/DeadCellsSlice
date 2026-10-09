@@ -1,14 +1,11 @@
-using System.Collections;
 using DeadCells.Player;
-using DeadCells.UI;
 using UnityEngine;
 
 namespace DeadCells.Core
 {
     /// <summary>
-    /// Session flow: spawn/respawn of the Beheaded, flame-colour presets (F),
-    /// and frame-rate setup. Also hosts the autoplay demo when launched with
-    /// -autoplay (see AutoplayDirector).
+    /// Flame-colour presets (Options → Flame colour), display mode and
+    /// frame-rate setup. Run flow lives in Run.RunManager.
     /// </summary>
     public class GameManager : MonoBehaviour
     {
@@ -23,7 +20,6 @@ namespace DeadCells.Core
         }
 
         public PlayerController player;
-        public Transform spawnPoint;
         public Material flameMaterial;
         public Material bodyMaterial;
         public Material smokeMaterial;
@@ -53,23 +49,8 @@ namespace DeadCells.Core
 
         void Start()
         {
-            if (player != null)
-            {
-                player.Died += () => StartCoroutine(RespawnRoutine());
-                if (spawnPoint != null)
-                    player.transform.position = spawnPoint.position;
-            }
-            ApplyFlame(flameIndex);
-        }
-
-        void Update()
-        {
-            if (player != null && player.Input.cycleFlamePressed)
-            {
-                ApplyFlame((flameIndex + 1) % flamePresets.Length);
-                FX.JuiceEngine.Instance?.Popup(player.transform.position + Vector3.up * 2.5f,
-                    flamePresets[flameIndex].name.ToUpperInvariant(), flamePresets[flameIndex].glow * 1.6f, false);
-            }
+            ApplyFlame(Meta.SaveSystem.Data.settings.flameIndex);
+            UI.MenuPages.ApplyDisplay();
         }
 
         public void ApplyFlame(int index)
@@ -88,15 +69,6 @@ namespace DeadCells.Core
                 smokeMaterial.SetColor(GlowId, p.glow * 1.4f);
             if (flameLight != null)
                 flameLight.color = p.glow;
-        }
-
-        IEnumerator RespawnRoutine()
-        {
-            yield return new WaitForSeconds(1.1f);
-            GameHUD.Instance?.Fade(true);
-            yield return new WaitForSeconds(0.7f);
-            player.Respawn(spawnPoint != null ? spawnPoint.position : Vector3.zero);
-            GameHUD.Instance?.Fade(false);
         }
 
         void OnDestroy()

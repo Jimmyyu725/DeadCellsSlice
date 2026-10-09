@@ -18,6 +18,8 @@ namespace DeadCells.EditorTools
     {
         const string ArtRoot = "Assets/_Project/Art/";
         static readonly HashSet<string> LoopClips = new HashSet<string> { "Idle", "Run", "Jump_Rise", "Jump_Fall" };
+        // Static props that live next to a character's FBX (boss weapons) and the rig-less creatures.
+        static readonly HashSet<string> StaticInCharacters = new HashSet<string> { "Greatsword", "Shovel" };
 
         void OnPreprocessTexture()
         {
@@ -41,7 +43,8 @@ namespace DeadCells.EditorTools
             if (!assetPath.StartsWith(ArtRoot))
                 return;
             var mi = (ModelImporter)assetImporter;
-            bool character = assetPath.Contains("/Characters/");
+            string file = System.IO.Path.GetFileNameWithoutExtension(assetPath);
+            bool character = assetPath.Contains("/Characters/") && !assetPath.Contains("/Creatures/") && !StaticInCharacters.Contains(file);
             mi.globalScale = 1f;
             mi.useFileScale = true;
             mi.bakeAxisConversion = true;
@@ -53,8 +56,8 @@ namespace DeadCells.EditorTools
             mi.importNormals = ModelImporterNormals.Import;
             mi.importTangents = ModelImporterTangents.CalculateMikk;
             mi.meshCompression = ModelImporterMeshCompression.Off;
-            // Environment kit meshes are merged at load time by LevelGeometry.
-            mi.isReadable = assetPath.Contains("/Environment/");
+            // Environment and biome kit meshes are merged at runtime by the level builder.
+            mi.isReadable = assetPath.Contains("/Environment/") || assetPath.Contains("/Biomes/");
             mi.sortHierarchyByName = false;
             if (character)
             {
@@ -74,9 +77,11 @@ namespace DeadCells.EditorTools
 
         void OnPreprocessAnimation()
         {
-            if (!assetPath.StartsWith(ArtRoot) || !assetPath.Contains("/Characters/"))
+            if (!assetPath.StartsWith(ArtRoot) || !assetPath.Contains("/Characters/") || assetPath.Contains("/Creatures/"))
                 return;
             var mi = (ModelImporter)assetImporter;
+            if (mi.animationType == ModelImporterAnimationType.None)
+                return;
             var clips = mi.defaultClipAnimations;
             if (clips == null || clips.Length == 0)
                 return;

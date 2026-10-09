@@ -80,8 +80,42 @@ namespace DeadCells.Environment
             embers.Play();
         }
 
+        /// <summary>Recolour for a biome; `rainUp` turns the embers into rain falling upwards.</summary>
+        public void Apply(Color motesA, Color motesB, Color embersA, Color embersB, bool rainUp)
+        {
+            if (motes == null || embers == null)
+            {
+                pending = () => Apply(motesA, motesB, embersA, embersB, rainUp);
+                return;
+            }
+            var mm = motes.main;
+            mm.startColor = new ParticleSystem.MinMaxGradient(motesA, motesB);
+            var em = embers.main;
+            em.startColor = new ParticleSystem.MinMaxGradient(embersA, embersB);
+            em.startSpeed = rainUp ? new ParticleSystem.MinMaxCurve(7f, 11f) : new ParticleSystem.MinMaxCurve(0.2f, 0.8f);
+            em.startLifetime = rainUp ? new ParticleSystem.MinMaxCurve(1.2f, 2f) : new ParticleSystem.MinMaxCurve(3f, 6f);
+            em.startSize = rainUp ? new ParticleSystem.MinMaxCurve(0.015f, 0.03f) : new ParticleSystem.MinMaxCurve(0.03f, 0.06f);
+            var emission = embers.emission;
+            emission.rateOverTime = rainUp ? 110f : embersPerSecond;
+            var shape = embers.shape;
+            shape.rotation = rainUp ? new Vector3(-90f, 0f, 0f) : Vector3.zero;
+            var noise = embers.noise;
+            noise.strength = rainUp ? 0.15f : 0.8f;
+            var r = embers.GetComponent<ParticleSystemRenderer>();
+            r.velocityScale = rainUp ? 0.05f : 0.12f;
+            r.lengthScale = rainUp ? 3f : 1.5f;
+        }
+
+        System.Action pending;
+
         void LateUpdate()
         {
+            if (pending != null && motes != null)
+            {
+                var p = pending;
+                pending = null;
+                p();
+            }
             if (follow != null)
             {
                 Vector3 p = follow.position;

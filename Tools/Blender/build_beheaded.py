@@ -58,12 +58,14 @@ EXTRA_JOINTS = {
     "shield_socket": ((0.29, 0.05, 1.0), (0.29, 0.15, 1.0)),
     # Blade points forward at rest.
     "weapon_socket": ((-0.295, -0.03, 0.83), (-0.295, -0.13, 0.83)),
+    # Off-hand grip (bow, second dagger, flask), pointing forward like weapon_socket.
+    "offhand_socket": ((0.295, -0.03, 0.83), (0.295, -0.13, 0.83)),
 }
 PARENTS = {
     "root": None, "hips": "root", "spine": "hips", "chest": "spine", "neck": "chest",
     "head": "neck", "head_socket": "head",
     "scarf_01": "neck", "scarf_02": "scarf_01", "scarf_03": "scarf_02", "scarf_04": "scarf_03",
-    "shield_socket": "forearm.L", "weapon_socket": "hand.R",
+    "shield_socket": "forearm.L", "weapon_socket": "hand.R", "offhand_socket": "hand.L",
 }
 for s in ("L", "R"):
     PARENTS.update({
@@ -71,7 +73,7 @@ for s in ("L", "R"):
         f"hand.{s}": f"forearm.{s}", f"thigh.{s}": "hips", f"shin.{s}": f"thigh.{s}", f"foot.{s}": f"shin.{s}",
         f"coat_{s}_01": "hips", f"coat_{s}_02": f"coat_{s}_01", f"coat_{s}_03": f"coat_{s}_02",
     })
-NON_DEFORM = ("root", "shield_socket", "weapon_socket")
+NON_DEFORM = ("root", "shield_socket", "weapon_socket", "offhand_socket")
 
 
 def joints():
@@ -811,6 +813,113 @@ def anim_block_hurt(arm):
                       chain_step=1)
 
 
+def anim_expansion(arm):
+    """Clips for the expanded arsenal and story beats."""
+    # Spear: three thrusts (straight, rising, lunging finisher). Blade angle 0 = level forward.
+    def thrust(rise, lunge, depth):
+        ant = M_(STANCE, hips_loc=(0, 0.06, -0.09), spine=(6, -16, 0), chest=(0, -22, 0), neck=(-6, 10, 0),
+                 feet={"L": (-0.20, 0.11, 0), "R": (0.24, 0.11, 0)},
+                 **{"arm.L": (-40, -100, 0, -15, 0), "arm.R": (45, -35, rise, 20, 0)})
+        hit = M_(STANCE, hips_loc=(0, -lunge, -0.11), spine=(20, 20, 0), chest=(12, 26, 0), neck=(-14, -12, 0),
+                 feet={"L": (-0.30 - depth, 0.11, 0), "R": (0.30, 0.11, 10)},
+                 **{"arm.L": (40, 15, 0, -25, 0), "arm.R": (-82 + rise * 0.5, -90 + rise * 0.6, rise, 8, 0),
+                    "chest:scale": (1, 1.05, 1)})
+        rec = M_(hit, hips_loc=(0, -lunge + 0.02, -0.12), **{"chest:scale": (1, 1, 1)})
+        return ant, hit, rec
+
+    snappy = {1: "LINEAR", 2: "LINEAR", 3: "CONSTANT", 4: "LINEAR", 8: "BEZIER"}
+    spear_chains = chains(16, (12, 10, 8, 6), (10, 14, 18, 22), (8, 6, 4), (6, 8, 10), scarf_z=10)
+    for name, rise, lunge, depth, length in (("Spear_Thrust_1", 0, 0.12, 0.05, 16), ("Spear_Thrust_2", -22, 0.10, 0.0, 16),
+                                             ("Spear_Thrust_3", 4, 0.22, 0.18, 22)):
+        ant, hit, rec = thrust(rise, lunge, depth)
+        rig.author_action(arm, name, length, [(1, STANCE), (2, rig.blend(STANCE, ant, 0.7)), (3, ant), (4, hit), (8, rec),
+                                              (length, STANCE)], modes=snappy, chain_fn=spear_chains, chain_step=1)
+
+    # Bow: left arm presents the bow, right hand draws to the cheek, release at frame 9.
+    raise_ = M_(STANCE, hips_loc=(0, 0.02, -0.09), spine=(4, 8, 0), chest=(0, 18, 0), neck=(-4, -14, 0),
+                head=(-2, -10, 0), feet={"L": (-0.18, 0.11, 0), "R": (0.22, 0.11, 0)},
+                **{"arm.L": (-88, -92, 0, -6, 0), "arm.R": (40, -40, 60, 20, 0)})
+    draw = M_(raise_, chest=(-2, 26, 0), **{"arm.L": (-92, -94, 0, -4, 0), "arm.R": (100, -62, 40, 24, 0)})
+    loose = M_(draw, chest=(-4, 30, 0), **{"arm.R": (122, 70, 90, 30, 0), "arm.L": (-90, -96, 0, -4, 0)})
+    rig.author_action(arm, "Bow_Shoot", 20, [(1, STANCE), (3, raise_), (8, draw), (9, loose), (12, loose), (20, STANCE)],
+                      modes={1: "BEZIER", 3: "BEZIER", 8: "CONSTANT", 9: "LINEAR", 12: "BEZIER"},
+                      chain_fn=chains(20, (8, 6, 5, 4), (6, 8, 10, 12), (4, 3, 2), (3, 4, 5)), chain_step=2)
+
+    # Overhand throw (grenades / harpoons), release at frame 6.
+    wind = M_(STANCE, hips_loc=(0, 0.06, -0.08), spine=(-4, -12, 0), chest=(-10, -26, 0), neck=(4, 12, 0),
+              feet={"L": (-0.22, 0.11, 0), "R": (0.24, 0.11, 0)},
+              **{"arm.L": (-70, -110, 0, -20, 0), "arm.R": (150, 90, 160, 20, 0)})
+    rel = M_(STANCE, hips_loc=(0, -0.10, -0.10), spine=(22, 18, 0), chest=(14, 26, 0), neck=(-14, -10, 0),
+             feet={"L": (-0.34, 0.11, 0), "R": (0.30, 0.13, 15)},
+             **{"arm.L": (40, 20, 0, -30, 0), "arm.R": (-100, -118, -60, 10, 0)})
+    follow = M_(rel, **{"arm.R": (-60, -70, 20, 10, 0)})
+    rig.author_action(arm, "Throw", 18, [(1, STANCE), (4, wind), (6, rel), (10, follow), (18, STANCE)],
+                      modes={1: "BEZIER", 4: "CONSTANT", 6: "LINEAR", 10: "BEZIER"},
+                      chain_fn=chains(18, (10, 8, 6, 4), (10, 12, 16, 20), (6, 4, 3), (6, 8, 10), scarf_z=10), chain_step=1)
+
+    # Drink the health flask: left hand to the flame, head tips back; heal applies at frame 20.
+    sip = M_(STANCE, hips_loc=(0, 0.03, -0.05), spine=(0, 0, 0), chest=(-10, 6, 0), neck=(-18, 0, 0), head=(-14, 0, 0),
+             **{"arm.L": (-118, -172, 0, -18, 0), "arm.R": (8, -16, 40, 12, 0)})
+    sip2 = M_(sip, chest=(-12, 6, 0), neck=(-22, 0, 0), **{"chest:scale": (1.03, 1.0, 1.03)})
+    rig.author_action(arm, "Drink", 36, [(1, STANCE), (8, sip), (16, sip2), (24, sip), (28, sip2), (36, STANCE)],
+                      chain_fn=chains(36, (4, 4, 5, 6), (4, 6, 8, 10), (2, 2, 3), (2, 3, 4)), chain_step=3)
+
+    # Wake up: the cinder ignites a corpse lying face down, which pushes itself up and shrugs.
+    lying = {
+        "hips_loc": (0, -0.35, -0.80), "hips": (80, 0, 0), "spine": (6, 0, 0), "chest": (4, 0, 0),
+        "neck": (-10, 0, 0), "head": (-6, 18, 0),
+        "legs": {"L": (96, 104, 40), "R": (90, 98, 40)},
+        "upper_arm.L": (-160, 0, -24), "forearm.L": (-10, 0, 0),
+        "upper_arm.R": (-150, 0, 22), "forearm.R": (-20, 0, 0), "hand.R": (20, 0, 0),
+    }
+    push = dict(lying, hips_loc=(0, -0.25, -0.62), hips=(62, 0, 0),
+                **{"upper_arm.L": (-70, 0, -18), "forearm.L": (-40, 0, 0),
+                   "upper_arm.R": (-60, 0, 16), "forearm.R": (-40, 0, 0)})
+    kneel = M_(STANCE, hips_loc=(0, -0.05, -0.48), spine=(36, 0, 0), chest=(20, 0, 0), neck=(-6, 0, 0), head=(10, 0, 0),
+               **{"arm.L": (-30, -40, 0, -10, 0), "arm.R": (-20, -40, 60, 10, 0)})
+    kneel.pop("feet")
+    kneel["legs"] = {"L": (-88, 0, 50), "R": (80, 95, 60)}
+    hunch = M_(STANCE, hips_loc=(0, 0, -0.14), spine=(28, 0, 0), chest=(16, 0, 0), neck=(4, 0, 0), head=(14, 0, 0),
+               **{"arm.L": (0, -10, 0, -6, 0), "arm.R": (6, -10, 60, 8, 0)})
+    shrug = M_(STANCE, hips_loc=(0, 0, -0.04), spine=(4, 0, 0), chest=(-6, 0, 0), neck=(-10, 0, 0), head=(-8, -12, 0),
+               **{"chest:scale": (1.06, 1.0, 1.04), "shoulder.L": (0, 0, 14), "shoulder.R": (0, 0, -14),
+                  "arm.L": (-10, -40, 0, -24, 0), "arm.R": (-10, -40, 40, 24, 0)})
+    rig.author_action(arm, "Wake_Up", 90, [(1, lying), (14, lying), (26, push), (42, kneel), (58, hunch), (72, shrug),
+                                           (80, shrug), (90, STANCE)],
+                      modes={1: "CONSTANT", 14: "BEZIER", 26: "BEZIER", 42: "BEZIER", 58: "BEZIER", 72: "CONSTANT"},
+                      chain_fn=chains(30, (-20, -10, -5, 0), (3, 5, 7, 9), (-10, -5, 0), (2, 3, 4)), chain_step=3)
+
+    # Death: stagger, knees, collapse face down (the cinder then squirts free in Unity).
+    stagger = M_(STANCE, hips_loc=(0, 0.14, -0.08), spine=(-10, 0, 0), chest=(-16, -12, 0), neck=(-18, 0, 0),
+                 feet={"L": (-0.06, 0.11, 0), "R": (0.28, 0.11, 0)},
+                 **{"arm.L": (-80, -90, 0, -40, 0), "arm.R": (-60, -80, 30, 40, 0)})
+    knees = dict(kneel, spine=(30, 0, 0), head=(16, 0, 0))
+    rig.author_action(arm, "Death", 40, [(1, STANCE), (5, stagger), (16, knees), (26, lying), (40, lying)],
+                      modes={1: "LINEAR", 5: "BEZIER", 16: "BEZIER", 26: "CONSTANT"},
+                      chain_fn=chains(20, (20, 14, 10, 6), (6, 8, 10, 12), (10, 8, 6), (4, 6, 8)), chain_step=2)
+
+
+def ensure_bones(arm):
+    """Add sockets introduced after the rig was skinned (non-deforming, so
+    existing weights are untouched)."""
+    missing = [b for b in EXTRA_JOINTS if b not in arm.data.bones]
+    if not missing:
+        return []
+    dc.set_active(arm)
+    bpy.ops.object.mode_set(mode="EDIT")
+    for name in missing:
+        h, t = EXTRA_JOINTS[name]
+        eb = arm.data.edit_bones.new(name)
+        eb.head, eb.tail = Vector(h), Vector(t)
+        eb.align_roll(dc.bone_roll_axis(Vector(t) - Vector(h)))
+        eb.use_deform = name not in NON_DEFORM
+        eb.parent = arm.data.edit_bones[PARENTS[name]]
+    bpy.ops.object.mode_set(mode="OBJECT")
+    for pb in arm.pose.bones:
+        pb.rotation_mode = "XYZ"
+    return missing
+
+
 def step_animate():
     arm = bpy.data.objects[f"{NAME}_Rig"]
     for act in list(bpy.data.actions):
@@ -824,6 +933,7 @@ def step_animate():
     anim_air(arm)
     anim_ground_pound(arm)
     anim_block_hurt(arm)
+    anim_expansion(arm)
     for act in bpy.data.actions:
         if act.name not in existing:
             act["dc_owner"] = NAME

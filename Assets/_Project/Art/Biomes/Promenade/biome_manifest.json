@@ -1,0 +1,697 @@
+{
+  "biome": "Promenade",
+  "generator": "Tools/Blender/build_biome.py --biome Promenade",
+  "unity_axes": "Unity (x,y,z) = Blender (x,z,y)",
+  "atlases": {
+    "Promenade_Kit": {
+      "albedo": "Assets/_Project/Art/Biomes/Promenade/Textures/Promenade_Kit_Albedo.png",
+      "normal": "Assets/_Project/Art/Biomes/Promenade/Textures/Promenade_Kit_Normal.png",
+      "orm": "Assets/_Project/Art/Biomes/Promenade/Textures/Promenade_Kit_ORM.png",
+      "emission": "Assets/_Project/Art/Biomes/Promenade/Textures/Promenade_Kit_Emission.png"
+    },
+    "Promenade_BG": {
+      "albedo": "Assets/_Project/Art/Biomes/Promenade/Textures/Promenade_BG_Albedo.png",
+      "normal": "Assets/_Project/Art/Biomes/Promenade/Textures/Promenade_BG_Normal.png",
+      "orm": "Assets/_Project/Art/Biomes/Promenade/Textures/Promenade_BG_ORM.png",
+      "emission": "Assets/_Project/Art/Biomes/Promenade/Textures/Promenade_BG_Emission.png"
+    }
+  },
+  "materials": {
+    "Promenade_Kit": "M_Promenade_Kit",
+    "Promenade_BG": "M_Promenade_BG"
+  },
+  "emission_colors": {
+    "silk / orb": "#A8D8FF",
+    "moon crystals": "#CFE8FF",
+    "BG windows": "#A8D8FF",
+    "clock dial": "#D8E8FF"
+  },
+  "tile_checks_blender": {
+    "Promenade_Fill_A": {
+      "max_z": 1.0,
+      "min_y": -0.9243,
+      "min_x": 0.0199,
+      "max_x": 0.9807,
+      "min_z": 0.0127
+    },
+    "Promenade_Fill_B": {
+      "max_z": 1.0,
+      "min_y": -0.9211,
+      "min_x": 0.0151,
+      "max_x": 0.9867,
+      "min_z": 0.0127
+    },
+    "Promenade_Fill_C": {
+      "max_z": 1.0,
+      "min_y": -0.9184,
+      "min_x": 0.0134,
+      "max_x": 0.985,
+      "min_z": 0.0225
+    },
+    "Promenade_Top_A": {
+      "max_z": 1.0408,
+      "min_y": -0.9738,
+      "min_x": -0.0001,
+      "max_x": 1.0,
+      "min_z": 0.0184
+    },
+    "Promenade_Top_B": {
+      "max_z": 1.0412,
+      "min_y": -0.9759,
+      "min_x": -0.0001,
+      "max_x": 1.0,
+      "min_z": 0.0156
+    },
+    "Promenade_Edge_L": {
+      "max_z": 1.0408,
+      "min_y": -0.9732,
+      "min_x": -0.0865,
+      "max_x": 1.0001,
+      "min_z": 0.0148
+    },
+    "Promenade_Edge_R": {
+      "max_z": 1.0408,
+      "min_y": -0.9732,
+      "min_x": -0.0001,
+      "max_x": 1.0865,
+      "min_z": 0.0148
+    }
+  },
+  "contract_checks_blender": {
+    "Promenade_Fill_A": {
+      "size_blender": [
+        0.961,
+        2.524,
+        0.987
+      ],
+      "top_z<=1.06": true,
+      "front_overhang<=0.08": true
+    },
+    "Promenade_Fill_B": {
+      "size_blender": [
+        0.972,
+        2.521,
+        0.987
+      ],
+      "top_z<=1.06": true,
+      "front_overhang<=0.08": true
+    },
+    "Promenade_Fill_C": {
+      "size_blender": [
+        0.972,
+        2.518,
+        0.977
+      ],
+      "top_z<=1.06": true,
+      "front_overhang<=0.08": true
+    },
+    "Promenade_Top_A": {
+      "size_blender": [
+        1.0,
+        2.574,
+        1.029
+      ],
+      "top_z<=1.06": true,
+      "front_overhang<=0.08": true
+    },
+    "Promenade_Top_B": {
+      "size_blender": [
+        1.0,
+        2.576,
+        1.028
+      ],
+      "top_z<=1.06": true,
+      "front_overhang<=0.08": true
+    },
+    "Promenade_Edge_L": {
+      "size_blender": [
+        1.087,
+        2.573,
+        1.026
+      ],
+      "top_z<=1.06": true,
+      "front_overhang<=0.08": true
+    },
+    "Promenade_Edge_R": {
+      "size_blender": [
+        1.087,
+        2.573,
+        1.026
+      ],
+      "top_z<=1.06": true,
+      "front_overhang<=0.08": true
+    },
+    "Promenade_Platform": {
+      "size_blender": [
+        0.992,
+        1.645,
+        0.78
+      ],
+      "deck_top=1": true,
+      "deck_thickness<=0.2": true
+    },
+    "Promenade_BackWall": {
+      "size_blender": [
+        4.0,
+        0.449,
+        4.0
+      ],
+      "4x4": true,
+      "depth<=0.4": true,
+      "tris<=3600": true
+    },
+    "Promenade_Pillar": {
+      "size_blender": [
+        1.0,
+        1.05,
+        5.08
+      ],
+      "width<=1": true,
+      "height~5": true
+    },
+    "Promenade_Arch": {
+      "size_blender": [
+        6.06,
+        0.87,
+        5.618
+      ],
+      "width~6": true,
+      "height~5.5": true
+    },
+    "Promenade_Light": {
+      "size_blender": [
+        0.385,
+        0.714,
+        0.65
+      ],
+      "LightSocket": true
+    },
+    "Promenade_Hang": {
+      "size_blender": [
+        0.42,
+        0.36,
+        2.856
+      ],
+      "top_at_pivot": true,
+      "length_2_3m": true
+    },
+    "Promenade_Door": {
+      "size_blender": [
+        2.418,
+        0.84,
+        3.252
+      ],
+      "width~2.4": true,
+      "height~3.2": true,
+      "recess<=0.8": true
+    },
+    "Promenade_Prop_A": {
+      "size_blender": [
+        1.09,
+        0.868,
+        0.65
+      ],
+      "height<=1.2": true
+    },
+    "Promenade_Prop_B": {
+      "size_blender": [
+        1.046,
+        0.625,
+        1.18
+      ],
+      "height<=1.2": true
+    },
+    "Promenade_Prop_C": {
+      "size_blender": [
+        0.995,
+        0.826,
+        1.13
+      ],
+      "height<=1.2": true
+    },
+    "Promenade_MoonChunk": {
+      "size_blender": [
+        3.985,
+        3.367,
+        5.05
+      ]
+    },
+    "Promenade_BG_Near": {
+      "size_blender": [
+        20.05,
+        3.34,
+        10.6
+      ],
+      "~20x10": true
+    },
+    "Promenade_BG_Far_A": {
+      "size_blender": [
+        6.0,
+        5.152,
+        19.942
+      ],
+      "height_16_25": true
+    },
+    "Promenade_BG_Far_B": {
+      "size_blender": [
+        9.7,
+        2.74,
+        16.0
+      ],
+      "height_16_25": true
+    },
+    "Promenade_ClockTower": {
+      "size_blender": [
+        6.4,
+        5.95,
+        25.0
+      ]
+    }
+  },
+  "modules": [
+    {
+      "name": "Promenade_Fill_A",
+      "role": "Fill_A",
+      "fbx": "Assets/_Project/Art/Biomes/Promenade/Meshes/Promenade_Fill_A.fbx",
+      "atlas": "Promenade_Kit",
+      "unity_bounds_min": [
+        0.0199,
+        0.0127,
+        -0.9243
+      ],
+      "unity_bounds_max": [
+        0.9807,
+        1.0,
+        1.6
+      ],
+      "sockets": {},
+      "tris": 538,
+      "usage": "1x1 tile, pivot bottom-left, top y=1, front z=-0.9"
+    },
+    {
+      "name": "Promenade_Fill_B",
+      "role": "Fill_B",
+      "fbx": "Assets/_Project/Art/Biomes/Promenade/Meshes/Promenade_Fill_B.fbx",
+      "atlas": "Promenade_Kit",
+      "unity_bounds_min": [
+        0.0151,
+        0.0127,
+        -0.9211
+      ],
+      "unity_bounds_max": [
+        0.9867,
+        1.0,
+        1.6
+      ],
+      "sockets": {},
+      "tris": 656,
+      "usage": "1x1 tile, pivot bottom-left, top y=1, front z=-0.9"
+    },
+    {
+      "name": "Promenade_Fill_C",
+      "role": "Fill_C",
+      "fbx": "Assets/_Project/Art/Biomes/Promenade/Meshes/Promenade_Fill_C.fbx",
+      "atlas": "Promenade_Kit",
+      "unity_bounds_min": [
+        0.0134,
+        0.0225,
+        -0.9184
+      ],
+      "unity_bounds_max": [
+        0.985,
+        1.0,
+        1.6
+      ],
+      "sockets": {},
+      "tris": 984,
+      "usage": "1x1 tile, pivot bottom-left, top y=1, front z=-0.9"
+    },
+    {
+      "name": "Promenade_Top_A",
+      "role": "Top_A",
+      "fbx": "Assets/_Project/Art/Biomes/Promenade/Meshes/Promenade_Top_A.fbx",
+      "atlas": "Promenade_Kit",
+      "unity_bounds_min": [
+        -0.0001,
+        0.0184,
+        -0.9738
+      ],
+      "unity_bounds_max": [
+        1.0,
+        1.0471,
+        1.6
+      ],
+      "sockets": {},
+      "tris": 1110,
+      "usage": "1x1 tile, pivot bottom-left, top y=1, front z=-0.9 ; moon-dust lip"
+    },
+    {
+      "name": "Promenade_Top_B",
+      "role": "Top_B",
+      "fbx": "Assets/_Project/Art/Biomes/Promenade/Meshes/Promenade_Top_B.fbx",
+      "atlas": "Promenade_Kit",
+      "unity_bounds_min": [
+        -0.0001,
+        0.0156,
+        -0.9759
+      ],
+      "unity_bounds_max": [
+        1.0,
+        1.0434,
+        1.6
+      ],
+      "sockets": {},
+      "tris": 966,
+      "usage": "1x1 tile, pivot bottom-left, top y=1, front z=-0.9 ; moon-dust lip"
+    },
+    {
+      "name": "Promenade_Edge_L",
+      "role": "Edge_L",
+      "fbx": "Assets/_Project/Art/Biomes/Promenade/Meshes/Promenade_Edge_L.fbx",
+      "atlas": "Promenade_Kit",
+      "unity_bounds_min": [
+        -0.0865,
+        0.0148,
+        -0.9732
+      ],
+      "unity_bounds_max": [
+        1.0001,
+        1.0408,
+        1.6
+      ],
+      "sockets": {},
+      "tris": 1139,
+      "usage": "1x1 tile, pivot bottom-left, top y=1, front z=-0.9 ; moon-dust lip"
+    },
+    {
+      "name": "Promenade_Edge_R",
+      "role": "Edge_R",
+      "fbx": "Assets/_Project/Art/Biomes/Promenade/Meshes/Promenade_Edge_R.fbx",
+      "atlas": "Promenade_Kit",
+      "unity_bounds_min": [
+        -0.0001,
+        0.0148,
+        -0.9732
+      ],
+      "unity_bounds_max": [
+        1.0865,
+        1.0408,
+        1.6
+      ],
+      "sockets": {},
+      "tris": 1139,
+      "usage": "right platform end (mirror of Edge_L)"
+    },
+    {
+      "name": "Promenade_Platform",
+      "role": "Platform",
+      "fbx": "Assets/_Project/Art/Biomes/Promenade/Meshes/Promenade_Platform.fbx",
+      "atlas": "Promenade_Kit",
+      "unity_bounds_min": [
+        0.004,
+        0.22,
+        -0.6447
+      ],
+      "unity_bounds_max": [
+        0.996,
+        1.0,
+        1.0
+      ],
+      "sockets": {},
+      "tris": 874,
+      "usage": "one-way stone beam 1 m, deck top y=1, corbel below"
+    },
+    {
+      "name": "Promenade_BackWall",
+      "role": "BackWall",
+      "fbx": "Assets/_Project/Art/Biomes/Promenade/Meshes/Promenade_BackWall.fbx",
+      "atlas": "Promenade_Kit",
+      "unity_bounds_min": [
+        0.0,
+        0.0,
+        -0.0491
+      ],
+      "unity_bounds_max": [
+        4.0,
+        4.0,
+        0.4
+      ],
+      "sockets": {},
+      "tris": 2850,
+      "usage": "4x4 ashlar back wall, seamless (game tiles it at 2x2)"
+    },
+    {
+      "name": "Promenade_Pillar",
+      "role": "Pillar",
+      "fbx": "Assets/_Project/Art/Biomes/Promenade/Meshes/Promenade_Pillar.fbx",
+      "atlas": "Promenade_Kit",
+      "unity_bounds_min": [
+        -0.5,
+        0.0,
+        -0.05
+      ],
+      "unity_bounds_max": [
+        0.5,
+        5.08,
+        1.0
+      ],
+      "sockets": {},
+      "tris": 1824,
+      "usage": "octagonal rampart column 5 m, brass bands, crescent finial"
+    },
+    {
+      "name": "Promenade_Arch",
+      "role": "Arch",
+      "fbx": "Assets/_Project/Art/Biomes/Promenade/Meshes/Promenade_Arch.fbx",
+      "atlas": "Promenade_Kit",
+      "unity_bounds_min": [
+        -3.03,
+        0.0,
+        -0.07
+      ],
+      "unity_bounds_max": [
+        3.03,
+        5.6178,
+        0.8
+      ],
+      "sockets": {},
+      "tris": 4467,
+      "usage": "rampart arch 6 m with glowing tick-silk web"
+    },
+    {
+      "name": "Promenade_Light",
+      "role": "Light",
+      "fbx": "Assets/_Project/Art/Biomes/Promenade/Meshes/Promenade_Light.fbx",
+      "atlas": "Promenade_Kit",
+      "unity_bounds_min": [
+        -0.1927,
+        -0.098,
+        -0.714
+      ],
+      "unity_bounds_max": [
+        0.1927,
+        0.5521,
+        0.0
+      ],
+      "sockets": {
+        "LightSocket": [
+          0.0,
+          0.168,
+          -0.546
+        ]
+      },
+      "tris": 841,
+      "usage": "moon lantern; LightSocket = orb centre (pale blue)"
+    },
+    {
+      "name": "Promenade_Hang",
+      "role": "Hang",
+      "fbx": "Assets/_Project/Art/Biomes/Promenade/Meshes/Promenade_Hang.fbx",
+      "atlas": "Promenade_Kit",
+      "unity_bounds_min": [
+        -0.1511,
+        -2.8306,
+        -0.1876
+      ],
+      "unity_bounds_max": [
+        0.2687,
+        0.0259,
+        0.1724
+      ],
+      "sockets": {},
+      "tris": 1172,
+      "usage": "glowing silk strands + cocoon, pivot at top, ~2.8 m"
+    },
+    {
+      "name": "Promenade_Door",
+      "role": "Door",
+      "fbx": "Assets/_Project/Art/Biomes/Promenade/Meshes/Promenade_Door.fbx",
+      "atlas": "Promenade_Kit",
+      "unity_bounds_min": [
+        -1.2082,
+        -0.05,
+        -0.06
+      ],
+      "unity_bounds_max": [
+        1.2095,
+        3.2023,
+        0.78
+      ],
+      "sockets": {},
+      "tris": 4739,
+      "usage": "arched gate with half-raised portcullis, recess 0.78 m"
+    },
+    {
+      "name": "Promenade_Prop_A",
+      "role": "Prop_A",
+      "fbx": "Assets/_Project/Art/Biomes/Promenade/Meshes/Promenade_Prop_A.fbx",
+      "atlas": "Promenade_Kit",
+      "unity_bounds_min": [
+        -0.5544,
+        -0.0371,
+        0.0
+      ],
+      "unity_bounds_max": [
+        0.5361,
+        0.6125,
+        0.868
+      ],
+      "sockets": {},
+      "tris": 2264,
+      "usage": "brass clockwork debris"
+    },
+    {
+      "name": "Promenade_Prop_B",
+      "role": "Prop_B",
+      "fbx": "Assets/_Project/Art/Biomes/Promenade/Meshes/Promenade_Prop_B.fbx",
+      "atlas": "Promenade_Kit",
+      "unity_bounds_min": [
+        -0.4236,
+        0.0,
+        -0.0302
+      ],
+      "unity_bounds_max": [
+        0.6223,
+        1.18,
+        0.5949
+      ],
+      "sockets": {},
+      "tris": 902,
+      "usage": "toppled merlon rubble with moon dust"
+    },
+    {
+      "name": "Promenade_Prop_C",
+      "role": "Prop_C",
+      "fbx": "Assets/_Project/Art/Biomes/Promenade/Meshes/Promenade_Prop_C.fbx",
+      "atlas": "Promenade_Kit",
+      "unity_bounds_min": [
+        -0.5258,
+        0.0,
+        0.0
+      ],
+      "unity_bounds_max": [
+        0.4691,
+        1.1303,
+        0.8263
+      ],
+      "sockets": {},
+      "tris": 242,
+      "usage": "moon-crystal cluster (emissive)"
+    },
+    {
+      "name": "Promenade_MoonChunk",
+      "role": "MoonChunk",
+      "fbx": "Assets/_Project/Art/Biomes/Promenade/Meshes/Promenade_MoonChunk.fbx",
+      "atlas": "Promenade_Kit",
+      "unity_bounds_min": [
+        -2.1458,
+        -3.2924,
+        -1.736
+      ],
+      "unity_bounds_max": [
+        1.8397,
+        1.7574,
+        1.6311
+      ],
+      "sockets": {},
+      "tris": 4182,
+      "usage": "floating moon shard ~4 m, pivot centre, silk tethers"
+    },
+    {
+      "name": "Promenade_BG_Near",
+      "role": "BG_Near",
+      "fbx": "Assets/_Project/Art/Biomes/Promenade/Meshes/Promenade_BG_Near.fbx",
+      "atlas": "Promenade_BG",
+      "unity_bounds_min": [
+        -10.0,
+        0.0,
+        -0.4
+      ],
+      "unity_bounds_max": [
+        10.05,
+        10.6,
+        2.94
+      ],
+      "sockets": {},
+      "tris": 2237,
+      "usage": "rampart causeway 20x10 m (Unity z=5)"
+    },
+    {
+      "name": "Promenade_BG_Far_A",
+      "role": "BG_Far_A",
+      "fbx": "Assets/_Project/Art/Biomes/Promenade/Meshes/Promenade_BG_Far_A.fbx",
+      "atlas": "Promenade_BG",
+      "unity_bounds_min": [
+        -3.0,
+        0.0,
+        -0.052
+      ],
+      "unity_bounds_max": [
+        3.0,
+        19.9421,
+        5.1
+      ],
+      "sockets": {},
+      "tris": 609,
+      "usage": "observatory tower ~19 m (Unity z=10)"
+    },
+    {
+      "name": "Promenade_BG_Far_B",
+      "role": "BG_Far_B",
+      "fbx": "Assets/_Project/Art/Biomes/Promenade/Meshes/Promenade_BG_Far_B.fbx",
+      "atlas": "Promenade_BG",
+      "unity_bounds_min": [
+        -5.0,
+        0.0,
+        0.0
+      ],
+      "unity_bounds_max": [
+        4.7,
+        16.0,
+        2.74
+      ],
+      "sockets": {},
+      "tris": 539,
+      "usage": "twin spires + tethered moon shard ~16 m (z=16)"
+    },
+    {
+      "name": "Promenade_ClockTower",
+      "role": "ClockTower",
+      "fbx": "Assets/_Project/Art/Biomes/Promenade/Meshes/Promenade_ClockTower.fbx",
+      "atlas": "Promenade_BG",
+      "unity_bounds_min": [
+        -3.2,
+        0.0,
+        0.0
+      ],
+      "unity_bounds_max": [
+        3.2,
+        25.0,
+        5.95
+      ],
+      "sockets": {},
+      "tris": 869,
+      "usage": "far clock tower 25 m, glowing dial"
+    }
+  ]
+}

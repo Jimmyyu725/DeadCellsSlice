@@ -131,7 +131,7 @@ def blade_mesh(name, length, w_base, w_tip, thick, z0, fuller=(0.15, 0.7), nicks
         body_t = min(1.0, (length * t) / (length - tip_len))
         w = w_base + (w_tip - w_base) * body_t
         if length * t > length - tip_len:
-            u = (length * t - (length - tip_len)) / tip_len
+            u = min(1.0, (length * t - (length - tip_len)) / tip_len)
             w = w_tip * (1.0 - u) ** 0.85
         w *= 0.5
         for nz in nick_z:

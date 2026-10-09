@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d6f673630701744479ea9da35f0f08be, type: 3}
+  m_Name: WorldPrefabs
+  m_EditorClassIdentifier: DeadCells.Runtime::DeadCells.Run.WorldPrefabs
+  chest: {fileID: 3885714916513679074, guid: 56706e721c5f14ce19ebf54c0a885e43, type: 3}
+  teleporter: {fileID: 4005991789830620625, guid: 8b6036e21d1fc46d1845320d1c27d642, type: 3}
+  loreTablet: {fileID: 4553391336812394533, guid: 39be5064af2b64176a9e4fd510ca65ea, type: 3}
+  fountain: {fileID: 7482269596789589702, guid: 40e9753a11f974613baf69010d8402c9, type: 3}
+  exitDoor: {fileID: 485900560580614990, guid: f28ceb33ff3ec40058c45534b8e38515, type: 3}
+  merchant: {fileID: 4576776694685043102, guid: d4aad4b9a1b5e4748a9a5f835f5824e1, type: 3}
+  collector: {fileID: 6291359733909934025, guid: 46d835c889c0447dda42e7e626543a22, type: 3}
+  pedestal: {fileID: 7293323144489701090, guid: a7b176e7181e84a61b32a3d345fed433, type: 3}
+  itemDrop: {fileID: 8195987820392747875, guid: 2643657c4fb644318893ed173aac1bfc, type: 3}
+  scroll: {fileID: 7763186552611612821, guid: 32ea56e50d27d4ca6a6a306c9d45dae6, type: 3}
+  blueprint: {fileID: 9032096584187661507, guid: 22a564009c25d459aaaea5028cb4cf81, type: 3}
+  gold: {fileID: 3501257684351700819, guid: 77c395b43bd32426cb52a92bc482585d, type: 3}
+  cell: {fileID: 7605437714641940085, guid: 784bb6bf5a7034c58bf341acf98f7a7e, type: 3}
+  bossGate: {fileID: 5383794035065958356, guid: 14b247f727be94614a2b4a113090d27c, type: 3}
+  spikes: {fileID: 2833862118195287408, guid: 4e373c650fa1c4c2684aa0754d31bab7, type: 3}
+  deepMaterial: {fileID: 2100000, guid: 3287d021a0ce64d318c5bf7ddf285504, type: 2}
+  shaftMaterial: {fileID: 2100000, guid: 624f905db3e464eeebfdd6d8bce9c256, type: 2}
+  liquidWater: {fileID: 2100000, guid: 58d4c8a1d83824e26894bd7b313c05f5, type: 2}
+  liquidWine: {fileID: 2100000, guid: 19df24a216d3642c4bee6c17bcdda411, type: 2}
+  liquidVoid: {fileID: 2100000, guid: f4d2de672fd4f491b948beeceb5a6438, type: 2}
+  liquidBrass: {fileID: 2100000, guid: 49cc538cff49e4f819e391917260f06b, type: 2}

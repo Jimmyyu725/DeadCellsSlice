@@ -65,7 +65,7 @@ namespace DeadCells.Core
         /// <summary>Always (re)start `clip` from `normalizedTime`.</summary>
         public void Restart(string clip, float fade = 0f, float normalizedTime = 0f)
         {
-            if (animator == null)
+            if (animator == null || !clipLengths.ContainsKey(clip))
                 return;
             current = clip;
             int hash = Animator.StringToHash(clip);
@@ -84,6 +84,8 @@ namespace DeadCells.Core
         }
 
         public float Speed => speed;
+
+        public bool Has(string clip) => clipLengths.ContainsKey(clip);
 
         public float Length(string clip) => clipLengths.TryGetValue(clip, out float l) ? l : 1f;
 

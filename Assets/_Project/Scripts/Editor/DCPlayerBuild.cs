@@ -16,7 +16,7 @@ namespace DeadCells.EditorTools
             Directory.CreateDirectory("Builds");
             var options = new BuildPlayerOptions
             {
-                scenes = new[] { DCSceneBuilder.ScenePath },
+                scenes = DCSceneBuilder.Scenes,
                 locationPathName = OutputPath,
                 target = BuildTarget.StandaloneOSX,
                 options = BuildOptions.None,

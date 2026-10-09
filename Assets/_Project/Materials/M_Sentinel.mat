@@ -1,0 +1,79 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: M_Sentinel
+  m_Shader: {fileID: 4800000, guid: 53ad804d297b64d5db56c4b3eb9c80b7, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _BaseMap:
+        m_Texture: {fileID: 2800000, guid: ff3367a0e4e1a4de89e79860cf374ac0, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _BumpMap:
+        m_Texture: {fileID: 2800000, guid: 4a029211842cd47bca1f6132d6bf1744, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _EmissionMap:
+        m_Texture: {fileID: 2800000, guid: 204746be4f77a4b0a9447665f27c15e7, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ORMMap:
+        m_Texture: {fileID: 2800000, guid: 4a58f863857fe4091821eb9f7af80dfd, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _AmbientStrength: 0.6
+    - _AttenBands: 4
+    - _BumpScale: 1
+    - _Cull: 2
+    - _EmissionPulseAmp: 0.3
+    - _EmissionPulseSpeed: 3
+    - _FogAmount: 0
+    - _GlintIntensity: 1.2
+    - _GlintThreshold: 0.5
+    - _HitFlash: 0
+    - _LightGlow: 0
+    - _MetallicScale: 1
+    - _OcclusionStrength: 1
+    - _OutlinePixels: 1
+    - _RampMid: 0.62
+    - _RampSmooth: 0.02
+    - _RampStep1: 0.42
+    - _RampStep2: 0.72
+    - _RimLightStrength: 1.4
+    - _RimLightWrap: 0.35
+    - _RimPower: 3
+    - _RimStrength: 0.5
+    - _RimThreshold: 0.35
+    - _RimUpBias: 2
+    - _RoughnessScale: 1
+    - _TopShade: 1
+    m_Colors:
+    - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
+    - _EmissionColor: {r: 2.6, g: 1.9, b: 0.7, a: 1}
+    - _GlintColor: {r: 1, g: 0.95, b: 0.85, a: 1}
+    - _HitFlashColor: {r: 2, g: 2, b: 2, a: 1}
+    - _OutlineColor: {r: 0.03, g: 0.02, b: 0.05, a: 1}
+    - _RimColor: {r: 0.6, g: 0.8, b: 1, a: 1}
+    - _ShadowTint: {r: 0.24, g: 0.3, b: 0.38, a: 1}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1
