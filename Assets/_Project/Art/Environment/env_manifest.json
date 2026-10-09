@@ -1,0 +1,535 @@
+{
+  "generator": "Tools/Blender/build_environment.py",
+  "unity_axes": "Unity (x,y,z) = Blender (x,z,y)",
+  "atlases": {
+    "ENV_Kit": {
+      "albedo": "Assets/_Project/Art/Environment/Textures/ENV_Kit_Albedo.png",
+      "normal": "Assets/_Project/Art/Environment/Textures/ENV_Kit_Normal.png",
+      "orm": "Assets/_Project/Art/Environment/Textures/ENV_Kit_ORM.png",
+      "emission": "Assets/_Project/Art/Environment/Textures/ENV_Kit_Emission.png"
+    },
+    "BG_Kit": {
+      "albedo": "Assets/_Project/Art/Environment/Textures/BG_Kit_Albedo.png",
+      "normal": "Assets/_Project/Art/Environment/Textures/BG_Kit_Normal.png",
+      "orm": "Assets/_Project/Art/Environment/Textures/BG_Kit_ORM.png",
+      "emission": "Assets/_Project/Art/Environment/Textures/BG_Kit_Emission.png"
+    }
+  },
+  "materials": {
+    "ENV_Kit": "M_ENV_Kit",
+    "BG_Kit": "M_BG_Kit"
+  },
+  "emission_colors": {
+    "ENV_Torch coals": "#FF7A1A",
+    "BG windows": "#3FE0D0"
+  },
+  "tile_checks_blender": {
+    "ENV_Stone_A": {
+      "max_z": 1.0,
+      "min_y": -0.9264,
+      "min_x": 0.0139,
+      "max_x": 0.9874,
+      "min_z": 0.0187
+    },
+    "ENV_Stone_B": {
+      "max_z": 1.0,
+      "min_y": -0.9289,
+      "min_x": 0.0221,
+      "max_x": 0.9873,
+      "min_z": 0.0196
+    },
+    "ENV_Stone_C": {
+      "max_z": 1.0,
+      "min_y": -0.9145,
+      "min_x": 0.0155,
+      "max_x": 0.985,
+      "min_z": 0.0171
+    },
+    "ENV_StoneTop_A": {
+      "max_z": 1.0496,
+      "min_y": -0.9778,
+      "min_x": -0.0001,
+      "max_x": 1.0,
+      "min_z": 0.0136
+    },
+    "ENV_StoneTop_B": {
+      "max_z": 1.0492,
+      "min_y": -0.979,
+      "min_x": -0.0001,
+      "max_x": 1.0,
+      "min_z": 0.0125
+    },
+    "ENV_StoneEdge_L": {
+      "max_z": 1.0511,
+      "min_y": -0.979,
+      "min_x": -0.0385,
+      "max_x": 1.0001,
+      "min_z": 0.0153
+    },
+    "ENV_StoneEdge_R": {
+      "max_z": 1.0511,
+      "min_y": -0.979,
+      "min_x": -0.0001,
+      "max_x": 1.0385,
+      "min_z": 0.0153
+    }
+  },
+  "modules": [
+    {
+      "name": "ENV_Stone_A",
+      "fbx": "Assets/_Project/Art/Environment/Meshes/ENV_Stone_A.fbx",
+      "atlas": "ENV_Kit",
+      "unity_bounds_min": [
+        0.0139,
+        0.0187,
+        -0.9264
+      ],
+      "unity_bounds_max": [
+        0.9874,
+        1.0,
+        1.6
+      ],
+      "sockets": {},
+      "tris": 622,
+      "usage": "Foreground 1x1 fill block (collidable). Pivot bottom-left on gameplay plane; top flat at y=1."
+    },
+    {
+      "name": "ENV_Stone_B",
+      "fbx": "Assets/_Project/Art/Environment/Meshes/ENV_Stone_B.fbx",
+      "atlas": "ENV_Kit",
+      "unity_bounds_min": [
+        0.0221,
+        0.0196,
+        -0.9289
+      ],
+      "unity_bounds_max": [
+        0.9873,
+        1.0,
+        1.6
+      ],
+      "sockets": {},
+      "tris": 566,
+      "usage": "Foreground 1x1 fill block variant B."
+    },
+    {
+      "name": "ENV_Stone_C",
+      "fbx": "Assets/_Project/Art/Environment/Meshes/ENV_Stone_C.fbx",
+      "atlas": "ENV_Kit",
+      "unity_bounds_min": [
+        0.0155,
+        0.0171,
+        -0.9145
+      ],
+      "unity_bounds_max": [
+        0.985,
+        1.0,
+        1.6
+      ],
+      "sockets": {},
+      "tris": 712,
+      "usage": "Foreground 1x1 fill block variant C."
+    },
+    {
+      "name": "ENV_StoneTop_A",
+      "fbx": "Assets/_Project/Art/Environment/Meshes/ENV_StoneTop_A.fbx",
+      "atlas": "ENV_Kit",
+      "unity_bounds_min": [
+        -0.0001,
+        0.0136,
+        -0.9778
+      ],
+      "unity_bounds_max": [
+        1.0,
+        1.055,
+        1.6
+      ],
+      "sockets": {},
+      "tris": 1492,
+      "usage": "Walkable surface tile with mossy lip (moss <= +0.055 above y=1, overhang <= 0.08)."
+    },
+    {
+      "name": "ENV_StoneTop_B",
+      "fbx": "Assets/_Project/Art/Environment/Meshes/ENV_StoneTop_B.fbx",
+      "atlas": "ENV_Kit",
+      "unity_bounds_min": [
+        -0.0001,
+        0.0125,
+        -0.979
+      ],
+      "unity_bounds_max": [
+        1.0,
+        1.0504,
+        1.6
+      ],
+      "sockets": {},
+      "tris": 1318,
+      "usage": "Walkable surface tile variant B."
+    },
+    {
+      "name": "ENV_StoneEdge_L",
+      "fbx": "Assets/_Project/Art/Environment/Meshes/ENV_StoneEdge_L.fbx",
+      "atlas": "ENV_Kit",
+      "unity_bounds_min": [
+        -0.0385,
+        0.0153,
+        -0.979
+      ],
+      "unity_bounds_max": [
+        1.0001,
+        1.055,
+        1.6001
+      ],
+      "sockets": {},
+      "tris": 1467,
+      "usage": "Left end of a platform: rounded outer corner, moss wraps over the -X side."
+    },
+    {
+      "name": "ENV_StoneEdge_R",
+      "fbx": "Assets/_Project/Art/Environment/Meshes/ENV_StoneEdge_R.fbx",
+      "atlas": "ENV_Kit",
+      "unity_bounds_min": [
+        -0.0001,
+        0.0153,
+        -0.979
+      ],
+      "unity_bounds_max": [
+        1.0385,
+        1.055,
+        1.6001
+      ],
+      "sockets": {},
+      "tris": 1467,
+      "usage": "Right end of a platform (mirror of Edge_L)."
+    },
+    {
+      "name": "ENV_WoodPlatform",
+      "fbx": "Assets/_Project/Art/Environment/Meshes/ENV_WoodPlatform.fbx",
+      "atlas": "ENV_Kit",
+      "unity_bounds_min": [
+        0.0049,
+        0.2,
+        -0.628
+      ],
+      "unity_bounds_max": [
+        0.9941,
+        1.0,
+        1.0
+      ],
+      "sockets": {},
+      "tris": 1060,
+      "usage": "One-way platform, 1 m segment, deck top at y=1 (deck y 0.82-1.0), strut below."
+    },
+    {
+      "name": "ENV_Pillar",
+      "fbx": "Assets/_Project/Art/Environment/Meshes/ENV_Pillar.fbx",
+      "atlas": "ENV_Kit",
+      "unity_bounds_min": [
+        -0.65,
+        0.0,
+        -0.1118
+      ],
+      "unity_bounds_max": [
+        0.65,
+        5.0267,
+        1.2
+      ],
+      "sockets": {},
+      "tris": 3048,
+      "usage": "Midground stone column 5 m, pivot bottom-center, front at z=0."
+    },
+    {
+      "name": "ENV_Arch",
+      "fbx": "Assets/_Project/Art/Environment/Meshes/ENV_Arch.fbx",
+      "atlas": "ENV_Kit",
+      "unity_bounds_min": [
+        -2.98,
+        0.0,
+        -0.1257
+      ],
+      "unity_bounds_max": [
+        2.98,
+        5.487,
+        0.8
+      ],
+      "sockets": {},
+      "tris": 5995,
+      "usage": "Midground archway, 4 m inner span, 5.5 m tall, vines."
+    },
+    {
+      "name": "ENV_CellDoor",
+      "fbx": "Assets/_Project/Art/Environment/Meshes/ENV_CellDoor.fbx",
+      "atlas": "ENV_Kit",
+      "unity_bounds_min": [
+        -1.2088,
+        -0.05,
+        -0.06
+      ],
+      "unity_bounds_max": [
+        1.206,
+        3.2,
+        0.86
+      ],
+      "sockets": {},
+      "tris": 3832,
+      "usage": "Prison cell door in stone frame (2.4x3.2 m), door ajar 6 deg, dark recess to z=+0.86."
+    },
+    {
+      "name": "ENV_BackWall",
+      "fbx": "Assets/_Project/Art/Environment/Meshes/ENV_BackWall.fbx",
+      "atlas": "ENV_Kit",
+      "unity_bounds_min": [
+        0.0,
+        0.0,
+        -0.0583
+      ],
+      "unity_bounds_max": [
+        4.0,
+        4.0,
+        0.4
+      ],
+      "sockets": {},
+      "tris": 3612,
+      "usage": "Background wall panel 4x4 m, tiles seamlessly on a 4 m grid. Pivot bottom-left, front at z=0."
+    },
+    {
+      "name": "ENV_Torch",
+      "fbx": "Assets/_Project/Art/Environment/Meshes/ENV_Torch.fbx",
+      "atlas": "ENV_Kit",
+      "unity_bounds_min": [
+        -0.3016,
+        0.0,
+        -0.8029
+      ],
+      "unity_bounds_max": [
+        0.3016,
+        0.82,
+        0.0
+      ],
+      "sockets": {
+        "FlameSocket": [
+          0.0,
+          0.795,
+          -0.495
+        ]
+      },
+      "tris": 1113,
+      "usage": "Wall sconce; pivot = wall attachment (bottom of plate), back at z=0, sticks out to -z. Coals emissive."
+    },
+    {
+      "name": "ENV_Grate",
+      "fbx": "Assets/_Project/Art/Environment/Meshes/ENV_Grate.fbx",
+      "atlas": "ENV_Kit",
+      "unity_bounds_min": [
+        -0.9846,
+        0.0,
+        -0.1255
+      ],
+      "unity_bounds_max": [
+        0.9825,
+        2.02,
+        0.55
+      ],
+      "sockets": {},
+      "tris": 3086,
+      "usage": "High wall window grate 2x2 m with recess, pivot bottom-center."
+    },
+    {
+      "name": "ENV_Chain",
+      "fbx": "Assets/_Project/Art/Environment/Meshes/ENV_Chain.fbx",
+      "atlas": "ENV_Kit",
+      "unity_bounds_min": [
+        -0.09,
+        -2.9313,
+        -0.09
+      ],
+      "unity_bounds_max": [
+        0.1321,
+        0.0,
+        0.09
+      ],
+      "sockets": {},
+      "tris": 3132,
+      "usage": "3 m hanging chain + ceiling plate + hook; pivot at top attachment."
+    },
+    {
+      "name": "ENV_ChainLink",
+      "fbx": "Assets/_Project/Art/Environment/Meshes/ENV_ChainLink.fbx",
+      "atlas": "ENV_Kit",
+      "unity_bounds_min": [
+        -0.0669,
+        -0.1767,
+        -0.0147
+      ],
+      "unity_bounds_max": [
+        0.0669,
+        0.0307,
+        0.0147
+      ],
+      "sockets": {},
+      "tris": 144,
+      "usage": "Single chain link, pivot at its top inner contact. Link pitch 0.146 m (next pivot at y=-0.146), alternate 90 deg about Y."
+    },
+    {
+      "name": "ENV_Cage",
+      "fbx": "Assets/_Project/Art/Environment/Meshes/ENV_Cage.fbx",
+      "atlas": "ENV_Kit",
+      "unity_bounds_min": [
+        -0.635,
+        -2.3,
+        -0.635
+      ],
+      "unity_bounds_max": [
+        0.635,
+        -0.0022,
+        0.635
+      ],
+      "sockets": {},
+      "tris": 3852,
+      "usage": "Hanging gibbet cage with slumped skeleton; pivot at top ring."
+    },
+    {
+      "name": "ENV_Barrel",
+      "fbx": "Assets/_Project/Art/Environment/Meshes/ENV_Barrel.fbx",
+      "atlas": "ENV_Kit",
+      "unity_bounds_min": [
+        -0.4329,
+        0.0,
+        -0.0129
+      ],
+      "unity_bounds_max": [
+        0.4329,
+        1.0,
+        0.8529
+      ],
+      "sockets": {},
+      "tris": 2780,
+      "usage": "Barrel prop, pivot bottom-center, front at z=0."
+    },
+    {
+      "name": "ENV_Crate",
+      "fbx": "Assets/_Project/Art/Environment/Meshes/ENV_Crate.fbx",
+      "atlas": "ENV_Kit",
+      "unity_bounds_min": [
+        -0.458,
+        0.0,
+        -0.017
+      ],
+      "unity_bounds_max": [
+        0.458,
+        0.9,
+        0.9
+      ],
+      "sockets": {},
+      "tris": 1800,
+      "usage": "Crate prop 0.9 m, pivot bottom-center, front at z=0."
+    },
+    {
+      "name": "ENV_BonePile",
+      "fbx": "Assets/_Project/Art/Environment/Meshes/ENV_BonePile.fbx",
+      "atlas": "ENV_Kit",
+      "unity_bounds_min": [
+        -0.8318,
+        -0.0,
+        0.0
+      ],
+      "unity_bounds_max": [
+        0.816,
+        0.4757,
+        1.0462
+      ],
+      "sockets": {},
+      "tris": 3326,
+      "usage": "Heap of skulls and bones, pivot bottom-center, front at z=0."
+    },
+    {
+      "name": "ENV_Banner",
+      "fbx": "Assets/_Project/Art/Environment/Meshes/ENV_Banner.fbx",
+      "atlas": "ENV_Kit",
+      "unity_bounds_min": [
+        -0.75,
+        -2.5001,
+        -0.0923
+      ],
+      "unity_bounds_max": [
+        0.75,
+        0.0327,
+        0.0677
+      ],
+      "sockets": {},
+      "tris": 2176,
+      "usage": "Tattered banner 1x2.5 m on a rod; pivot at rod top-center."
+    },
+    {
+      "name": "BG_Tower_A",
+      "fbx": "Assets/_Project/Art/Environment/Meshes/BG_Tower_A.fbx",
+      "atlas": "BG_Kit",
+      "unity_bounds_min": [
+        -3.55,
+        0.0,
+        -0.55
+      ],
+      "unity_bounds_max": [
+        3.55,
+        21.75,
+        5.2
+      ],
+      "sockets": {},
+      "tris": 1638,
+      "usage": "Background castle tower (7x21.8 m), teal-glow window mask."
+    },
+    {
+      "name": "BG_Tower_B",
+      "fbx": "Assets/_Project/Art/Environment/Meshes/BG_Tower_B.fbx",
+      "atlas": "BG_Kit",
+      "unity_bounds_min": [
+        -3.83,
+        0.0,
+        -0.25
+      ],
+      "unity_bounds_max": [
+        3.25,
+        25.45,
+        6.0
+      ],
+      "sockets": {},
+      "tris": 3482,
+      "usage": "Background round tower with broken roof and bartizan (25 m)."
+    },
+    {
+      "name": "BG_Ruins",
+      "fbx": "Assets/_Project/Art/Environment/Meshes/BG_Ruins.fbx",
+      "atlas": "BG_Kit",
+      "unity_bounds_min": [
+        -10.0,
+        0.0,
+        -0.75
+      ],
+      "unity_bounds_max": [
+        10.0,
+        10.0,
+        2.2
+      ],
+      "sockets": {},
+      "tris": 2613,
+      "usage": "Background ruined arcade 20x10 m with hanging chains and cage."
+    },
+    {
+      "name": "BG_Spires",
+      "fbx": "Assets/_Project/Art/Environment/Meshes/BG_Spires.fbx",
+      "atlas": "BG_Kit",
+      "unity_bounds_min": [
+        -6.0,
+        0.0,
+        0.0
+      ],
+      "unity_bounds_max": [
+        6.0,
+        16.7,
+        4.0
+      ],
+      "sockets": {},
+      "tris": 2311,
+      "usage": "Far silhouette cluster of gothic spires 12x16 m (layer z=10)."
+    }
+  ]
+}

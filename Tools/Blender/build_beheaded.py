@@ -814,7 +814,9 @@ def anim_block_hurt(arm):
 def step_animate():
     arm = bpy.data.objects[f"{NAME}_Rig"]
     for act in list(bpy.data.actions):
-        bpy.data.actions.remove(act)
+        if act.get("dc_owner", NAME) == NAME:
+            bpy.data.actions.remove(act)
+    existing = set(bpy.data.actions.keys())
     anim_idle(arm)
     anim_run(arm)
     anim_slashes(arm)
@@ -822,6 +824,9 @@ def step_animate():
     anim_air(arm)
     anim_ground_pound(arm)
     anim_block_hurt(arm)
+    for act in bpy.data.actions:
+        if act.name not in existing:
+            act["dc_owner"] = NAME
     arm.animation_data.action = bpy.data.actions["Idle"]
     scene = bpy.context.scene
     scene.frame_start, scene.frame_end = 1, 60
@@ -858,7 +863,8 @@ def step_export():
         pb.scale = (1, 1, 1)
     path = dc.export_fbx(OUT_DIR / f"{NAME}.fbx", [arm] + meshes, animated=True)
     arm.animation_data.action = bpy.data.actions.get("Idle")
-    meta = {a.name: int(a.get("dc_length", a.frame_range[1])) for a in bpy.data.actions}
+    meta = {a.name: int(a.get("dc_length", a.frame_range[1])) for a in bpy.data.actions
+            if a.get("dc_owner", NAME) == NAME}
     import json
     (OUT_DIR / f"{NAME}_clips.json").write_text(json.dumps(meta, indent=2))
     dc.ensure_dir(BLEND_PATH.parent)

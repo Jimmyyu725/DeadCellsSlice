@@ -835,41 +835,116 @@ def pack_orm(ao_img, rough_img, metal_img, name, size):
     return out
 
 
-def bake_texture_set(target, out_dir, prefix, size=2048, highpoly=None, ao=True, emission=True):
+def uv_coverage_mask(objs, size, inset=0.02):
+    """Boolean (size, size) mask of texels whose centres lie inside a UV
+    triangle of any object (rows bottom-up like Image.pixels)."""
+    import numpy as np
+    mask = np.zeros((size, size), dtype=bool)
+    for o in objs:
+        me = o.data
+        uv = me.uv_layers.active.data
+        me.calc_loop_triangles()
+        tris = np.array([[uv[li].uv[:] for li in t.loops] for t in me.loop_triangles], dtype=np.float64) * size
+        for p in tris:
+            x0, y0 = np.floor(p.min(0)).astype(int)
+            x1, y1 = np.ceil(p.max(0)).astype(int)
+            x0, y0, x1, y1 = max(x0, 0), max(y0, 0), min(x1, size), min(y1, size)
+            if x1 <= x0 or y1 <= y0:
+                continue
+            xs, ys = np.meshgrid(np.arange(x0, x1) + 0.5, np.arange(y0, y1) + 0.5)
+            a, b, c = p
+            area = (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0])
+            if abs(area) < 1e-12:
+                continue
+            sgn = 1.0 if area > 0 else -1.0
+            inside = np.ones(xs.shape, dtype=bool)
+            for e0, e1 in ((a, b), (b, c), (c, a)):
+                ex, ey = e1[0] - e0[0], e1[1] - e0[1]
+                ln = math.hypot(ex, ey) or 1e-12
+                d = sgn * (ex * (ys - e0[1]) - ey * (xs - e0[0])) / ln
+                inside &= d >= inset
+            mask[y0:y1, x0:x1] |= inside
+    return mask
+
+
+def dilate_image(img, mask, iterations=16):
+    """Push island colours outwards into uncovered texels (edge padding)."""
+    import numpy as np
+    w, h = img.size
+    a = np.empty(w * h * 4, dtype=np.float32)
+    img.pixels.foreach_get(a)
+    a = a.reshape(h, w, 4)
+    filled = mask.copy()
+    for _ in range(iterations):
+        pad = np.pad(a * filled[..., None], ((1, 1), (1, 1), (0, 0)))
+        cnt = np.pad(filled.astype(np.float32), 1)
+        acc = np.zeros_like(a)
+        n = np.zeros((h, w), dtype=np.float32)
+        for dy, dx in ((0, 1), (2, 1), (1, 0), (1, 2), (0, 0), (0, 2), (2, 0), (2, 2)):
+            acc += pad[dy:dy + h, dx:dx + w]
+            n += cnt[dy:dy + h, dx:dx + w]
+        grow = (~filled) & (n > 0)
+        if not grow.any():
+            break
+        a[grow] = acc[grow] / n[grow][:, None]
+        filled |= grow
+    a[..., 3] = 1.0
+    img.pixels.foreach_set(a.ravel())
+    img.update()
+
+
+def bake_texture_set(target, out_dir, prefix, size=2048, highpoly=None, ao=True, emission=True, dilate=16):
     """Full PBR texture set for `target` (one object, or a list of objects
-    whose UVs were packed into one shared atlas). Returns {kind: path}."""
+    whose UVs were packed into one shared atlas). Returns {kind: path}.
+
+    With several objects Blender applies the bake margin per object, so each
+    object's margin would overwrite its neighbours' texels. Multi-object and
+    pairwise bakes therefore run with margin 0 and the finished atlas is
+    padded once with a global dilation instead.
+    """
     setup_cycles(samples=4)
     out_dir = ensure_dir(out_dir)
+    targets = list(target) if isinstance(target, (list, tuple)) else [target]
+    pairwise = bool(highpoly) and isinstance(highpoly[0], tuple)
+    shared = len(targets) > 1 or pairwise
+    margin = 0 if shared else 8
+    mask = uv_coverage_mask(targets, size) if shared else None
+
+    def finish(img, name):
+        if mask is not None:
+            dilate_image(img, mask, dilate)
+        return save_image(img, out_dir / f"{prefix}_{name}.png")
+
     paths = {}
     img = new_image(f"{prefix}_Albedo", size)
-    bake_pass(target, img, "ALBEDO")
-    paths["albedo"] = save_image(img, out_dir / f"{prefix}_Albedo.png")
+    bake_pass(targets, img, "ALBEDO", margin=margin)
+    paths["albedo"] = finish(img, "Albedo")
 
     img = new_image(f"{prefix}_Normal", size, non_color=True)
-    if highpoly and isinstance(highpoly[0], tuple):
+    if pairwise:
         # Pairwise low->high bakes into one shared atlas: rays never land on
         # a neighbouring part's shell.
         for i, (low, high) in enumerate(highpoly):
             bake_pass(low, img, "NORMAL", sources=[high], samples=8, clear=(i == 0),
-                      cage_extrusion=0.02, max_ray=0.05)
+                      cage_extrusion=0.02, max_ray=0.05, margin=0)
     else:
-        bake_pass(target, img, "NORMAL", sources=highpoly, samples=8)
-    paths["normal"] = save_image(img, out_dir / f"{prefix}_Normal.png")
+        bake_pass(targets if len(targets) > 1 else targets[0], img, "NORMAL", sources=highpoly, samples=8, margin=margin)
+    paths["normal"] = finish(img, "Normal")
 
-    rough = bake_pass(target, new_image(f"{prefix}_R", size, non_color=True), "ROUGH")
-    metal = bake_pass(target, new_image(f"{prefix}_M", size, non_color=True), "METAL")
+    rough = bake_pass(targets, new_image(f"{prefix}_R", size, non_color=True), "ROUGH", margin=margin)
+    metal = bake_pass(targets, new_image(f"{prefix}_M", size, non_color=True), "METAL", margin=margin)
     if ao:
-        occ = bake_pass(target, new_image(f"{prefix}_AO", size, non_color=True), "AO", samples=32)
+        occ = bake_pass(targets, new_image(f"{prefix}_AO", size, non_color=True), "AO", samples=32, margin=margin)
     else:
         occ = new_image(f"{prefix}_AO", size, non_color=True)
         occ.generated_color = (1, 1, 1, 1)
     orm = pack_orm(occ, rough, metal, f"{prefix}_ORM", size)
-    paths["orm"] = save_image(orm, out_dir / f"{prefix}_ORM.png")
+    paths["orm"] = finish(orm, "ORM")
 
     if emission:
         img = new_image(f"{prefix}_Emission", size)
-        bake_pass(target, img, "EMIT_MASK")
-        paths["emission"] = save_image(img, out_dir / f"{prefix}_Emission.png")
+        bake_pass(targets, img, "EMIT_MASK", margin=margin)
+        paths["emission"] = finish(img, "Emission")
     return paths
 
 
