@@ -48,20 +48,21 @@ Material:
     - _EmissionPulseAmp: 0.25
     - _EmissionPulseSpeed: 6
     - _FogAmount: 1
-    - _GlintIntensity: 0.3
+    - _GlintIntensity: 0
     - _GlintThreshold: 0.7
     - _HitFlash: 0
+    - _LightGlow: 0.05
     - _MetallicScale: 1
     - _OcclusionStrength: 1
     - _OutlinePixels: 0
     - _RampMid: 0.62
-    - _RampSmooth: 0.02
+    - _RampSmooth: 0.15
     - _RampStep1: 0.42
     - _RampStep2: 0.72
-    - _RimLightStrength: 0.35
+    - _RimLightStrength: 0
     - _RimLightWrap: 0.35
     - _RimPower: 3
-    - _RimStrength: 0.05
+    - _RimStrength: 0
     - _RimThreshold: 0.55
     - _RimUpBias: 2
     - _RoughnessScale: 1

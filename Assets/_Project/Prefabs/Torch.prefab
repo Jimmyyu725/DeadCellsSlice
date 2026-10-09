@@ -111,11 +111,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: DeadCells.Runtime::DeadCells.Environment.TorchFlicker
   baseIntensity: 4
-  intensityJitter: 0.28
+  intensityJitter: 0.1
   baseRange: 6.5
-  rangeJitter: 0.12
-  speed: 7
-  wobble: 0.03
+  rangeJitter: 0.04
+  speed: 3.5
+  wobble: 0
   flameRenderer: {fileID: 0}
 --- !u!1 &3787266004672010654
 GameObject:

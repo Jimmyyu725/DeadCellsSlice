@@ -47,6 +47,7 @@ CBUFFER_START(UnityPerMaterial)
     half4  _HitFlashColor;
     half   _FogAmount;
     half   _TopShade;
+    half   _LightGlow;
 CBUFFER_END
 
 struct Attributes
@@ -85,6 +86,7 @@ DCToonInputs DCGetToonInputs()
     t.rimLightStrength = _RimLightStrength;
     t.rimLightWrap = _RimLightWrap;
     t.attenBands = _AttenBands;
+    t.lightGlow = _LightGlow;
     return t;
 }
 

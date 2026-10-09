@@ -38,10 +38,6 @@ Shader "Hidden/DeadCells/Pixelate"
                 c += SAMPLE_TEXTURE2D_X_LOD(_BlitTexture, sampler_LinearClamp, uv + float2(-quarter.x, quarter.y), 0);
                 c += SAMPLE_TEXTURE2D_X_LOD(_BlitTexture, sampler_LinearClamp, uv + float2(quarter.x, quarter.y), 0);
                 c *= 0.25h;
-                // Keep the brightest tap's hue on thin emissive details (sparks of
-                // light would otherwise average away).
-                half4 centre = SAMPLE_TEXTURE2D_X_LOD(_BlitTexture, sampler_PointClamp, uv, 0);
-                c = max(c, centre * 0.85h);
                 if (_DC_ColorSteps > 0.5)
                 {
                     // Quantise in a perceptual space so dark tones keep detail.

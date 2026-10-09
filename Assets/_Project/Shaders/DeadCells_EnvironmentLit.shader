@@ -27,6 +27,7 @@ Shader "DeadCells/EnvironmentLit"
         _ShadowTint ("Shadow Tint", Color) = (0.32, 0.30, 0.52, 1)
         _AttenBands ("Light Falloff Bands (0 = smooth)", Range(0, 8)) = 4
         _AmbientStrength ("Ambient (probe) Strength", Range(0, 2)) = 0.6
+        _LightGlow ("Light Halo (punctual)", Range(0, 0.5)) = 0.05
 
         [Header(Specular Glint)]
         _GlintThreshold ("Glint Threshold", Range(0, 1)) = 0.5

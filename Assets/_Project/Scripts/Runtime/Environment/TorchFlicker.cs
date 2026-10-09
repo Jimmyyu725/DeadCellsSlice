@@ -7,10 +7,10 @@ namespace DeadCells.Environment
     public class TorchFlicker : MonoBehaviour
     {
         public float baseIntensity = 4f;
-        [Range(0f, 1f)] public float intensityJitter = 0.28f;
+        [Range(0f, 1f)] public float intensityJitter = 0.1f;
         public float baseRange = 7f;
-        [Range(0f, 1f)] public float rangeJitter = 0.12f;
-        public float speed = 7f;
+        [Range(0f, 1f)] public float rangeJitter = 0.04f;
+        public float speed = 3.5f;
         public float wobble = 0.03f;
         public Renderer flameRenderer;
 

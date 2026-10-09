@@ -220,13 +220,18 @@ namespace DeadCells.EditorTools
             m.SetFloat("_EmissionPulseAmp", 0.25f);
             m.SetColor("_ShadowTint", new Color(0.20f, 0.27f, 0.40f));
             m.SetColor("_RimColor", new Color(0.35f, 0.75f, 0.85f));
-            m.SetFloat("_RimStrength", 0.05f);
+            // No view-dependent hard-stepped terms on static scenery: rims and
+            // glints on brick bevels toggle on/off as the camera moves (jumps
+            // made the wall lighting flash). Characters keep them.
+            m.SetFloat("_RimStrength", 0f);
             m.SetFloat("_RimThreshold", 0.55f);
-            m.SetFloat("_RimLightStrength", 0.35f);
-            m.SetFloat("_GlintIntensity", 0.3f);
+            m.SetFloat("_RimLightStrength", 0f);
+            m.SetFloat("_GlintIntensity", 0f);
             m.SetFloat("_GlintThreshold", 0.7f);
             m.SetFloat("_BumpScale", 0.75f);
             m.SetFloat("_AttenBands", 0f);
+            m.SetFloat("_RampSmooth", 0.15f); // soft terminator: moving lights glide over bevels instead of popping
+            m.SetFloat("_LightGlow", 0.05f);
             m.SetFloat("_AmbientStrength", 0.5f);
             m.SetFloat("_FogAmount", 1f);
             m.SetFloat("_TopShade", 0.55f);
@@ -571,6 +576,10 @@ namespace DeadCells.EditorTools
             var flicker = lightGo.AddComponent<TorchFlicker>();
             flicker.baseIntensity = 4f;
             flicker.baseRange = 6.5f;
+            flicker.intensityJitter = 0.1f;
+            flicker.rangeJitter = 0.04f;
+            flicker.speed = 3.5f;
+            flicker.wobble = 0f;
 
             var embers = TorchEmbers(go.transform);
             embers.transform.localPosition = flamePos + Vector3.up * 0.1f;

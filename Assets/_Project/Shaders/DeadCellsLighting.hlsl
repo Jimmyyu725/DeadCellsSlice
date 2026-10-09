@@ -27,6 +27,7 @@ struct DCToonInputs
     half  rimLightStrength;
     half  rimLightWrap;
     half  attenBands;
+    half  lightGlow;     // albedo-independent scatter around punctual lights (haze halo)
 };
 
 struct DCSurface
@@ -96,6 +97,8 @@ half3 DCPunctualLight(Light light, DCSurface s, half3 V, DCToonInputs t)
     half3 col = diffuseCol * light.color * ramp * atten;
     col += DCSpecular(s.normalWS, V, L, ramp, s, t) * light.color * atten;
     col += DCRimMask(s.normalWS, V, t) * saturate(ndl + t.rimLightWrap) * light.color * atten * t.rimLightStrength;
+    // View-independent warm halo so dark surfaces still show the light pool.
+    col += light.color * atten * t.lightGlow * (ndl * 0.25h + 0.75h);
     return col;
 }
 

@@ -51,6 +51,7 @@ Material:
     - _GlintIntensity: 2.2
     - _GlintThreshold: 0.35
     - _HitFlash: 0
+    - _LightGlow: 0
     - _MetallicScale: 1
     - _OcclusionStrength: 1
     - _OutlinePixels: 0.75
