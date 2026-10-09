@@ -1,0 +1,13 @@
+{
+  "Dodge_Roll": 20,
+  "Ground_Pound_Slam": 24,
+  "Hurt": 14,
+  "Idle": 61,
+  "Jump_Fall": 13,
+  "Jump_Rise": 13,
+  "Run": 25,
+  "Shield_Block": 12,
+  "Slash_Combo_1": 18,
+  "Slash_Combo_2": 18,
+  "Slash_Combo_3": 24
+}
