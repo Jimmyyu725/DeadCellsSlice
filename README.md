@@ -2,6 +2,10 @@
 
 用 Blender（Python 程序化建模/绑定/动画/烘焙）+ Unity 6 URP（自定义卡通 shader、像素化 Render Feature、手感系统）复刻《Dead Cells》开场区域的画面风格与战斗手感。所有资产都由脚本生成，可一键重建。
 
+![大厅：光柱、吊笼、远景塔楼与战斗](Docs/screenshot_hall.jpg)
+
+![命中瞬间：白闪、火花、伤害数字](Docs/screenshot_combat.jpg)
+
 ## 直接玩
 
 ```bash
