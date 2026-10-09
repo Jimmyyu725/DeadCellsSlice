@@ -220,13 +220,13 @@ namespace DeadCells.Run
                 int x = 0;
                 while (x < d.width)
                 {
-                    if (dist[x, y] < 2)
+                    if (dist[x, y] < 3)
                     {
                         x++;
                         continue;
                     }
                     int start = x;
-                    while (x < d.width && dist[x, y] >= 2 && x - start < Chunk)
+                    while (x < d.width && dist[x, y] >= 3 && x - start < Chunk)
                         x++;
                     int len = x - start;
                     var m = Matrix4x4.TRS(new Vector3(start + len * 0.5f, y + 0.5f, -0.9f), Quaternion.identity, new Vector3(len, 1f, 1f));
@@ -237,8 +237,8 @@ namespace DeadCells.Run
             for (int x = 0; x < d.width; x++)
             for (int y = 0; y < d.height; y++)
             {
-                // Only the ring touching open space gets kit modules; deeper rock is dark fill.
-                if (Open(d, x, y) || dist[x, y] >= 2)
+                // Two rings of kit modules around open space; deeper rock is dark fill.
+                if (Open(d, x, y) || dist[x, y] >= 3)
                     continue;
                 string key = $"Chunk_{x / Chunk}_{y / Chunk}";
                 // Dark card just behind the tile faces hides hairline gaps between modules.

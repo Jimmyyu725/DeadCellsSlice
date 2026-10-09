@@ -105,7 +105,11 @@ namespace DeadCells.Run
             var db = ItemDatabase.Instance;
             if (db == null)
                 return list;
-            var pool = db.Unlocked().Where(i => i.kind != ItemKind.Shield || rng.NextDouble() < 0.6).OrderBy(_ => rng.Next()).Take(3).ToList();
+            // Never offer what the player already carries.
+            var run = SaveSystem.Data.run;
+            var carried = new HashSet<string> { run.primary, run.secondary, run.skill1, run.skill2 };
+            var pool = db.Unlocked().Where(i => !carried.Contains(i.id) && (i.kind != ItemKind.Shield || rng.NextDouble() < 0.6))
+                .OrderBy(_ => rng.Next()).Take(3).ToList();
             foreach (var item in pool)
                 list.Add((item, Mathf.RoundToInt(item.PriceFor(depth) / Mathf.Max(0.5f, Difficulty.RewardMultiplier))));
             return list;

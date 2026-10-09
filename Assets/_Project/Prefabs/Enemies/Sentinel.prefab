@@ -1151,6 +1151,7 @@ MonoBehaviour:
   verticalAggro: 3.5
   hurtTime: 0.24
   superArmor: 0
+  poise: 3
   corpseTime: 0.65
   ichorColor: {r: 0.55, g: 0.45, b: 0.2, a: 1}
   burstColor: {r: 2.4, g: 1.8, b: 0.7, a: 1}
@@ -1172,6 +1173,7 @@ MonoBehaviour:
   hitboxSize: {x: 2, y: 1.6}
   knockback: {x: 7.5, y: 4}
   cooldown: 0.75
+  armoredWindup: 1
 --- !u!1 &8136324631414723658
 GameObject:
   m_ObjectHideFlags: 0

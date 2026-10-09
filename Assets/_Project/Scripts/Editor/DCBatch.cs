@@ -83,6 +83,49 @@ namespace DeadCells.EditorTools
             }
         }
 
+        /// <summary>Dump generated levels (many seeds) as text for Tools/Rooms/validate_levels.py.</summary>
+        public static void DumpLevels()
+        {
+            string dir = "Tools/_out/levels";
+            System.IO.Directory.CreateDirectory(dir);
+            foreach (var f in System.IO.Directory.GetFiles(dir, "*.txt"))
+                System.IO.File.Delete(f);
+            foreach (var id in new[] { "Oubliette", "Promenade", "Ossuary", "StiltVillage", "ClockLung", "Passage" })
+            {
+                var biome = AssetDatabase.LoadAssetAtPath<DeadCells.Run.BiomeDef>($"{DCContentBuilder.ContentDir}/Biomes/{id}.asset");
+                for (int seed = 1; seed <= 40; seed++)
+                {
+                    var d = DeadCells.Run.LevelGenerator.Generate(biome, seed * 7919);
+                    var sb = new System.Text.StringBuilder();
+                    for (int y = d.height - 1; y >= 0; y--)
+                    {
+                        for (int x = 0; x < d.width; x++)
+                        {
+                            char c = d.tiles[x, y] switch
+                            {
+                                DeadCells.Run.Tile.Solid => '#',
+                                DeadCells.Run.Tile.OneWay => '=',
+                                DeadCells.Run.Tile.Liquid => '~',
+                                DeadCells.Run.Tile.Spikes => 'X',
+                                _ => '.',
+                            };
+                            foreach (var s in d.spawns)
+                                if (s.cell.x == x && s.cell.y == y && "PTDKMp".IndexOf(s.code) >= 0)
+                                    c = s.code;
+                            sb.Append(c);
+                        }
+                        sb.Append('\n');
+                    }
+                    System.IO.File.WriteAllText($"{dir}/{id}_{seed:00}.txt", sb.ToString());
+                    var rooms = new System.Text.StringBuilder();
+                    foreach (var r in d.rooms)
+                        rooms.AppendLine($"{r.template} {r.kind} {r.rect.xMin} {r.rect.yMin} {r.rect.width} {r.rect.height}");
+                    System.IO.File.WriteAllText($"{dir}/{id}_{seed:00}.rooms", rooms.ToString());
+                }
+            }
+            Debug.Log("[DC] levels dumped");
+        }
+
         public static void Setup()
         {
             DCProjectSetup.ConfigureAll();

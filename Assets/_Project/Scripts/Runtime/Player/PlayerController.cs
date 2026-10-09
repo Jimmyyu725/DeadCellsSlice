@@ -539,8 +539,10 @@ namespace DeadCells.Player
                 health.InvulnerableUntil = Mathf.Max(health.InvulnerableUntil, Time.time + 0.02f);
             if (t >= dodgeDuration)
             {
-                // Stay ghosted while still overlapping an enemy so we never pop inside one.
-                if (Physics2D.OverlapCapsule(capsule.bounds.center, capsule.size * 0.9f, capsule.direction, 0f, DCLayers.EnemyMask) == null)
+                // Stay ghosted while still overlapping an enemy so we never pop inside one,
+                // but only briefly: an enemy that stays on top of us must not trap the roll.
+                bool overlapping = Physics2D.OverlapCapsule(capsule.bounds.center, capsule.size * 0.9f, capsule.direction, 0f, DCLayers.EnemyMask) != null;
+                if (!overlapping || t >= dodgeDuration + 0.35f)
                 {
                     gameObject.layer = DCLayers.Player;
                     dodgeReadyTime = Time.time + dodgeCooldown;

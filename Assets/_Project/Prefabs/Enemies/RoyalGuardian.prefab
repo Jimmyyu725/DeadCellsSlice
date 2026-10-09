@@ -1270,6 +1270,7 @@ MonoBehaviour:
   verticalAggro: 8
   hurtTime: 0.24
   superArmor: 0
+  poise: 3
   corpseTime: 0.65
   ichorColor: {r: 0.5, g: 0.1, b: 0.12, a: 1}
   burstColor: {r: 3, g: 2.2, b: 0.8, a: 1}

@@ -32,6 +32,8 @@ namespace DeadCells.Enemies
         public float verticalAggro = 3.5f;
         public float hurtTime = 0.24f;
         public bool superArmor;
+        [Tooltip("Flinches allowed in a row before the enemy shrugs hits off for a moment.")]
+        public int poise = 3;
         public float corpseTime = 0.65f;
         public Color ichorColor = new Color(0.3f, 0.6f, 0.15f);
         public Color burstColor = new Color(1.2f, 2.2f, 0.6f);
@@ -53,6 +55,9 @@ namespace DeadCells.Enemies
         protected float stunnedUntil;
         protected float hurtUntil;
         protected float gravityScale;
+        int flinches;
+        float lastFlinch = -10f;
+        float poiseBrokenUntil;
 
         public bool IsDead { get; private set; }
         public bool IsElite { get; private set; }
@@ -303,8 +308,18 @@ namespace DeadCells.Enemies
             squash?.Punch(new Vector2(1.18f, 0.86f));
             if (!Engaged && isBoss)
                 return;
-            if (superArmor || isBoss || InSuperArmor())
+            if (superArmor || isBoss || InSuperArmor() || Time.time < poiseBrokenUntil)
                 return;
+            // Poise: after a few flinches in a row the enemy ignores hit-stun briefly.
+            flinches = Time.time - lastFlinch < 1.2f ? flinches + 1 : 1;
+            lastFlinch = Time.time;
+            if (flinches > poise)
+            {
+                flinches = 0;
+                poiseBrokenUntil = Time.time + 1.4f;
+                hitFlash?.Flash(new Color(2.6f, 1.6f, 0.4f), 0.7f);
+                return;
+            }
             knock = info.knockback;
             body.linearVelocity = new Vector2(info.knockback.x, flying ? info.knockback.y * 0.5f : Mathf.Max(body.linearVelocity.y, info.knockback.y * 0.35f));
             hurtUntil = Time.time + hurtTime + info.stun;

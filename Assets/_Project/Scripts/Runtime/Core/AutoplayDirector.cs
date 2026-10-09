@@ -59,6 +59,7 @@ namespace DeadCells.Core
         int pathIndex;
         float dropUntil;
         float jumpDir = 1f;
+        float fightStuck, lastFightX, ignoreFightUntil;
         readonly FrameTiming[] frameTimings = new FrameTiming[1];
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
@@ -245,6 +246,48 @@ namespace DeadCells.Core
             yield return null;
             ui.CloseAllForTest();
             yield return new WaitForSecondsRealtime(0.3f);
+            // Teleport: reveal the map, open the statue map at the first teleporter, jump to another.
+            var rmTour = RunManager.Instance;
+            rmTour.CheatRevealMap();
+            var teles = rmTour.Level.teleporters;
+            if (teles.Count > 1)
+            {
+                var p0 = PlayerController.Main;
+                p0.Teleport(teles[0].transform.position + new Vector3(0.8f, 0.05f, -teles[0].transform.position.z));
+                yield return new WaitForSecondsRealtime(0.5f);
+                ui.OpenTeleportMap(teles[0]);
+                yield return new WaitForSecondsRealtime(0.8f);
+                Capture("ui_teleport_map");
+                yield return null;
+                yield return null;
+                ui.CloseAllForTest();
+                rmTour.TeleportTo(teles[teles.Count - 1]);
+                yield return new WaitForSecondsRealtime(1.5f);
+                Capture("ui_teleported");
+                log.WriteLine($"[{Elapsed:F1}] teleported to {PlayerController.Main.transform.position} (target {teles[teles.Count - 1].transform.position})");
+            }
+            // Shop: stand at a priced pedestal with enough gold, buy it.
+            ItemPickup pedestal = null;
+            foreach (var pick in FindObjectsByType<ItemPickup>())
+                if (pick.price > 0)
+                {
+                    pedestal = pick;
+                    break;
+                }
+            if (pedestal != null)
+            {
+                SaveSystem.Data.run.gold += pedestal.price;
+                var pp = PlayerController.Main;
+                pp.Teleport(new Vector3(pedestal.transform.position.x - 0.6f, pedestal.transform.position.y + 0.05f, 0f));
+                yield return new WaitForSecondsRealtime(0.8f);
+                Capture("ui_shop");
+                var before = pp.Combat.Slot(pp.Combat.SlotFor(pedestal.CardItem));
+                string bought = pedestal.CardItem != null ? pedestal.CardItem.id : "?";
+                pedestal.Interact(pp);
+                yield return new WaitForSecondsRealtime(0.8f);
+                Capture("ui_bought");
+                log.WriteLine($"[{Elapsed:F1}] bought {bought}, replaced {(before != null ? before.id : "nothing")}, gold now {SaveSystem.Data.run.gold}");
+            }
             ui.ShowLore("oub1");
             yield return new WaitForSecondsRealtime(0.8f);
             Capture("ui_lore");
@@ -325,13 +368,31 @@ namespace DeadCells.Core
                 f.flaskPressed = true;
 
             var target = NearestEnemy(pos, 9f);
-            if (target != null && Mathf.Abs(target.transform.position.y - pos.y) < 2.2f)
+            if (target != null && fightStuck > 3f)
+            {
+                // No progress towards this target: navigate instead for a while.
+                ignoreFightUntil = Time.time + 4f;
+                fightStuck = 0f;
+            }
+            if (target != null && Mathf.Abs(target.transform.position.y - pos.y) < 2.2f && Time.time > ignoreFightUntil)
             {
                 float dx = target.transform.position.x - pos.x;
                 if (Mathf.Abs(dx) > 1.5f)
                     f.moveX = Mathf.Sign(dx);
                 else if (Mathf.Sign(dx) != player.Facing)
                     f.moveX = Mathf.Sign(dx);
+                // Hop obstacles between us and the target.
+                if (f.moveX != 0f && player.Grounded && Physics2D.Raycast((Vector2)pos + Vector2.up * 0.5f, new Vector2(f.moveX, 0f), 0.9f, DCLayers.SolidMask).collider != null)
+                {
+                    f.jumpPressed = true;
+                    jumpHoldUntil = Time.time + 0.45f;
+                    jumpDir = f.moveX;
+                }
+                f.jumpHeld = Time.time < jumpHoldUntil;
+                if (!player.Grounded && f.moveX == 0f)
+                    f.moveX = jumpDir;
+                fightStuck = Mathf.Abs(pos.x - lastFightX) < 0.05f && Mathf.Abs(dx) > 2.2f ? fightStuck + dt : 0f;
+                lastFightX = pos.x;
                 if (Mathf.Abs(dx) < 2.2f && attackTimer <= 0f)
                 {
                     f.primaryPressed = true;
@@ -566,21 +627,27 @@ namespace DeadCells.Core
                 if (fy < y && Stand(d, x, fy))
                     yield return new Vector2Int(x, fy);
             }
-            for (int dy = 1; dy <= 3; dy++)
+            // Jumps and drops (same model as Tools/Rooms/validate_rooms.py).
+            for (int dy = -6; dy <= 3; dy++)
             {
-                for (int dx = -4; dx <= 4; dx++)
+                for (int dx = -5; dx <= 5; dx++)
                 {
+                    if (dx == 0 && dy <= 0)
+                        continue;
+                    if (dy >= 2 && Mathf.Abs(dx) > 4)
+                        continue;
                     if (dy == 3 && Mathf.Abs(dx) > 3)
                         continue;
                     int nx = x + dx, ny = y + dy;
                     if (!Stand(d, nx, ny))
                         continue;
-                    if (!Column(d, x, y, ny + 1) || !Column(d, nx, ny, ny + 1))
+                    int apex = Mathf.Max(y, ny);
+                    if (!Column(d, x, y, apex + 1) || !Column(d, nx, ny, apex + 1))
                         continue;
                     bool ok = true;
                     int step = dx > 0 ? 1 : -1;
                     for (int cx = x; dx != 0 && cx != nx + step; cx += step)
-                        if (Blocks(d, cx, ny) || Blocks(d, cx, ny + 1))
+                        if (Blocks(d, cx, apex) || Blocks(d, cx, apex + 1))
                         {
                             ok = false;
                             break;
@@ -597,29 +664,6 @@ namespace DeadCells.Core
                     int nx = x + dx, ny = y + dy;
                     if (Stand(d, nx, ny) && Blocks(d, nx, ny - 1) && Column(d, x, y, ny + 1))
                         yield return new Vector2Int(nx, ny);
-                }
-            }
-            // Gap jumps at the same level or lower.
-            for (int dx = -5; dx <= 5; dx++)
-            {
-                if (Mathf.Abs(dx) < 2)
-                    continue;
-                for (int dy = 0; dy >= -4; dy--)
-                {
-                    int nx = x + dx, ny = y + dy;
-                    if (!Stand(d, nx, ny))
-                        continue;
-                    bool ok = true;
-                    int step = dx > 0 ? 1 : -1;
-                    for (int cx = x; cx != nx + step; cx += step)
-                        if (Blocks(d, cx, y + 1) || Blocks(d, cx, y + 2))
-                        {
-                            ok = false;
-                            break;
-                        }
-                    if (ok)
-                        yield return new Vector2Int(nx, ny);
-                    break;
                 }
             }
         }

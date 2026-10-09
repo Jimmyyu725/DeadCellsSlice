@@ -240,7 +240,9 @@ def check(room):
         if tgt not in seen:
             errs.append(f"exit door {tgt} unreachable from {start}")
     for grp in ups:
-        ok = any((x, y) in seen for x in range(grp[0] - 1, grp[-1] + 2) for y in range(g.h - 4, g.h - 1)
+        # The opening row becomes a one-way platform: standing on it puts the feet at
+        # row h, so a foothold must exist within 3 rows below (y >= h - 3).
+        ok = any((x, y) in seen for x in range(grp[0] - 1, grp[-1] + 2) for y in range(g.h - 3, g.h - 1)
                  if g.clear_column(x, y, g.h - 2))
         if not ok:
             errs.append(f"top opening {grp} unreachable")
@@ -307,6 +309,11 @@ def main():
                 for b in room["meta"].get("biomes", "all").split(","):
                     tag_count[(t, b)] = tag_count.get((t, b), 0) + 1
             errs = check(room)
+            if not errs and not room["meta"].get("nomirror"):
+                # The generator also uses mirror images (doors swap sides).
+                mirrored = dict(room)
+                mirrored["rows"] = ["".join({"<": ">", ">": "<"}.get(ch, ch) for ch in reversed(r)) for r in room["rows"]]
+                errs = ["(mirrored) " + e for e in check(mirrored)]
             if errs:
                 bad += 1
                 print(f"[{room['file']}] {name}:")

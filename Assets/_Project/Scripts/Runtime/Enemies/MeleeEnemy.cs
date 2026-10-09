@@ -50,7 +50,10 @@ namespace DeadCells.Enemies
             anim.SetSpeed(1f);
         }
 
-        protected override bool InSuperArmor() => state == State.Strike;
+        [Tooltip("Telegraphed attacks cannot be interrupted by ordinary hits (parries and stuns still work).")]
+        public bool armoredWindup = true;
+
+        protected override bool InSuperArmor() => state == State.Strike || (armoredWindup && state == State.Windup);
 
         protected override void OnInterrupted()
         {
