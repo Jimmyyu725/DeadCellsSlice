@@ -30,6 +30,31 @@ namespace DeadCells.Core
             public bool down, jump, attack, dodge, shield, swap, flame;
         }
 
+        /// <summary>Signed direction to the nearest living zombie (0 if none).</summary>
+        float AimAtNearest()
+        {
+            var z = Nearest(out _);
+            return z == null ? 0f : Mathf.Sign(z.transform.position.x - player.transform.position.x);
+        }
+
+        ZombieEnemy Nearest(out float score)
+        {
+            ZombieEnemy target = null;
+            score = float.MaxValue;
+            foreach (var z in FindObjectsByType<ZombieEnemy>())
+            {
+                if (z.IsDead || !z.gameObject.activeInHierarchy)
+                    continue;
+                float d = Mathf.Abs(z.transform.position.x - player.transform.position.x) + Mathf.Abs(z.transform.position.y - player.transform.position.y) * 2f;
+                if (d < score)
+                {
+                    score = d;
+                    target = z;
+                }
+            }
+            return target;
+        }
+
         readonly List<Step> script = new List<Step>();
         float startTime;
         float nextCapture;
@@ -140,6 +165,9 @@ namespace DeadCells.Core
                 var s = script[stepIndex];
                 bool first = stepIndex != prevStep;
                 f.moveX = s.moveX;
+                // Showcase attacks and blocks turn towards the nearest zombie on their first frame.
+                if (first && (s.attack || s.shield) && s.moveX == 0f)
+                    f.moveX = AimAtNearest();
                 f.down = s.down;
                 f.jumpHeld = s.jump;
                 f.jumpPressed = s.jump && first;
@@ -160,19 +188,7 @@ namespace DeadCells.Core
 
         InputFrame Bot(InputFrame f)
         {
-            ZombieEnemy target = null;
-            float best = float.MaxValue;
-            foreach (var z in FindObjectsByType<ZombieEnemy>())
-            {
-                if (z.IsDead || !z.gameObject.activeInHierarchy)
-                    continue;
-                float d = Mathf.Abs(z.transform.position.x - player.transform.position.x) + Mathf.Abs(z.transform.position.y - player.transform.position.y) * 2f;
-                if (d < best)
-                {
-                    best = d;
-                    target = z;
-                }
-            }
+            var target = Nearest(out _);
             if (target == null)
             {
                 f.moveX = 1f;
@@ -182,8 +198,14 @@ namespace DeadCells.Core
             float dy = target.transform.position.y - player.transform.position.y;
             botAttackTimer -= Time.deltaTime;
             botJumpTimer -= Time.deltaTime;
+            bool blocked = false;
             if (Mathf.Abs(dx) > 1.6f)
+            {
                 f.moveX = Mathf.Sign(dx);
+                // A wall or ledge in the way: jump over it.
+                var hit = Physics2D.Raycast((Vector2)player.transform.position + Vector2.up * 0.4f, new Vector2(f.moveX, 0f), 0.8f, DCLayers.SolidMask);
+                blocked = hit.collider != null;
+            }
             else
             {
                 if (Mathf.Sign(dx) != player.Facing)
@@ -194,14 +216,14 @@ namespace DeadCells.Core
                     botAttackTimer = 0.17f;
                 }
             }
-            if (dy > 1.2f && botJumpTimer <= 0f)
+            if ((dy > 1.2f || blocked) && botJumpTimer <= 0f && player.Grounded)
             {
                 f.jumpPressed = true;
                 f.jumpHeld = true;
                 botJumpTimer = 0.8f;
             }
             else
-                f.jumpHeld = botJumpTimer > 0.4f;
+                f.jumpHeld = botJumpTimer > 0.35f;
             return f;
         }
 

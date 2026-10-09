@@ -47,7 +47,7 @@ namespace DeadCells.EditorTools
             if (x < 2) return H;
             if (x < 21) return 4;
             if (x < 34) return 1;
-            if (x >= 42 && x <= 46) return 7;
+            if (x >= 42 && x <= 46) return 6;
             if (x < 56) return 4;
             if (x < 58) return 5;
             if (x < 73) return 6;
@@ -70,7 +70,7 @@ namespace DeadCells.EditorTools
 
         static readonly Vector2[] ZombieSpawns =
         {
-            new Vector2(27.5f, 1f), new Vector2(39f, 4f), new Vector2(44.5f, 7f), new Vector2(52f, 4f),
+            new Vector2(27.5f, 1f), new Vector2(39f, 4f), new Vector2(44.5f, 6f), new Vector2(52f, 4f),
             new Vector2(65.5f, 6f), new Vector2(70f, 6f),
         };
 
