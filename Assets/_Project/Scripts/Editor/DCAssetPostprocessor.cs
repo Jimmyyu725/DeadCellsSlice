@@ -17,6 +17,7 @@ namespace DeadCells.EditorTools
     public class DCAssetPostprocessor : AssetPostprocessor
     {
         const string ArtRoot = "Assets/_Project/Art/";
+        const string AudioRoot = "Assets/_Project/Audio/";
         static readonly HashSet<string> LoopClips = new HashSet<string> { "Idle", "Run", "Jump_Rise", "Jump_Fall" };
         // Static props that live next to a character's FBX (boss weapons) and the rig-less creatures.
         static readonly HashSet<string> StaticInCharacters = new HashSet<string> { "Greatsword", "Shovel" };
@@ -36,6 +37,36 @@ namespace DeadCells.EditorTools
             ti.maxTextureSize = 2048;
             ti.textureCompression = TextureImporterCompression.CompressedHQ;
             ti.alphaSource = TextureImporterAlphaSource.None;
+        }
+
+        /// <summary>
+        /// Audio written by Tools/Audio/make_audio.py: effects decompress on load
+        /// (mono, low latency); music and ambience stream as Vorbis.
+        /// </summary>
+        void OnPreprocessAudio()
+        {
+            if (!assetPath.StartsWith(AudioRoot))
+                return;
+            var ai = (AudioImporter)assetImporter;
+            bool bed = assetPath.Contains("/Music/") || assetPath.Contains("/Ambience/");
+            var settings = ai.defaultSampleSettings;
+            if (bed)
+            {
+                settings.loadType = AudioClipLoadType.Streaming;
+                settings.compressionFormat = AudioCompressionFormat.Vorbis;
+                settings.quality = 0.6f;
+                ai.forceToMono = false;
+                ai.loadInBackground = true;
+            }
+            else
+            {
+                settings.loadType = AudioClipLoadType.DecompressOnLoad;
+                settings.compressionFormat = AudioCompressionFormat.ADPCM;
+                ai.forceToMono = true;
+                ai.loadInBackground = false;
+            }
+            settings.preloadAudioData = !bed;
+            ai.defaultSampleSettings = settings;
         }
 
         void OnPreprocessModel()

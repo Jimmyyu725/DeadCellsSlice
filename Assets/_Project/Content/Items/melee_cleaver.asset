@@ -28,6 +28,9 @@ MonoBehaviour:
   arcCore: {r: 6, g: 5, b: 6.5, a: 1}
   sparkColor: {r: 2.8, g: 1.8, b: 2.6, a: 1}
   dualWield: 0
+  swingSound: swing.light
+  hitSound: hit.flesh
+  fireSound: 
   bladeLength: 0.78
   combo:
   - clip: Slash_Combo_1

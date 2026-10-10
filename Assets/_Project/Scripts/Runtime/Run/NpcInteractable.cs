@@ -22,6 +22,7 @@ namespace DeadCells.Run
 
         public override void Interact(PlayerController player)
         {
+            Audio.Sfx.Play("npc.talk", transform.position + Vector3.up * 1.5f);
             if (role == Role.Collector)
                 GameUI.Instance?.OpenCollector();
             else

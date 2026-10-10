@@ -79,6 +79,7 @@ namespace DeadCells.Enemies
                         Enter(State.Chase);
                         nextAttack = Mathf.Max(nextAttack, Time.time + reactionDelay * windupScale);
                         JuiceEngine.Instance?.Popup(transform.position + Vector3.up * 2.3f, "?", new Color(1f, 0.9f, 0.5f), false);
+                        Audio.Sfx.Play("enemy.notice", transform.position + Vector3.up * 2f);
                     }
                     anim.Play(Mathf.Abs(body.linearVelocity.x) > 0.2f ? "Run" : "Idle", 0.12f);
                     if (anim.Current == "Run")
@@ -106,6 +107,7 @@ namespace DeadCells.Enemies
                         Enter(State.Strike);
                         anim.SetSpeed(strikeSpeed);
                         hit = false;
+                        Audio.Sfx.Play("enemy.attack", transform.position + Vector3.up);
                         squash?.Punch(new Vector2(1.2f, 0.85f));
                     }
                     break;

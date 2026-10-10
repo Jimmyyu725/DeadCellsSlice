@@ -48,6 +48,8 @@ namespace DeadCells.Core
         public float dieAfter;
         public bool breakPost;
         public bool armoryTest;
+        public bool jumpTest;
+        InputFrame? overrideInput;
         bool holdAttack;
         bool standStill;
         bool diedOnce;
@@ -107,6 +109,7 @@ namespace DeadCells.Core
                     case "-autoplayDieAfter": float.TryParse(next, out d.dieAfter); break;
                     case "-autoplayBreakPost": d.breakPost = true; break;
                     case "-autoplayArmory": d.armoryTest = true; break;
+                    case "-autoplayJumpTest": d.jumpTest = true; break;
                     case "-autoplayDifficulty":
                         d.difficulty = next == "easy" ? BaseDifficulty.Easy : next == "hard" ? BaseDifficulty.Hard : BaseDifficulty.Normal;
                         break;
@@ -200,6 +203,12 @@ namespace DeadCells.Core
                     Invoke(nameof(CaptureArea), 2.5f);
                     if (breakPost)
                         Invoke(nameof(BreakPost), 1.5f);
+                    if (jumpTest && rm.InPassage)
+                    {
+                        jumpTest = false;
+                        skipEvery = 0f;
+                        StartCoroutine(JumpTest());
+                    }
                     if (armoryTest && rm.InPassage)
                     {
                         armoryTest = false;
@@ -242,6 +251,38 @@ namespace DeadCells.Core
         }
 
         void CaptureArea() => Capture("area_" + lastArea.Replace('/', '_'));
+
+        /// <summary>Test hook: measure single and double jump heights from flat floor.</summary>
+        System.Collections.IEnumerator JumpTest()
+        {
+            yield return new WaitForSecondsRealtime(1.5f);
+            var p = PlayerController.Main;
+            foreach (bool twice in new[] { false, true })
+            {
+                overrideInput = new InputFrame();
+                yield return new WaitForSeconds(0.5f);
+                float y0 = p.transform.position.y, best = y0, t0 = Time.time;
+                overrideInput = new InputFrame { jumpPressed = true, jumpHeld = true };
+                yield return null;
+                overrideInput = new InputFrame { jumpHeld = true };
+                bool second = false;
+                while (Time.time - t0 < 1.6f)
+                {
+                    best = Mathf.Max(best, p.transform.position.y);
+                    if (twice && !second && Time.time - t0 > 0.36f)
+                    {
+                        second = true;
+                        overrideInput = new InputFrame { jumpPressed = true, jumpHeld = true };
+                        yield return null;
+                        overrideInput = new InputFrame { jumpHeld = true };
+                        Capture("double_jump_flip");
+                    }
+                    yield return null;
+                }
+                log.WriteLine($"[{Elapsed:F1}] jump test {(twice ? "double" : "single")}: height {best - y0:F2} m");
+            }
+            overrideInput = null;
+        }
 
         /// <summary>Player chest position in screen pixels, for cropping test captures.</summary>
         static string ScreenTag(PlayerController p)
@@ -521,6 +562,7 @@ namespace DeadCells.Core
             if (t >= duration)
             {
                 var run = SaveSystem.Data.run;
+                log.WriteLine($"audio: {Audio.AudioManager.PlayedCount} effects played, ids: {string.Join(" ", Audio.AudioManager.PlayedIds)}; music={Audio.Music.Current}");
                 log.WriteLine($"done. errors={errors} kills={run.kills} biome={run.biome} time={run.time:F0}s fps~{1f / Mathf.Max(0.0001f, Time.smoothDeltaTime):F0}");
                 log.Flush();
                 enabled = false;
@@ -540,6 +582,8 @@ namespace DeadCells.Core
             var rm = RunManager.Instance;
             if (player == null || rm == null || rm.Level == null || rm.Transitioning)
                 return f;
+            if (overrideInput.HasValue)
+                return overrideInput.Value;
             if (holdAttack || standStill)
                 return new InputFrame { primaryHeld = holdAttack };
             if (scripted)

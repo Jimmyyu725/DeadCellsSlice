@@ -72,6 +72,7 @@ namespace DeadCells.Enemies
                         released = true;
                         Vector3 from = transform.position + new Vector3(FacingDir * 0.8f, 1.6f, 0f);
                         var p = Fire(harpoonPrefab, from, AimAtPlayer(from, harpoonSpeed), 0f, baseDamage);
+                        Audio.Sfx.Play("harpoon.throw", from);
                         if (p != null)
                         {
                             p.hasEffect = true;
@@ -133,6 +134,7 @@ namespace DeadCells.Enemies
             clock = 0f;
             airborne = true;
             anim.SetSpeed(1f);
+            Audio.Sfx.Play("enemy.leap", transform.position);
             int dir = DirToPlayer;
             float vx = Mathf.Clamp((player.position.x - transform.position.x) * 1.15f, -leapVelocity.x, leapVelocity.x);
             float vy = leapVelocity.y + Mathf.Clamp(DistY, 0f, 4f) * 1.5f;

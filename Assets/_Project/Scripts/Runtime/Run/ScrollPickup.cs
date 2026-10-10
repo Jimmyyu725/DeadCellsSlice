@@ -32,6 +32,7 @@ namespace DeadCells.Run
             else
                 run.scrollsPower++;
             player.RecalculateStats(false);
+            Audio.Sfx.Play("pickup.scroll");
             if (vitality)
                 player.Health.Heal(player.Health.maxHealth * 0.15f);
             GameHUD.Instance?.Toast(Prompt, vitality ? new Color(0.5f, 1f, 0.6f) : new Color(1f, 0.55f, 0.4f));

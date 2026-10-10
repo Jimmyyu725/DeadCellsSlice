@@ -83,6 +83,13 @@ namespace DeadCells.Items
         [ColorUsage(true, true)] public Color arcCore = new Color(6f, 6f, 6f);
         [ColorUsage(true, true)] public Color sparkColor = new Color(2.5f, 2.2f, 1.6f);
         public bool dualWield;
+        [Header("Sound")]
+        [Tooltip("Sound event when a melee swing starts (Tools/Audio/sfx.py ids).")]
+        public string swingSound = "swing.light";
+        [Tooltip("Sound event when a melee hit lands (crits and kills add their own).")]
+        public string hitSound = "hit.flesh";
+        [Tooltip("Sound event when a bow shot / skill is released.")]
+        public string fireSound = "";
         public float bladeLength = 0.78f;
         public AttackStep[] combo = new AttackStep[0];
 

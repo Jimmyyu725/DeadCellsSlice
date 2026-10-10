@@ -27,6 +27,7 @@ namespace DeadCells.Run
                 return;
             }
             used = true;
+            Audio.Sfx.Play("fountain.use", transform.position);
             var run = SaveSystem.Data.run;
             int max = RunManager.MaxFlaskCharges;
             run.flaskCharges = Mathf.Max(run.flaskCharges, Mathf.RoundToInt(max * Difficulty.FountainRefill));

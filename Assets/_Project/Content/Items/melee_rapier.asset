@@ -28,6 +28,9 @@ MonoBehaviour:
   arcCore: {r: 6.5, g: 6, b: 4.5, a: 1}
   sparkColor: {r: 3, g: 2.6, b: 1.4, a: 1}
   dualWield: 0
+  swingSound: swing.thrust
+  hitSound: hit.flesh
+  fireSound: 
   bladeLength: 1.1
   combo:
   - clip: Spear_Thrust_1

@@ -26,6 +26,7 @@ namespace DeadCells.Run
         public override void Interact(PlayerController player)
         {
             var meta = SaveSystem.Data.meta;
+            Audio.Sfx.Play("lore.read");
             if (!meta.loreRead.Contains(loreId))
             {
                 meta.loreRead.Add(loreId);

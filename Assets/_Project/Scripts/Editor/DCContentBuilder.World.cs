@@ -511,6 +511,9 @@ namespace DeadCells.EditorTools
             d.crit = crit;
             d.critMultiplier = critMult;
             d.icon = null;
+            d.swingSound = "swing.light";
+            d.hitSound = "hit.flesh";
+            d.fireSound = "";
             EditorUtility.SetDirty(d);
             return d;
         }
@@ -555,6 +558,8 @@ namespace DeadCells.EditorTools
                 Step("Slash_Combo_1", 18, 4, 8, 9, 3, 6, 3.5f, 32, new Vector2(1.5f, 1.0f), new Vector2(3.0f, 2.2f), 7f, 0.4f, 0.7f, 0.35f),
                 Step("Slash_Combo_3", 24, 5, 10, 14, 4, 8, 5f, 48, new Vector2(1.6f, 0.9f), new Vector2(3.3f, 2.4f), 12f, 0.6f, 1f, 0.6f, true),
             };
+            broad.swingSound = "swing.heavy";
+            broad.hitSound = "hit.heavy";
             list.Add(broad);
 
             var spear = Item("melee_spear", ItemKind.Melee, "Spear", MountPoint.Weapon, 40, 170, 2, CritRule.Finisher, 1.9f);
@@ -569,6 +574,7 @@ namespace DeadCells.EditorTools
                 Step("Spear_Thrust_2", 16, 4, 7, 8, 3, 6, 5.5f, 17, new Vector2(1.8f, 1.2f), new Vector2(3.4f, 0.9f), 4.5f, 0.15f, 0.35f, 0.18f),
                 Step("Spear_Thrust_3", 22, 5, 9, 12, 4, 8, 9f, 30, new Vector2(2.1f, 1.1f), new Vector2(4.0f, 1.0f), 10f, 0.35f, 1f, 0.45f, true),
             };
+            spear.swingSound = "swing.thrust";
             list.Add(spear);
 
             var daggers = Item("melee_daggers", ItemKind.Melee, "Dagger", MountPoint.Weapon, 50, 160, 2, CritRule.Behind, 2.3f);
@@ -598,6 +604,8 @@ namespace DeadCells.EditorTools
                 Step("Slash_Combo_1", 18, 4, 8, 10, 3, 6, 3f, 30, new Vector2(1.5f, 1.1f), new Vector2(3.0f, 2.4f), 8f, 0.9f, 0.8f, 0.4f),
                 Step("Slash_Combo_3", 24, 5, 10, 15, 4, 8, 4.5f, 46, new Vector2(1.6f, 0.9f), new Vector2(3.3f, 2.6f), 13f, 0.7f, 1f, 0.65f, true),
             };
+            maul.swingSound = "swing.heavy";
+            maul.hitSound = "hit.bell";
             list.Add(maul);
 
             // Pendulum Rapier: quick thrusts that crit right after a roll.
@@ -613,6 +621,7 @@ namespace DeadCells.EditorTools
                 Step("Spear_Thrust_2", 16, 4, 7, 7, 3, 6, 6f, 11, new Vector2(1.6f, 1.2f), new Vector2(3.0f, 0.8f), 3f, 0.1f, 0.25f, 0.12f),
                 Step("Spear_Thrust_3", 22, 5, 9, 12, 4, 8, 9f, 20, new Vector2(1.9f, 1.1f), new Vector2(3.6f, 0.9f), 7f, 0.3f, 0.8f, 0.3f, true),
             };
+            rapier.swingSound = "swing.thrust";
             list.Add(rapier);
 
             // Tide Scythe: slow, very wide sweeps.
@@ -628,6 +637,7 @@ namespace DeadCells.EditorTools
                 Step("Slash_Combo_1", 18, 4, 8, 9, 3, 6, 4f, 17, new Vector2(1.6f, 1.0f), new Vector2(3.4f, 2.2f), 5f, 0.2f, 0.4f, 0.22f),
                 Step("Slash_Combo_3", 24, 5, 10, 14, 4, 8, 6f, 34, new Vector2(1.7f, 1.0f), new Vector2(3.6f, 2.6f), 11f, 0.4f, 1f, 0.5f, true),
             };
+            scythe.swingSound = "swing.heavy";
             list.Add(scythe);
 
             // Chain Flail: the last hit of the combo sends enemies flying.
@@ -643,6 +653,8 @@ namespace DeadCells.EditorTools
                 Step("Slash_Combo_2", 18, 4, 7, 9, 3, 6, 4f, 15, new Vector2(1.4f, 1.3f), new Vector2(2.7f, 2.3f), 7f, 0.2f, 0.35f, 0.2f),
                 Step("Slash_Combo_3", 24, 5, 9, 14, 4, 8, 6f, 32, new Vector2(1.5f, 0.9f), new Vector2(3.0f, 2.2f), 15f, 0.5f, 1f, 0.55f, true),
             };
+            flail.swingSound = "swing.flail";
+            flail.hitSound = "hit.heavy";
             list.Add(flail);
 
             // Gravedigger's Shovel: finishes off anything below 35% health.
@@ -657,6 +669,8 @@ namespace DeadCells.EditorTools
                 Step("Slash_Combo_1", 18, 4, 7, 9, 3, 6, 4.5f, 18, new Vector2(1.4f, 1.0f), new Vector2(2.7f, 2.0f), 6f, 0.2f, 0.35f, 0.2f),
                 Step("Slash_Combo_3", 24, 5, 9, 13, 4, 8, 6.5f, 28, new Vector2(1.5f, 0.8f), new Vector2(3.0f, 1.8f), 10f, 0.4f, 0.9f, 0.45f, true),
             };
+            shovel.swingSound = "swing.heavy";
+            shovel.hitSound = "hit.heavy";
             list.Add(shovel);
 
             var shield = Item("shield_frontline", ItemKind.Shield, "FrontlineShield", MountPoint.Shield, 0, 140, 1, CritRule.None, 1.5f);
@@ -673,6 +687,7 @@ namespace DeadCells.EditorTools
             bow.damage = 16f;
             bow.cooldown = 0.5f;
             bow.effectColor = new Color(2.2f, 2.4f, 2.8f);
+            bow.fireSound = "bow.shoot";
             list.Add(bow);
 
             // Fishbone Crossbow: slow bolts that pierce every enemy in a line.
@@ -684,6 +699,7 @@ namespace DeadCells.EditorTools
             crossbow.cooldown = 1.1f;
             crossbow.pierce = true;
             crossbow.effectColor = new Color(2.8f, 2.2f, 1.2f);
+            crossbow.fireSound = "crossbow.shoot";
             list.Add(crossbow);
 
             var fire = Item("skill_fire_grenade", ItemKind.Skill, "FireGrenade", MountPoint.Weapon, 0, 130, 1, CritRule.None, 1.5f);
@@ -699,6 +715,7 @@ namespace DeadCells.EditorTools
             fire.cooldown = 10f;
             fire.spin = true;
             fire.effectColor = new Color(3.4f, 1.4f, 0.3f);
+            fire.fireSound = "grenade.throw";
             list.Add(fire);
 
             var ice = Item("skill_ice_grenade", ItemKind.Skill, "IceGrenade", MountPoint.Weapon, 35, 150, 2, CritRule.None, 1.5f);
@@ -714,6 +731,7 @@ namespace DeadCells.EditorTools
             ice.cooldown = 12f;
             ice.spin = true;
             ice.effectColor = new Color(0.9f, 2.2f, 3.4f);
+            ice.fireSound = "grenade.throw";
             list.Add(ice);
 
             var harpoon = Item("skill_harpoon", ItemKind.Skill, "Harpoon", MountPoint.Weapon, 60, 200, 3, CritRule.None, 1.5f);
@@ -726,6 +744,7 @@ namespace DeadCells.EditorTools
             harpoon.effectDuration = 0.6f;
             harpoon.cooldown = 8f;
             harpoon.effectColor = new Color(1.4f, 2.2f, 3.4f);
+            harpoon.fireSound = "harpoon.throw";
             list.Add(harpoon);
 
             foreach (var d in list)

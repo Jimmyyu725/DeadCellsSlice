@@ -1,0 +1,764 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a4cf6f80983ef47218e243165fe854f4, type: 3}
+  m_Name: SoundBank
+  m_EditorClassIdentifier: DeadCells.Runtime::DeadCells.Audio.SoundBank
+  sfx:
+  - id: achievement
+    clips:
+    - {fileID: 8300000, guid: 27165a26c496644a4b9c5555d4ba85d6, type: 3}
+    volume: 0.7
+    pitch: {x: 1, y: 1}
+    cooldown: 0.03
+    voices: 1
+    spatial: 0
+  - id: area.enter
+    clips:
+    - {fileID: 8300000, guid: 549c1fa23c8264a92b936259abc14273, type: 3}
+    volume: 0.6
+    pitch: {x: 1, y: 1}
+    cooldown: 0.03
+    voices: 1
+    spatial: 0
+  - id: arrow.hit
+    clips:
+    - {fileID: 8300000, guid: 766d2d736237b4ccebdc966cfe481b13, type: 3}
+    - {fileID: 8300000, guid: cc81665ea5f7340d68e146bea1a264b1, type: 3}
+    volume: 0.55
+    pitch: {x: 0.95, y: 1.05}
+    cooldown: 0.03
+    voices: 4
+    spatial: 1
+  - id: boss.death
+    clips:
+    - {fileID: 8300000, guid: e9727c8d5c136465b9b0764fe3672938, type: 3}
+    volume: 1
+    pitch: {x: 1, y: 1}
+    cooldown: 0.03
+    voices: 1
+    spatial: 0
+  - id: boss.gate
+    clips:
+    - {fileID: 8300000, guid: 292e716821fe745dcb22f577a6542be3, type: 3}
+    volume: 0.9
+    pitch: {x: 1, y: 1}
+    cooldown: 0.03
+    voices: 1
+    spatial: 0
+  - id: boss.intro
+    clips:
+    - {fileID: 8300000, guid: c6d6b78f4169147109fd811d74c4abf9, type: 3}
+    volume: 0.9
+    pitch: {x: 1, y: 1}
+    cooldown: 0.03
+    voices: 1
+    spatial: 0
+  - id: boss.shockwave
+    clips:
+    - {fileID: 8300000, guid: 61e76ffa662284a34b6e2273f0b0c68f, type: 3}
+    volume: 0.75
+    pitch: {x: 0.95, y: 1.05}
+    cooldown: 0.03
+    voices: 2
+    spatial: 1
+  - id: boss.slam
+    clips:
+    - {fileID: 8300000, guid: 0cc7d253bccf84e4ba16754515527685, type: 3}
+    - {fileID: 8300000, guid: 8310b078af3c2476fa12bd632f66394e, type: 3}
+    volume: 1
+    pitch: {x: 0.95, y: 1.03}
+    cooldown: 0.1
+    voices: 2
+    spatial: 1
+  - id: boss.sweep
+    clips:
+    - {fileID: 8300000, guid: 4f68921f07a2942e19e1b607998daa25, type: 3}
+    - {fileID: 8300000, guid: 813b0bec671014e808e930d0a852bdb5, type: 3}
+    volume: 0.85
+    pitch: {x: 0.95, y: 1.05}
+    cooldown: 0.03
+    voices: 2
+    spatial: 1
+  - id: bow.shoot
+    clips:
+    - {fileID: 8300000, guid: 91baa29106af4445692649234b687cd1, type: 3}
+    - {fileID: 8300000, guid: 281149b6d4ebe45e8a41110f7ae38a3a, type: 3}
+    volume: 0.6
+    pitch: {x: 0.95, y: 1.05}
+    cooldown: 0.03
+    voices: 4
+    spatial: 1
+  - id: chest.open
+    clips:
+    - {fileID: 8300000, guid: b8332726757a34e0bb289a4efade49e7, type: 3}
+    volume: 0.75
+    pitch: {x: 0.95, y: 1.05}
+    cooldown: 0.03
+    voices: 1
+    spatial: 1
+  - id: crossbow.shoot
+    clips:
+    - {fileID: 8300000, guid: b85f3ab6add2f4b3eaf205be760e392f, type: 3}
+    - {fileID: 8300000, guid: bd85d85e07491415d80b0dd845fd56ce, type: 3}
+    volume: 0.75
+    pitch: {x: 0.95, y: 1.05}
+    cooldown: 0.03
+    voices: 4
+    spatial: 1
+  - id: door.open
+    clips:
+    - {fileID: 8300000, guid: 23e49cfef60b8441a9c85514ff957f8b, type: 3}
+    volume: 0.8
+    pitch: {x: 0.95, y: 1.05}
+    cooldown: 0.03
+    voices: 1
+    spatial: 1
+  - id: enemy.alert
+    clips:
+    - {fileID: 8300000, guid: 2046ed62b73d4486dbe195354727dbb3, type: 3}
+    volume: 0.55
+    pitch: {x: 0.98, y: 1.04}
+    cooldown: 0.06
+    voices: 3
+    spatial: 1
+  - id: enemy.attack
+    clips:
+    - {fileID: 8300000, guid: 443f16ce6ae624cb38dc16e96a67f882, type: 3}
+    - {fileID: 8300000, guid: cdd316c0a40ec4d069341b9affc3242d, type: 3}
+    volume: 0.55
+    pitch: {x: 0.9, y: 1.08}
+    cooldown: 0.04
+    voices: 4
+    spatial: 1
+  - id: enemy.cast
+    clips:
+    - {fileID: 8300000, guid: 7ac564213624a418ca2ec0845b9e46b5, type: 3}
+    volume: 0.5
+    pitch: {x: 0.95, y: 1.05}
+    cooldown: 0.03
+    voices: 3
+    spatial: 1
+  - id: enemy.death
+    clips:
+    - {fileID: 8300000, guid: f4df11b04e9a8459081b1ed39d943740, type: 3}
+    - {fileID: 8300000, guid: fed1c09549f854624b5044f050f3cbb7, type: 3}
+    volume: 0.7
+    pitch: {x: 0.9, y: 1.1}
+    cooldown: 0.04
+    voices: 4
+    spatial: 1
+  - id: enemy.kill
+    clips:
+    - {fileID: 8300000, guid: 7b48f11f80fee44a198d6708516ed856, type: 3}
+    - {fileID: 8300000, guid: f8e18615dc87f46189c61085b090a441, type: 3}
+    - {fileID: 8300000, guid: 79d0cec2323674043863e629a4229f9c, type: 3}
+    volume: 0.75
+    pitch: {x: 0.9, y: 1.1}
+    cooldown: 0.03
+    voices: 4
+    spatial: 1
+  - id: enemy.leap
+    clips:
+    - {fileID: 8300000, guid: 5d4e0a777bdb5493988b4a2b0601cca8, type: 3}
+    volume: 0.55
+    pitch: {x: 0.95, y: 1.05}
+    cooldown: 0.03
+    voices: 3
+    spatial: 1
+  - id: enemy.notice
+    clips:
+    - {fileID: 8300000, guid: 1e55d7368199041ee8d8cbcf44f64003, type: 3}
+    volume: 0.35
+    pitch: {x: 0.95, y: 1.1}
+    cooldown: 0.1
+    voices: 2
+    spatial: 1
+  - id: enemy.orb
+    clips:
+    - {fileID: 8300000, guid: 347568fc1c6f0414d90a7688ce6e3f8f, type: 3}
+    volume: 0.5
+    pitch: {x: 0.95, y: 1.05}
+    cooldown: 0.03
+    voices: 3
+    spatial: 1
+  - id: explode.fire
+    clips:
+    - {fileID: 8300000, guid: ab8ea3bc8c2ba410ba72cf7348a934c7, type: 3}
+    - {fileID: 8300000, guid: 7d12259c5c36d4219a3b27ceaaf8ff9e, type: 3}
+    volume: 0.95
+    pitch: {x: 0.92, y: 1.05}
+    cooldown: 0.05
+    voices: 3
+    spatial: 1
+  - id: explode.ice
+    clips:
+    - {fileID: 8300000, guid: 7f6db68c3e1f54ef3b7cc4310f36fb4d, type: 3}
+    - {fileID: 8300000, guid: 467904a0435e8427a9e0fa3394f876bf, type: 3}
+    volume: 0.85
+    pitch: {x: 0.95, y: 1.05}
+    cooldown: 0.05
+    voices: 3
+    spatial: 1
+  - id: flyer.dive
+    clips:
+    - {fileID: 8300000, guid: d445b67b76d0142759ccf71878e6ee3f, type: 3}
+    - {fileID: 8300000, guid: 44a595beb57aa4cfea7a68ddd245b0a0, type: 3}
+    volume: 0.55
+    pitch: {x: 0.95, y: 1.05}
+    cooldown: 0.03
+    voices: 3
+    spatial: 1
+  - id: fountain.use
+    clips:
+    - {fileID: 8300000, guid: 41de6d84e158946e9b0d1a0b299741e7, type: 3}
+    volume: 0.7
+    pitch: {x: 0.95, y: 1.05}
+    cooldown: 0.03
+    voices: 1
+    spatial: 1
+  - id: grenade.throw
+    clips:
+    - {fileID: 8300000, guid: 870af6612078149d59fbdae272ea033d, type: 3}
+    volume: 0.55
+    pitch: {x: 0.95, y: 1.05}
+    cooldown: 0.03
+    voices: 4
+    spatial: 1
+  - id: harpoon.throw
+    clips:
+    - {fileID: 8300000, guid: 18603c2fb673c43e9bfe002ac5b7620f, type: 3}
+    volume: 0.65
+    pitch: {x: 0.95, y: 1.05}
+    cooldown: 0.03
+    voices: 4
+    spatial: 1
+  - id: hazard.sorrow
+    clips:
+    - {fileID: 8300000, guid: 08dc2fc69e94545a8afb37d18a88be3f, type: 3}
+    volume: 0.4
+    pitch: {x: 0.95, y: 1.05}
+    cooldown: 0.03
+    voices: 2
+    spatial: 1
+  - id: hazard.spikes
+    clips:
+    - {fileID: 8300000, guid: d24ce8cacb69a48cd9d0413a567c8192, type: 3}
+    volume: 0.7
+    pitch: {x: 0.95, y: 1.05}
+    cooldown: 0.03
+    voices: 2
+    spatial: 1
+  - id: hazard.vent
+    clips:
+    - {fileID: 8300000, guid: 0ec33eedf96ec4526925641e4e13db17, type: 3}
+    volume: 0.5
+    pitch: {x: 0.95, y: 1.05}
+    cooldown: 0.03
+    voices: 3
+    spatial: 1
+  - id: hit.bell
+    clips:
+    - {fileID: 8300000, guid: 1f3dbd2c6d24345418d8c0ea2eabef85, type: 3}
+    - {fileID: 8300000, guid: ac5b2a26a23464ca39d3ddb5daeb5135, type: 3}
+    volume: 0.8
+    pitch: {x: 0.94, y: 1.06}
+    cooldown: 0.05
+    voices: 3
+    spatial: 1
+  - id: hit.crit
+    clips:
+    - {fileID: 8300000, guid: 3b8e0113e54ec4f60ba4007bc9882f0e, type: 3}
+    - {fileID: 8300000, guid: fad7f7a3f1bce4935b628f382df0914e, type: 3}
+    volume: 0.9
+    pitch: {x: 0.95, y: 1.05}
+    cooldown: 0.03
+    voices: 3
+    spatial: 1
+  - id: hit.flesh
+    clips:
+    - {fileID: 8300000, guid: b06d56ece593b413b9dfc64c37f1e544, type: 3}
+    - {fileID: 8300000, guid: d52c907e983824a5fb1db4425d97bb28, type: 3}
+    - {fileID: 8300000, guid: 2db912f05565d4db78f465bbea6f478c, type: 3}
+    - {fileID: 8300000, guid: ad99de844de1a4683ba8913480c6bb6c, type: 3}
+    volume: 0.75
+    pitch: {x: 0.9, y: 1.1}
+    cooldown: 0.025
+    voices: 5
+    spatial: 1
+  - id: hit.heavy
+    clips:
+    - {fileID: 8300000, guid: 40d3055307ef542288fea0b580588890, type: 3}
+    - {fileID: 8300000, guid: b7024953f17964426916d6882ff683f8, type: 3}
+    volume: 0.9
+    pitch: {x: 0.92, y: 1.05}
+    cooldown: 0.03
+    voices: 3
+    spatial: 1
+  - id: lightning.zap
+    clips:
+    - {fileID: 8300000, guid: 1f3409b28f8da4e55abd64f560fdbb57, type: 3}
+    - {fileID: 8300000, guid: b8da4093e361a4c50b69a6a59583c834, type: 3}
+    - {fileID: 8300000, guid: bb017407b15ed43c99a46f76ab79a806, type: 3}
+    volume: 0.6
+    pitch: {x: 0.9, y: 1.1}
+    cooldown: 0.04
+    voices: 3
+    spatial: 1
+  - id: lore.read
+    clips:
+    - {fileID: 8300000, guid: 3287e0f5b469142b9b3b55029326b84d, type: 3}
+    volume: 0.7
+    pitch: {x: 0.95, y: 1.05}
+    cooldown: 0.03
+    voices: 1
+    spatial: 0
+  - id: npc.talk
+    clips:
+    - {fileID: 8300000, guid: fe1388fd801f8405db997a75a593aaf7, type: 3}
+    - {fileID: 8300000, guid: f985e94487ced40748a1b2a4fb80627b, type: 3}
+    volume: 0.45
+    pitch: {x: 0.95, y: 1.05}
+    cooldown: 0.03
+    voices: 1
+    spatial: 1
+  - id: pickup.blueprint
+    clips:
+    - {fileID: 8300000, guid: 8e143fa96f8a8423fa5033cc3ce1f9ad, type: 3}
+    volume: 0.75
+    pitch: {x: 1, y: 1}
+    cooldown: 0.03
+    voices: 1
+    spatial: 0
+  - id: pickup.cell
+    clips:
+    - {fileID: 8300000, guid: cb26aba617db44c358e8109ef1747c00, type: 3}
+    - {fileID: 8300000, guid: 08535556783b64dcf9f9685d45095083, type: 3}
+    volume: 0.5
+    pitch: {x: 0.95, y: 1.1}
+    cooldown: 0.03
+    voices: 4
+    spatial: 0
+  - id: pickup.gold
+    clips:
+    - {fileID: 8300000, guid: dbb93c234803d4eeb8c7f1fc3f0bd416, type: 3}
+    - {fileID: 8300000, guid: ba69e7df973284a92ad27f4bd6507b74, type: 3}
+    - {fileID: 8300000, guid: 6dfd4361be36d459f81974ba8c483b3d, type: 3}
+    volume: 0.4
+    pitch: {x: 0.95, y: 1.12}
+    cooldown: 0.03
+    voices: 4
+    spatial: 0
+  - id: pickup.item
+    clips:
+    - {fileID: 8300000, guid: aa7ff07fa4d4f48f78b2003e19776728, type: 3}
+    volume: 0.7
+    pitch: {x: 0.95, y: 1.05}
+    cooldown: 0.03
+    voices: 1
+    spatial: 0
+  - id: pickup.scroll
+    clips:
+    - {fileID: 8300000, guid: f72852870420e4a9d9c7c7af4bfbd44d, type: 3}
+    volume: 0.75
+    pitch: {x: 1, y: 1}
+    cooldown: 0.03
+    voices: 1
+    spatial: 0
+  - id: player.death
+    clips:
+    - {fileID: 8300000, guid: 4a511afe3982b44beb01cdf7c2000aac, type: 3}
+    volume: 0.9
+    pitch: {x: 1, y: 1}
+    cooldown: 0.03
+    voices: 1
+    spatial: 0
+  - id: player.double_jump
+    clips:
+    - {fileID: 8300000, guid: 99293ffc67e004ee497cf1b23d3e816b, type: 3}
+    - {fileID: 8300000, guid: 2bf463327478246b68c80f8c393535c9, type: 3}
+    volume: 0.6
+    pitch: {x: 0.95, y: 1.05}
+    cooldown: 0.05
+    voices: 2
+    spatial: 1
+  - id: player.drink
+    clips:
+    - {fileID: 8300000, guid: a2b344fa8fb0347eebcbdeda8914e20a, type: 3}
+    - {fileID: 8300000, guid: 8676689649f954138842f0aaf45a816c, type: 3}
+    volume: 0.7
+    pitch: {x: 0.95, y: 1.05}
+    cooldown: 0.03
+    voices: 1
+    spatial: 1
+  - id: player.flask_empty
+    clips:
+    - {fileID: 8300000, guid: 6aa8c4395f67c4a25aa7d86fbde2a7fe, type: 3}
+    volume: 0.5
+    pitch: {x: 0.95, y: 1.05}
+    cooldown: 0.03
+    voices: 1
+    spatial: 1
+  - id: player.hurt
+    clips:
+    - {fileID: 8300000, guid: a764a79ea59fa47b89003f01da39e686, type: 3}
+    - {fileID: 8300000, guid: 2041328f225374d31a7b4dc164bd85a3, type: 3}
+    - {fileID: 8300000, guid: d1e84c2b292ae4565abc549c69c1e10a, type: 3}
+    volume: 0.8
+    pitch: {x: 0.95, y: 1.05}
+    cooldown: 0.03
+    voices: 2
+    spatial: 1
+  - id: player.jump
+    clips:
+    - {fileID: 8300000, guid: 7b4612ac4a7af41f0a3b678a9d96261f, type: 3}
+    - {fileID: 8300000, guid: 85c8207f33f1e4d3791be6f28d78e5be, type: 3}
+    volume: 0.45
+    pitch: {x: 0.95, y: 1.05}
+    cooldown: 0.05
+    voices: 2
+    spatial: 1
+  - id: player.land
+    clips:
+    - {fileID: 8300000, guid: 78a74728ff6cd4b70b1c0b616e3d6b46, type: 3}
+    - {fileID: 8300000, guid: 2ddd0efbef4534740966ac7da46359a1, type: 3}
+    volume: 0.5
+    pitch: {x: 0.9, y: 1.05}
+    cooldown: 0.08
+    voices: 2
+    spatial: 1
+  - id: player.mantle
+    clips:
+    - {fileID: 8300000, guid: 89162691d2c624da7b3305061eeb1757, type: 3}
+    - {fileID: 8300000, guid: 057a8ee357e444d1ebb59eb6d1733430, type: 3}
+    volume: 0.45
+    pitch: {x: 0.95, y: 1.05}
+    cooldown: 0.03
+    voices: 2
+    spatial: 1
+  - id: player.pound_land
+    clips:
+    - {fileID: 8300000, guid: 46197bafe2ee945e486928b4855770ce, type: 3}
+    - {fileID: 8300000, guid: decf5cc0d17e6494cb76c4cae564f7ad, type: 3}
+    volume: 0.85
+    pitch: {x: 0.95, y: 1.05}
+    cooldown: 0.03
+    voices: 1
+    spatial: 1
+  - id: player.pound_start
+    clips:
+    - {fileID: 8300000, guid: efe4689d2477a44c2b78dd66ea423426, type: 3}
+    volume: 0.55
+    pitch: {x: 0.95, y: 1.05}
+    cooldown: 0.03
+    voices: 1
+    spatial: 1
+  - id: player.roll
+    clips:
+    - {fileID: 8300000, guid: 19af810384eea40b6a118b6d9cc3e458, type: 3}
+    - {fileID: 8300000, guid: 0029267a2a05b492ab7f8e65a9b00ad4, type: 3}
+    volume: 0.55
+    pitch: {x: 0.95, y: 1.05}
+    cooldown: 0.03
+    voices: 2
+    spatial: 1
+  - id: player.step
+    clips:
+    - {fileID: 8300000, guid: bcc529183fefd4b7b99fc8283e139f70, type: 3}
+    - {fileID: 8300000, guid: ddd36cd28ac9944968a93591546c65af, type: 3}
+    - {fileID: 8300000, guid: f89713b54cb704337be65b6db562d9f8, type: 3}
+    - {fileID: 8300000, guid: abb8838230add4fcbb5154f2240880c9, type: 3}
+    - {fileID: 8300000, guid: 26d4cde572b764dc0913825c13a5576c, type: 3}
+    volume: 0.28
+    pitch: {x: 0.9, y: 1.1}
+    cooldown: 0.08
+    voices: 2
+    spatial: 1
+  - id: projectile.reflect
+    clips:
+    - {fileID: 8300000, guid: 0b28d41e018b541ee9c77240c43f68ec, type: 3}
+    volume: 0.7
+    pitch: {x: 0.95, y: 1.05}
+    cooldown: 0.03
+    voices: 2
+    spatial: 1
+  - id: shield.block
+    clips:
+    - {fileID: 8300000, guid: c93466f4bba204fd598011ba1efc4ca7, type: 3}
+    - {fileID: 8300000, guid: e9b03060ce7cd47f1b983e27af24886e, type: 3}
+    volume: 0.75
+    pitch: {x: 0.95, y: 1.05}
+    cooldown: 0.03
+    voices: 2
+    spatial: 1
+  - id: shield.parry
+    clips:
+    - {fileID: 8300000, guid: 0a4f0c46e4415483a9e3d9e58641a026, type: 3}
+    - {fileID: 8300000, guid: 5a0b762e1b208491197d0c9cd6ccbe5d, type: 3}
+    volume: 0.9
+    pitch: {x: 0.95, y: 1.05}
+    cooldown: 0.03
+    voices: 2
+    spatial: 1
+  - id: shield.raise
+    clips:
+    - {fileID: 8300000, guid: 1a1cd9b43b24d44788a0cde06c021997, type: 3}
+    volume: 0.45
+    pitch: {x: 0.95, y: 1.05}
+    cooldown: 0.03
+    voices: 1
+    spatial: 1
+  - id: shop.buy
+    clips:
+    - {fileID: 8300000, guid: 2ddcd2a4b5ba944ab8b2fe11c14b9558, type: 3}
+    volume: 0.7
+    pitch: {x: 0.95, y: 1.05}
+    cooldown: 0.03
+    voices: 1
+    spatial: 0
+  - id: swing.flail
+    clips:
+    - {fileID: 8300000, guid: 67f1347fead7a45f0b34824b0b55352d, type: 3}
+    - {fileID: 8300000, guid: a04cfe0117a1249d9b0f7423f0c7917e, type: 3}
+    volume: 0.6
+    pitch: {x: 0.92, y: 1.06}
+    cooldown: 0.02
+    voices: 3
+    spatial: 1
+  - id: swing.heavy
+    clips:
+    - {fileID: 8300000, guid: 04bbcca647ff84c8e956e41ad5f97d1e, type: 3}
+    - {fileID: 8300000, guid: 52f530fbc66524869b110c947c8631a6, type: 3}
+    volume: 0.65
+    pitch: {x: 0.92, y: 1.05}
+    cooldown: 0.02
+    voices: 3
+    spatial: 1
+  - id: swing.light
+    clips:
+    - {fileID: 8300000, guid: f7ea7719b96f04d119fc4bcb7fe6feca, type: 3}
+    - {fileID: 8300000, guid: c0e8231b6123d489c98c3b9af2877e74, type: 3}
+    - {fileID: 8300000, guid: 48af80fae797a49eeb5b0ef2a5fd799e, type: 3}
+    volume: 0.55
+    pitch: {x: 0.92, y: 1.08}
+    cooldown: 0.02
+    voices: 3
+    spatial: 1
+  - id: swing.thrust
+    clips:
+    - {fileID: 8300000, guid: 62bfaf469421f416e849ba2d6116c6cd, type: 3}
+    - {fileID: 8300000, guid: bf0d50b48d931409cba8968ddfbe5494, type: 3}
+    - {fileID: 8300000, guid: f240d9a50900447adb97dc46aeb1437d, type: 3}
+    volume: 0.5
+    pitch: {x: 0.92, y: 1.1}
+    cooldown: 0.02
+    voices: 3
+    spatial: 1
+  - id: teleport.activate
+    clips:
+    - {fileID: 8300000, guid: cd3f33689d99a46828618feb5952b24d, type: 3}
+    volume: 0.6
+    pitch: {x: 1, y: 1}
+    cooldown: 0.03
+    voices: 1
+    spatial: 1
+  - id: teleport.warp
+    clips:
+    - {fileID: 8300000, guid: a7de3121088e5438a97748b59acdf266, type: 3}
+    volume: 0.75
+    pitch: {x: 1, y: 1}
+    cooldown: 0.03
+    voices: 1
+    spatial: 0
+  - id: tk.pillar
+    clips:
+    - {fileID: 8300000, guid: 470d9d5ebbc52496284db2316da26be9, type: 3}
+    volume: 0.6
+    pitch: {x: 0.95, y: 1.05}
+    cooldown: 0.03
+    voices: 4
+    spatial: 1
+  - id: tk.rewind
+    clips:
+    - {fileID: 8300000, guid: 31e08f94b8ae643418dbe006b7a62a49, type: 3}
+    volume: 0.85
+    pitch: {x: 1, y: 1}
+    cooldown: 0.03
+    voices: 1
+    spatial: 1
+  - id: tk.star
+    clips:
+    - {fileID: 8300000, guid: 1a425fd78942d460186daa11a699a457, type: 3}
+    - {fileID: 8300000, guid: c454602cf7b0b4237b4d81b00fa3e883, type: 3}
+    volume: 0.45
+    pitch: {x: 0.95, y: 1.1}
+    cooldown: 0.05
+    voices: 4
+    spatial: 1
+  - id: tk.summon
+    clips:
+    - {fileID: 8300000, guid: 52e024515ad9249f3a8a7baf632d6c62, type: 3}
+    volume: 0.6
+    pitch: {x: 0.95, y: 1.05}
+    cooldown: 0.03
+    voices: 2
+    spatial: 1
+  - id: turret.charge
+    clips:
+    - {fileID: 8300000, guid: 058210b066bb5436d9fb82b4a2c78d0d, type: 3}
+    volume: 0.4
+    pitch: {x: 0.95, y: 1.05}
+    cooldown: 0.03
+    voices: 3
+    spatial: 1
+  - id: turret.fire
+    clips:
+    - {fileID: 8300000, guid: f2832c87c58a04b32aadaf2ab6d4a643, type: 3}
+    volume: 0.5
+    pitch: {x: 0.95, y: 1.05}
+    cooldown: 0.03
+    voices: 3
+    spatial: 1
+  - id: ui.back
+    clips:
+    - {fileID: 8300000, guid: 35822c8e6a33a4de39eb13fb1e4a6b41, type: 3}
+    volume: 0.4
+    pitch: {x: 1, y: 1}
+    cooldown: 0.03
+    voices: 2
+    spatial: 0
+  - id: ui.close
+    clips:
+    - {fileID: 8300000, guid: c709884570fa44c9db1e9d71644ed49e, type: 3}
+    volume: 0.35
+    pitch: {x: 1, y: 1}
+    cooldown: 0.05
+    voices: 1
+    spatial: 0
+  - id: ui.confirm
+    clips:
+    - {fileID: 8300000, guid: 2bc15bec67f1e438f9ca4a6d5398f37c, type: 3}
+    volume: 0.4
+    pitch: {x: 1, y: 1}
+    cooldown: 0.03
+    voices: 2
+    spatial: 0
+  - id: ui.error
+    clips:
+    - {fileID: 8300000, guid: 80bf07451734a487bad6c731200929bf, type: 3}
+    volume: 0.4
+    pitch: {x: 1, y: 1}
+    cooldown: 0.08
+    voices: 1
+    spatial: 0
+  - id: ui.move
+    clips:
+    - {fileID: 8300000, guid: b1bc3c0e097e54eaeaef2dacfb633f7d, type: 3}
+    volume: 0.3
+    pitch: {x: 0.98, y: 1.02}
+    cooldown: 0.02
+    voices: 2
+    spatial: 0
+  - id: ui.open
+    clips:
+    - {fileID: 8300000, guid: 81303f7304ce04ab498951fe895d8b7f, type: 3}
+    volume: 0.4
+    pitch: {x: 1, y: 1}
+    cooldown: 0.05
+    voices: 1
+    spatial: 0
+  - id: vermin.explode
+    clips:
+    - {fileID: 8300000, guid: 5d69d750998414596abed5ef992f21c1, type: 3}
+    - {fileID: 8300000, guid: b20110f9008454ba7a43cf848506d7e5, type: 3}
+    volume: 0.85
+    pitch: {x: 0.95, y: 1.05}
+    cooldown: 0.03
+    voices: 3
+    spatial: 1
+  - id: vermin.fuse
+    clips:
+    - {fileID: 8300000, guid: f93b449bb2ca84ff5ad2b0d8fb7b6300, type: 3}
+    volume: 0.5
+    pitch: {x: 0.95, y: 1.05}
+    cooldown: 0.03
+    voices: 3
+    spatial: 1
+  - id: weapon.equip
+    clips:
+    - {fileID: 8300000, guid: ace15c2635c19483db99c557f2d2bd96, type: 3}
+    volume: 0.6
+    pitch: {x: 0.95, y: 1.05}
+    cooldown: 0.03
+    voices: 1
+    spatial: 0
+  music:
+  - id: music.boss
+    clip: {fileID: 8300000, guid: bcf7643c322f9446799956375b5d5d91, type: 3}
+    volume: 0.9
+    loop: 1
+  - id: music.death
+    clip: {fileID: 8300000, guid: a17017f18baab4b8c96f217653d00e1e, type: 3}
+    volume: 0.8
+    loop: 0
+  - id: music.lung
+    clip: {fileID: 8300000, guid: b3238337d2a494cd08e6d8ac46cda39d, type: 3}
+    volume: 0.75
+    loop: 1
+  - id: music.menu
+    clip: {fileID: 8300000, guid: 722dc1f8ff70f4153a4041c0f8c4a8ce, type: 3}
+    volume: 0.75
+    loop: 1
+  - id: music.ossuary
+    clip: {fileID: 8300000, guid: 4f5732591848d4cdf9099d7ecc180974, type: 3}
+    volume: 0.75
+    loop: 1
+  - id: music.oubliette
+    clip: {fileID: 8300000, guid: e6c44aa72eded4b7fbfbbb41579311d7, type: 3}
+    volume: 0.75
+    loop: 1
+  - id: music.passage
+    clip: {fileID: 8300000, guid: 5e59a057506334435a959640f4bd0391, type: 3}
+    volume: 0.75
+    loop: 1
+  - id: music.promenade
+    clip: {fileID: 8300000, guid: 4355a7ec86e1644e2a524c00f690b0d6, type: 3}
+    volume: 0.75
+    loop: 1
+  - id: music.stilt
+    clip: {fileID: 8300000, guid: 916ebf8545bfe458f9393a53a53c0f56, type: 3}
+    volume: 0.75
+    loop: 1
+  ambience:
+  - id: amb.clock
+    clip: {fileID: 8300000, guid: dc36fed4ea39d4afdb8f5adaae674f2c, type: 3}
+    volume: 0.6
+    loop: 1
+  - id: amb.dungeon
+    clip: {fileID: 8300000, guid: 43738537b3c26445aa2555239df5328c, type: 3}
+    volume: 0.6
+    loop: 1
+  - id: amb.ossuary
+    clip: {fileID: 8300000, guid: cfd97cd606ec04ca88d5a88e2f369ed0, type: 3}
+    volume: 0.6
+    loop: 1
+  - id: amb.passage
+    clip: {fileID: 8300000, guid: 59fbcb48c8957452bb3dd755e48cdf77, type: 3}
+    volume: 0.6
+    loop: 1
+  - id: amb.sea
+    clip: {fileID: 8300000, guid: a0441db8704684c7593d5d06896ba448, type: 3}
+    volume: 0.6
+    loop: 1
+  - id: amb.wind
+    clip: {fileID: 8300000, guid: c2ad192c121a14c61a8723f9ce01c788, type: 3}
+    volume: 0.6
+    loop: 1

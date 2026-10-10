@@ -64,6 +64,7 @@ namespace DeadCells.Enemies
                         state = State.Dive;
                         t = 0f;
                         hit = false;
+                        Audio.Sfx.Play("flyer.dive", transform.position);
                         diveDir = player != null ? ((Vector2)(player.position + Vector3.up * 0.9f) - (Vector2)transform.position).normalized : Vector2.down;
                     }
                     break;

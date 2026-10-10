@@ -2,7 +2,7 @@
 
 用 Blender（Python 程序化建模、绑定、动画、烘焙）+ Unity 6 URP（自定义卡通 shader、像素化 Render Feature、手感系统）做的《Dead Cells》风格横版 Roguelite。剧情取自《The Churning》设定：余烬血块附身无头囚犯，从地牢底层一路向上，穿过四个区域，直到钟匠之肺的时间守护者。
 
-所有美术资产都由脚本生成，关卡在运行时由房间模板拼出，整个项目可一键重建。
+所有美术资产、音效和配乐都由脚本生成，关卡在运行时由房间模板拼出，整个项目可一键重建。
 
 ![主菜单](Docs/shot_menu.jpg)
 
@@ -23,7 +23,7 @@ open "Builds/DeadCellsSlice.app"
 | 操作 | 键盘 / 鼠标 | 手柄 |
 |---|---|---|
 | 移动 | A / D 或 ← → | 左摇杆 / 十字键 |
-| 跳跃（按住更高；撞墙时自动攀上边缘） | Space | A |
+| 跳跃（按住更高；空中再按一次二段跳；撞墙时自动攀上边缘） | Space | A |
 | 主武器 / 副武器（按住连续攻击） | J 或左键 / K 或右键 | X / Y |
 | 技能 1 / 技能 2 | Q / E | LT / RT |
 | 翻滚（无敌帧） | Shift 或 L | B |
@@ -45,6 +45,7 @@ open "Builds/DeadCellsSlice.app"
 - **商店与收藏家**：商人用金币卖装备。精英、Boss、宝箱会掉落图纸，在通道里交给收藏家并花细胞解锁，之后才会出现在掉落和商店里；收藏家也卖血瓶容量和永久生命。
 - **传送点（同 Dead Cells）**：靠近石像就会点亮，同时标进地图。在石像旁按交互打开地图，选另一座已点亮的石像就能传送。地图有战争迷雾，标出你、传送点、出口、商店、宝藏和石板。
 - **剧情**：序章（大蒸馏、时序之神的断齿、余烬血块的诞生）、苏醒字幕、区域标题与引言、13 块碎裂石板、NPC 与 Boss 台词、死亡画面「无药可救的轮回」，以及击败时间守护者后的结局。
+- **声音**：80 种音效（挥砍、命中、暴击、敌人预警、拾取、界面等）、8 首可循环配乐（主菜单、五个区域、水闸通道、Boss 战）和 6 段环境声，全部由 `Tools/Audio/` 用 numpy 合成。设置里可分别调节音乐和音效音量。
 - **成就**：21 个，覆盖探索、Boss、Boss 细胞、困难通关、无伤区域、速通、收集、石板、传送和死亡次数。用过作弊的那一局不能解锁成就。
 - **作弊**：在主菜单直接键入 `CHURN` 解锁作弊菜单，可开无敌、一击必杀、无冷却，加金币和细胞，回满，显示全地图，跳关，解锁全部图纸或全部 Boss 细胞。
 
@@ -74,6 +75,7 @@ open "Builds/DeadCellsSlice.app"
 |---|---|
 | `Tools/Blender/` | 资产生成脚本：角色 `build_beheaded.py`、`build_zombie.py`、`build_enemies.py`（哨兵、僧侣、渔民、两个 Boss、生物），武器 `build_weapons.py`、`build_arsenal.py`、`build_armory.py`，道具 `build_props.py`，环境 `build_environment.py`、`build_biome.py`（四个区域套件） |
 | `Tools/PIPELINE.md`、`Tools/BIOMES.md` | Blender → Unity 资产约定、区域套件约定 |
+| `Tools/Audio/` | 音频合成：`dsp.py` 信号处理，`sfx.py` 音效配方，`music.py` 作曲与环境声，`make_audio.py` 生成 WAV 和清单（用 Blender 自带的 Python 运行，它带 numpy） |
 | `Tools/Rooms/` | 房间模板（`make_rooms.py` 按坐标定义）和两个校验器：单房间（含镜像）可达性 `validate_rooms.py`，整关可达性 `validate_levels.py` |
 | `Assets/_Project/Art/` | 导出的 FBX 与烘焙贴图 |
 | `Assets/_Project/Resources/` | 房间模板、中英文字符串表、物品库、世界预制体表 |
@@ -100,7 +102,13 @@ python3 Tools/Rooms/make_rooms.py && python3 Tools/Rooms/validate_rooms.py
 ~/.unity/bin/unity run . --no-tail -l Logs/dump.log -- -executeMethod DeadCells.EditorTools.DCBatch.DumpLevels && python3 Tools/Rooms/validate_levels.py
 ```
 
-3. 配置 Unity、生成内容和场景、打包 macOS 版，并跑一遍自动验证：
+3. 音频（约 30 秒）：
+
+```bash
+/Applications/Blender.app/Contents/Resources/5.2/python/bin/python3.13 Tools/Audio/make_audio.py
+```
+
+4. 配置 Unity、生成内容和场景、打包 macOS 版，并跑一遍自动验证：
 
 ```bash
 zsh Tools/build_and_capture.sh check --seconds 120 -- -autoplayMenu -autoplayGod -autoplaySkip 20
@@ -123,6 +131,7 @@ zsh Tools/build_and_capture.sh check --seconds 120 -- -autoplayMenu -autoplayGod
 | `-autoplayLang en\|zh`、`-autoplayNoVsync` | 语言、关闭垂直同步（测真实帧率） |
 | `-autoplayDieAfter N`、`-autoplayRetry`、`-autoplayPrologue` | 第 N 秒强制死亡、死亡画面选「重试」、允许播放序章（测试重开流程） |
 | `-autoplayShaftTest` | 每个区域把角色放到竖井底部，只靠跳跃爬出，记录成败 |
+| `-autoplayJumpTest`、`-autoplayArmory` | 在通道里测单跳 / 二段跳高度；逐把挥舞所有武器并拉近截图 |
 | `-autoplayBreakPost` | 故意清空后处理配置，验证运行时自动重建 |
 
-测试机器人使用单独的存档 `save_autoplay.json`，不会改动玩家自己的 `save.json`。日志 `autoplay_log.txt` 记录每个区域的房间数和敌人数、报错计数、平均帧率、最差帧、CPU/GPU 帧时间。
+测试机器人使用单独的存档 `save_autoplay.json` 并静音运行，不会改动玩家自己的 `save.json`。日志 `autoplay_log.txt` 记录每个区域的房间数和敌人数、报错计数、平均帧率、最差帧、CPU/GPU 帧时间。

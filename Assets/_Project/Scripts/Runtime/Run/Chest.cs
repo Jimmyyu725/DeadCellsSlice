@@ -31,6 +31,7 @@ namespace DeadCells.Run
         IEnumerator Open()
         {
             var juice = JuiceEngine.Instance;
+            Audio.Sfx.Play("chest.open", transform.position);
             juice?.Shake(Vector2.up, 0.2f);
             juice?.HitStop(0.05f);
             float t = 0f;

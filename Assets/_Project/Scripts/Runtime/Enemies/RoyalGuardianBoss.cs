@@ -62,6 +62,8 @@ namespace DeadCells.Enemies
                     {
                         struck = true;
                         StrikeBox(new Vector2(2.2f, 1.2f), new Vector2(3.4f, 2.6f), baseDamage * 1.3f, new Vector2(9f, 7f), 0.4f);
+                        Audio.Sfx.Play("boss.slam", transform.position);
+                        Audio.Sfx.Play("boss.shockwave", transform.position);
                         var juice = JuiceEngine.Instance;
                         Vector3 tip = transform.position + new Vector3(FacingDir * 3f * transform.localScale.x, 0.2f, 0f);
                         juice?.SlamWave(tip, 3f);
@@ -106,7 +108,11 @@ namespace DeadCells.Enemies
             anim.Restart(clip, 0f);
             anim.SetSpeed((Enraged ? 1.25f : 1f) / windupScale);
             Telegraph();
+            if (s == State.Sweep)
+                Invoke(nameof(SweepSound), Mathf.Max(0f, (sweepFrame - 8) / 60f * windupScale / (Enraged ? 1.25f : 1f)));
         }
+
+        void SweepSound() => Audio.Sfx.Play("boss.sweep", transform.position + Vector3.up);
 
         void Finish()
         {

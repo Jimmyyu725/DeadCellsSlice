@@ -121,6 +121,7 @@ namespace DeadCells.Run
             if (fresh && ui != null && !autoplaySkips && wantPrologue)
             {
                 player.Freeze(true);
+                Audio.Music.Play("music.menu");
                 yield return ui.PlayPrologue();
                 SaveSystem.Data.meta.introSeen = true;
                 SaveSystem.Save();
@@ -191,6 +192,7 @@ namespace DeadCells.Run
             var data = LevelGenerator.Generate(def, seed);
             level = LevelBuilder.Build(data, def, levelRoot, seed);
             ApplyAtmosphere(def);
+            Audio.Music.ForBiome(def.id);
             if (map != null)
                 map.Setup(data, def.liquidMaterial != null && def.liquidMaterial.HasProperty("_Color") ? def.liquidMaterial.GetColor("_Color") : new Color(0.5f, 0.3f, 0.8f));
             if (cameraBounds != null)
@@ -226,6 +228,7 @@ namespace DeadCells.Run
                 if (def.depth == 4) Achievements.Unlock("lung");
             }
             ui?.ShowTitle(def);
+            Audio.Sfx.Play("area.enter", def.isPassage ? 0.6f : 1f);
             if (wake)
             {
                 player.Freeze(false);
@@ -332,6 +335,7 @@ namespace DeadCells.Run
             player.Freeze(true);
             juice?.Embers(player.transform.position + Vector3.up, 30, new Color(1.6f, 0.8f, 3.2f));
             player.squash.Punch(new Vector2(0.6f, 1.5f));
+            Audio.Sfx.Play("teleport.warp");
             GameHUD.Instance?.Fade(true);
             yield return new WaitForSecondsRealtime(0.35f);
             player.Teleport(target.transform.position + new Vector3(1.2f, 0.05f, -target.transform.position.z));
@@ -435,6 +439,8 @@ namespace DeadCells.Run
             Run.active = false;
             SaveSystem.Save();
             var ui = GameUI.Instance;
+            Audio.Music.Play("music.menu", 2f);
+            Audio.Music.Ambience(null, 2f);
             if (ui != null)
                 yield return ui.PlayEnding(newCell, summary.time, summary.kills, summary.gold, summary.diff, summary.cells);
             SceneFlow.LoadMenu();
@@ -461,6 +467,8 @@ namespace DeadCells.Run
 
         IEnumerator DeathRoutine(int cells, int gold, float time, int kills, string biome, BaseDifficulty difficulty, int bossCells)
         {
+            Audio.Music.Play("music.death", 0.6f);
+            Audio.Music.Ambience(null, 2f);
             yield return new WaitForSecondsRealtime(1.2f);
             var ui = GameUI.Instance;
             if (ui == null)

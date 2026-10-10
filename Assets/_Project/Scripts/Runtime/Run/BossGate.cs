@@ -50,6 +50,9 @@ namespace DeadCells.Run
             {
                 SetClosed(true);
                 JuiceEngine.Instance?.Shake(Vector2.down, 0.5f);
+                Audio.Sfx.Play("boss.gate");
+                Audio.Sfx.Play("boss.intro");
+                Audio.Music.Play("music.boss", 0.8f);
                 boss.Engage();
                 GameHUD.Instance?.ShowBoss(boss);
             }
@@ -57,6 +60,7 @@ namespace DeadCells.Run
             {
                 done = true;
                 SetClosed(false);
+                Audio.Music.ForBiome(RunManager.Instance != null && RunManager.Instance.Current != null ? RunManager.Instance.Current.id : "", 4f);
                 if (exit != null)
                     exit.locked = false;
                 GameHUD.Instance?.ShowBoss(null);

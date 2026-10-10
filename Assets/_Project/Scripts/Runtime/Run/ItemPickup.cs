@@ -63,16 +63,19 @@ namespace DeadCells.Run
                 if (run.gold < price)
                 {
                     GameHUD.Instance?.Toast(Loc.Get("hud.not_enough_gold"), new Color(1f, 0.5f, 0.4f));
+                    Audio.Sfx.Play("ui.error");
                     return;
                 }
                 RunManager.Instance.SpendGold(price);
                 SaveSystem.Data.stats.goldSpent += price;
                 Achievements.CheckThresholds();
                 GameHUD.Instance?.Toast(Loc.Get("npc.merchant.bought"), UIKit.Gold);
+                Audio.Sfx.Play("shop.buy");
             }
             var combat = player.Combat;
             int slot = combat.SlotFor(item);
             var old = combat.Equip(slot, item);
+            Audio.Sfx.Play("pickup.item");
             JuiceEngine.Instance?.Embers(transform.position + Vector3.up * 1.1f, 16, item.arcColor);
             if (old != null)
             {

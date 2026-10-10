@@ -28,6 +28,9 @@ MonoBehaviour:
   arcCore: {r: 6, g: 6, b: 6, a: 1}
   sparkColor: {r: 2.5, g: 2.2, b: 1.6, a: 1}
   dualWield: 0
+  swingSound: swing.light
+  hitSound: hit.flesh
+  fireSound: bow.shoot
   bladeLength: 0.78
   combo: []
   parryWindow: 0.18

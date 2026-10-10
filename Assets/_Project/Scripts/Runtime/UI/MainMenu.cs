@@ -30,6 +30,8 @@ namespace DeadCells.UI
             GameInput.GameplayEnabled = true;
             Loc.Current = Data.settings.language;
             MenuPages.ApplyDisplay();
+            Audio.Music.Play("music.menu", 1.2f);
+            Audio.Music.Ambience(null, 1.2f);
 
             var canvas = UIKit.Canvas("TitleCanvas", 150, transform);
             var root = canvas.transform;

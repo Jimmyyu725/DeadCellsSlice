@@ -162,6 +162,7 @@ namespace DeadCells.UI
 
         public void OpenPause()
         {
+            Audio.Sfx.Play("ui.open");
             var page = new MenuPage { title = () => Loc.Get("menu.paused"), body = () => RunSummary() };
             page.Add(MenuItem.Button(() => Loc.Get("menu.resume"), menu.CloseAll));
             page.Add(MenuItem.Button(() => Loc.Get("map.title"), () =>
@@ -203,6 +204,7 @@ namespace DeadCells.UI
             if (rm == null || map == null || map.Texture == null)
                 return;
             mapOpen = true;
+            Audio.Sfx.Play("ui.open");
             teleportMode = from != null;
             teleportFrom = from;
             teleportChoices = rm.Level.teleporters.Where(t => t != null && t.Discovered && t != from).OrderBy(t => t.transform.position.x).ToList();
@@ -236,6 +238,8 @@ namespace DeadCells.UI
 
         void CloseMap()
         {
+            if (mapOpen)
+                Audio.Sfx.Play("ui.close");
             mapOpen = false;
             teleportMode = false;
             mapRoot.gameObject.SetActive(false);

@@ -197,6 +197,7 @@ namespace DeadCells.UI
             int n = page.items.Count;
             if (n > 0)
             {
+                int before = page.selected;
                 if (MenuInput.Up)
                 {
                     page.selected = (page.selected - 1 + n) % n;
@@ -207,11 +208,13 @@ namespace DeadCells.UI
                     page.selected = (page.selected + 1) % n;
                     ClampSelection(page, 1);
                 }
+                if (page.selected != before)
+                    Audio.Sfx.Play("ui.move");
                 var item = page.items[page.selected];
-                if (item.Enabled && item.change != null)
+                if (item.Enabled && item.change != null && (MenuInput.Left || MenuInput.Right))
                 {
-                    if (MenuInput.Left) item.change(-1);
-                    if (MenuInput.Right) item.change(1);
+                    item.change(MenuInput.Left ? -1 : 1);
+                    Audio.Sfx.Play("ui.move");
                 }
                 // Mouse hover / click.
                 Vector2 mouse = MenuInput.MousePosition;
@@ -220,30 +223,43 @@ namespace DeadCells.UI
                     int idx = scroll + i;
                     if (idx >= n || !UIKit.Contains(rows[i].rt, mouse))
                         continue;
-                    if (MenuInput.MouseMoved)
+                    if (MenuInput.MouseMoved && page.selected != idx)
+                    {
                         page.selected = idx;
+                        Audio.Sfx.Play("ui.move");
+                    }
                     if (MenuInput.MouseClicked)
                     {
                         page.selected = idx;
                         var clicked = page.items[idx];
-                        if (clicked.Enabled)
-                            clicked.confirm?.Invoke();
+                        if (clicked.Enabled && clicked.confirm != null)
+                        {
+                            Audio.Sfx.Play("ui.confirm");
+                            clicked.confirm();
+                        }
+                        else if (!clicked.Enabled)
+                            Audio.Sfx.Play("ui.error");
                         return;
                     }
                 }
                 if (MenuInput.Confirm && item.Enabled && item.confirm != null)
                 {
+                    Audio.Sfx.Play("ui.confirm");
                     item.confirm();
                     return;
                 }
+                if (MenuInput.Confirm && !item.Enabled)
+                    Audio.Sfx.Play("ui.error");
             }
             else if (MenuInput.Confirm && page.onBack != null)
             {
+                Audio.Sfx.Play("ui.confirm");
                 page.onBack();
                 return;
             }
             if (MenuInput.Cancel && page.canBack)
             {
+                Audio.Sfx.Play("ui.back");
                 if (page.onBack != null)
                     page.onBack();
                 else

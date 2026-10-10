@@ -241,6 +241,7 @@ namespace DeadCells.Enemies
             hitFlash?.Flash(new Color(2.6f, 0.5f, 0.2f), 0.6f);
             squash?.Punch(new Vector2(0.9f, 1.12f));
             JuiceEngine.Instance?.Popup(transform.position + Vector3.up * (2.4f * transform.localScale.y), "!", new Color(1f, 0.25f, 0.2f), big);
+            Audio.Sfx.Play("enemy.alert", transform.position + Vector3.up * 2f, big ? 1f : 0.75f);
         }
 
         protected bool StrikeBox(Vector2 offset, Vector2 size, float damage, Vector2 knockback, float stun = 0.25f)
@@ -362,6 +363,7 @@ namespace DeadCells.Enemies
                 if (!c.isTrigger)
                     c.gameObject.layer = DCLayers.Fx;
             Killed?.Invoke(this, info);
+            Audio.Sfx.Play(isBoss ? "boss.death" : "enemy.death", transform.position + Vector3.up);
             Invoke(nameof(Burst), isBoss ? 1.6f : corpseTime);
         }
 

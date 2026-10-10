@@ -18,6 +18,7 @@ namespace DeadCells.Run
         public float damage = 14f;
         float t;
         float nextHit;
+        bool wasActive;
 
         void Start() => t = Random.value * period;
 
@@ -34,6 +35,9 @@ namespace DeadCells.Run
             }
             if (glow != null)
                 glow.intensity = active ? 4f : warn ? 1.5f : 0.3f;
+            if (active && !wasActive)
+                Audio.Sfx.Play("hazard.vent", transform.position);
+            wasActive = active;
             if (!active || Time.time < nextHit)
                 return;
             var c = (Vector2)transform.position + new Vector2(0f, area.y * 0.5f);

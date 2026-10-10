@@ -24,6 +24,7 @@ namespace DeadCells.Run
         {
             if (locked)
                 return;
+            Audio.Sfx.Play("door.open", transform.position);
             RunManager.Instance.ExitReached();
         }
 

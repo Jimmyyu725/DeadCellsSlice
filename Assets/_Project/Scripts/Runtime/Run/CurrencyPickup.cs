@@ -65,6 +65,7 @@ namespace DeadCells.Run
                     rm.AddGold(amount);
                 else
                     rm.AddCells(amount);
+                Audio.Sfx.Play(kind == Kind.Gold ? "pickup.gold" : "pickup.cell");
             }
             Destroy(gameObject);
         }

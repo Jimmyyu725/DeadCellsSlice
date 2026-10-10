@@ -40,6 +40,7 @@ namespace DeadCells.Enemies
                 if (timer <= 0.8f && timer + dt > 0.8f)
                 {
                     hitFlash?.Flash(new Color(2.2f, 0.8f, 3f), 0.6f);
+                    Audio.Sfx.Play("turret.charge", transform.position + Vector3.up * 1.6f);
                     anim.Restart(anim.Has(singClip) ? singClip : "Idle", 0f);
                 }
                 if (timer <= 0f)
@@ -58,6 +59,7 @@ namespace DeadCells.Enemies
                         }
                     }
                     squash?.Punch(new Vector2(1.15f, 0.9f));
+                    Audio.Sfx.Play("turret.fire", from);
                 }
             }
             if (core != null)

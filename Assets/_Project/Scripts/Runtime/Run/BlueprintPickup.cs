@@ -32,6 +32,7 @@ namespace DeadCells.Run
                     GameHUD.Instance?.Toast(Loc.Get("hud.blueprint", def.DisplayName), UIKit.CellBlue);
                 }
                 JuiceEngine.Instance?.Embers(transform.position + Vector3.up, 20, new Color(0.6f, 1.8f, 3f));
+                Audio.Sfx.Play("pickup.blueprint");
                 Destroy(gameObject);
             }
         }

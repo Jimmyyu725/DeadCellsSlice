@@ -57,6 +57,8 @@ namespace DeadCells.Run
                 });
                 if (wasInv && kind == Kind.Spikes)
                     return;
+                if (kind == Kind.Spikes)
+                    Audio.Sfx.Play("hazard.spikes", player.transform.position);
             }
             juice?.Ichor(player.transform.position, Vector2.up, splashColor, 16);
             if (returnToSafety && !player.Health.IsDead)

@@ -17,6 +17,25 @@ namespace DeadCells.FX
         Vector2 offset;     // current deviation from (1,1)
         Vector2 velocity;
 
+        [Tooltip("Height of the body centre above this pivot (spins turn around it).")]
+        public float spinCenter = 1.0f;
+
+        Vector3 basePosition;
+        float spinFrom, spinTo, spinStart, spinDuration;
+        bool spinning;
+
+        void Awake() => basePosition = transform.localPosition;
+
+        /// <summary>Rotates the visual by `degrees` around the body centre over `duration` (a flip).</summary>
+        public void Spin(float degrees, float duration)
+        {
+            spinFrom = 0f;
+            spinTo = degrees;
+            spinStart = Time.time;
+            spinDuration = Mathf.Max(0.01f, duration);
+            spinning = true;
+        }
+
         public void Punch(Vector2 scale)
         {
             offset = scale - Vector2.one;
@@ -53,6 +72,19 @@ namespace DeadCells.FX
             float sx = Mathf.Max(0.2f, 1f + offset.x);
             float sy = Mathf.Max(0.2f, 1f + offset.y);
             transform.localScale = new Vector3(sx, sy, sx);
+            float angle = 0f;
+            if (spinning)
+            {
+                float t = (Time.time - spinStart) / spinDuration;
+                if (t >= 1f)
+                    spinning = false;
+                else
+                    angle = Mathf.Lerp(spinFrom, spinTo, 1f - (1f - t) * (1f - t)); // ease out
+            }
+            var rot = Quaternion.Euler(0f, 0f, angle);
+            Vector3 center = new Vector3(0f, spinCenter * sy, 0f);
+            transform.localRotation = rot;
+            transform.localPosition = basePosition + center - rot * center;
         }
     }
 }

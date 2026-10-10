@@ -50,6 +50,11 @@ namespace DeadCells.Player
         public float apexHangThreshold = 1.6f;
         public float apexGravityMultiplier = 0.55f;
         public float coyoteTime = 0.12f;
+
+        [Header("Double jump")]
+        [Tooltip("Jumps available in mid-air, refilled on landing.")]
+        public int airJumps = 1;
+        public float doubleJumpHeight = 2.7f;
         public float jumpBufferTime = 0.15f;
 
         [Header("Dodge roll / air dash")]
@@ -114,6 +119,8 @@ namespace DeadCells.Player
         bool jumpCutApplied;
         bool isJumping;
         bool airDashAvailable = true;
+        int airJumpsLeft;
+        float doubleJumpVelocity;
         float dodgeReadyTime;
         int dodgeDirection;
         float fallSpeedBeforeLanding;
@@ -148,6 +155,7 @@ namespace DeadCells.Player
             flameBlock = new MaterialPropertyBlock();
             gravity = 2f * jumpHeight / (timeToApex * timeToApex);
             jumpVelocity = gravity * timeToApex;
+            doubleJumpVelocity = Mathf.Sqrt(2f * gravity * doubleJumpHeight);
             body.gravityScale = 0f;
             body.freezeRotation = true;
             body.interpolation = RigidbodyInterpolation2D.Interpolate;
@@ -185,7 +193,7 @@ namespace DeadCells.Player
                 case PlayerState.Attack:
                     if (TryDodge(input) || TryGroundPound(input))
                         break;
-                    if (combat.CanCancel && Grounded && Time.time - lastJumpPressedTime <= jumpBufferTime)
+                    if (combat.CanCancel && (Grounded || airJumpsLeft > 0) && Time.time - lastJumpPressedTime <= jumpBufferTime)
                     {
                         // Recovery frames can be cancelled into a jump.
                         combat.CancelAttack();
@@ -279,6 +287,7 @@ namespace DeadCells.Player
                     if (footstepTimer <= 0f)
                     {
                         footstepTimer = 0.2f;
+                        Audio.Sfx.Play("player.step", FeetPosition);
                         JuiceEngine.Instance?.Dust(FeetPosition, new Vector2(-Facing, 0.4f), 2);
                     }
                 }
@@ -301,6 +310,7 @@ namespace DeadCells.Player
             {
                 lastGroundedTime = Time.time;
                 airDashAvailable = true;
+                airJumpsLeft = airJumps;
                 if (!wasGrounded)
                     OnLanded(fallSpeedBeforeLanding);
                 if (groundCollider != null && groundCollider.gameObject.layer == DCLayers.Ground && Time.time - lastSafeTime > 0.25f
@@ -406,6 +416,22 @@ namespace DeadCells.Player
                 squash.Punch(new Vector2(0.78f, 1.28f));
                 JuiceEngine.Instance?.Dust(FeetPosition, Vector2.up, 4);
                 anim.Restart("Jump_Rise", 0.02f);
+                Audio.Sfx.Play("player.jump", FeetPosition);
+            }
+            else if (buffered && !Grounded && airJumpsLeft > 0 && !input.down)
+            {
+                // Double jump: a fresh, slightly lower jump with a forward flip.
+                airJumpsLeft--;
+                v.y = doubleJumpVelocity;
+                isJumping = true;
+                jumpCutApplied = false;
+                lastJumpPressedTime = -10f;
+                squash.Punch(new Vector2(0.85f, 1.2f));
+                squash.Spin(-360f, 0.32f); // inside the mirrored facing pivot: always a forward flip
+                JuiceEngine.Instance?.Embers(FeetPosition + Vector3.up * 0.2f, 10, new Color(1.6f, 2.6f, 3.2f));
+                JuiceEngine.Instance?.Dust(FeetPosition, Vector2.down, 3);
+                anim.Restart("Jump_Rise", 0.02f);
+                Audio.Sfx.Play("player.double_jump", FeetPosition);
             }
 
             // Variable height: releasing early cuts the ascent.
@@ -481,6 +507,7 @@ namespace DeadCells.Player
             mantleTo = standAt;
             anim.SetFacing(dir);
             EnterState(PlayerState.Mantle);
+            Audio.Sfx.Play("player.mantle", transform.position);
             return true;
         }
 
@@ -498,6 +525,7 @@ namespace DeadCells.Player
             if (State == PlayerState.PoundFall)
                 return;
             squash.Punch(new Vector2(1f + 0.32f * strength + 0.08f, 1f - 0.3f * strength - 0.06f));
+            Audio.Sfx.Play("player.land", FeetPosition, 0.35f + 0.65f * strength);
             if (strength > 0.15f)
                 JuiceEngine.Instance?.Dust(FeetPosition, Vector2.up, Mathf.RoundToInt(3 + 8 * strength));
         }
@@ -519,6 +547,7 @@ namespace DeadCells.Player
             combat.CancelAttack();
             LastDodgeTime = Time.time;
             EnterState(PlayerState.Dodge);
+            Audio.Sfx.Play("player.roll", FeetPosition);
             return true;
         }
 
@@ -532,6 +561,7 @@ namespace DeadCells.Player
             lastJumpPressedTime = -10f;
             combat.CancelAttack();
             EnterState(PlayerState.PoundHang);
+            Audio.Sfx.Play("player.pound_start", transform.position);
             return true;
         }
 
@@ -588,6 +618,7 @@ namespace DeadCells.Player
                     break;
                 case PlayerState.PoundLand:
                     PoundImpact();
+                    Audio.Sfx.Play("player.pound_land", FeetPosition);
                     break;
                 case PlayerState.Block:
                     combat.BeginBlock(blockSlot);
@@ -665,6 +696,7 @@ namespace DeadCells.Player
             health.InvulnerableUntil = Time.time + hurtInvulnerability;
             hitFlash?.Flash(new Color(2.4f, 0.35f, 0.3f));
             squash.Punch(new Vector2(0.82f, 1.15f));
+            Audio.Sfx.Play("player.hurt", transform.position + Vector3.up);
             var juice = JuiceEngine.Instance;
             if (juice != null)
             {
@@ -686,6 +718,7 @@ namespace DeadCells.Player
             combat.EndBlock();
             EnterState(PlayerState.Dead);
             anim.Restart("Death", 0f);
+            Audio.Sfx.Play("player.death");
             Died?.Invoke();
         }
 

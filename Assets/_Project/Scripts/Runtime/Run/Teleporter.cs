@@ -66,6 +66,7 @@ namespace DeadCells.Run
             if (announce)
             {
                 GameHUD.Instance?.Toast(Loc.Get("hud.teleporter_found"), new Color(0.8f, 0.6f, 1f));
+                Audio.Sfx.Play("teleport.activate", transform.position);
                 JuiceEngine.Instance?.Embers(transform.position + Vector3.up * 1.5f, 24, new Color(1.6f, 0.8f, 3.2f));
             }
         }

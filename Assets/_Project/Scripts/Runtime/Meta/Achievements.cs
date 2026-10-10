@@ -34,6 +34,7 @@ namespace DeadCells.Meta
             data.achievements.Add(id);
             SaveSystem.Save();
             Debug.Log("[DC] achievement: " + id);
+            Audio.Sfx.Play("achievement");
             Unlocked?.Invoke(id);
         }
 

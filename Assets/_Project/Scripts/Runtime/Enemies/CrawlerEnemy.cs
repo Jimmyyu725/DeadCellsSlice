@@ -61,6 +61,7 @@ namespace DeadCells.Enemies
             anim.Restart(anim.Has(hopClip) ? hopClip : moveClip, 0f);
             body.linearVelocity = new Vector2(DirToPlayer * hop.x, hop.y);
             squash?.Punch(new Vector2(0.75f, 1.3f));
+            Audio.Sfx.Play("enemy.leap", transform.position, 0.7f, 1.2f);
         }
 
         protected override void Move(float dt)

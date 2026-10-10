@@ -79,6 +79,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: DeadCells.Runtime::DeadCells.FX.SquashStretch
   stiffness: 420
   dampingRatio: 0.45
+  spinCenter: 1
 --- !u!1 &1892709104285491053
 GameObject:
   m_ObjectHideFlags: 0

@@ -113,6 +113,7 @@ namespace DeadCells.Enemies
                     {
                         fired = true;
                         JuiceEngine.Instance?.Shake(Vector2.down, 0.7f);
+                        Audio.Sfx.Play("boss.slam", transform.position);
                         int count = phase == 3 ? 4 : 3;
                         for (int i = 0; i < count; i++)
                         {
@@ -130,6 +131,7 @@ namespace DeadCells.Enemies
                         fired = true;
                         int n = phase == 1 ? 3 : 5;
                         Vector3 from = transform.position + new Vector3(FacingDir * 1.2f, 2.6f, 0f);
+                        Audio.Sfx.Play("tk.star", from);
                         for (int i = 0; i < n; i++)
                         {
                             float time = 0.9f + i * 0.12f;
@@ -161,6 +163,7 @@ namespace DeadCells.Enemies
                     {
                         fired = true;
                         GameUIBridge.Say?.Invoke(Loc.Get("npc.keeper.name"), Loc.Get("npc.keeper.rewind"));
+                        Audio.Sfx.Play("tk.rewind");
                         health.Heal(health.maxHealth * 0.12f);
                         var pc = PlayerController.Main;
                         if (pc != null && history.Count > 0)
@@ -196,7 +199,11 @@ namespace DeadCells.Enemies
             anim.Restart(clip, 0f);
             anim.SetSpeed(Speed / windupScale);
             Telegraph(s != State.Rewind);
+            if (s == State.Swing)
+                Invoke(nameof(SwingSound), Mathf.Max(0f, (swingFrame - 6) / 60f * windupScale / Speed));
         }
+
+        void SwingSound() => Audio.Sfx.Play("boss.sweep", transform.position + Vector3.up);
 
         void Finish(float rest)
         {
@@ -214,6 +221,7 @@ namespace DeadCells.Enemies
                 return;
             var go = Instantiate(pillarPrefab, at, Quaternion.identity);
             go.SetActive(true);
+            Audio.Sfx.Play("tk.pillar", at);
             var pillar = go.GetComponent<StarPillar>() ?? go.AddComponent<StarPillar>();
             pillar.delay = delay;
             pillar.damage = Damage(baseDamage * 0.9f);
@@ -224,6 +232,7 @@ namespace DeadCells.Enemies
         {
             if (tickPrefab == null)
                 return;
+            Audio.Sfx.Play("tk.summon", transform.position + Vector3.up * 3f);
             foreach (int dir in new[] { -1, 1 })
             {
                 var go = Instantiate(tickPrefab, transform.position + new Vector3(dir * 4f, 5f, 0f), Quaternion.identity, transform.parent);

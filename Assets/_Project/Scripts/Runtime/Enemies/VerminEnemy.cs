@@ -36,11 +36,13 @@ namespace DeadCells.Enemies
             {
                 fuseUntil = Time.time + fuse * windupScale;
                 Telegraph(false);
+                Audio.Sfx.Play("vermin.fuse", transform.position);
             }
         }
 
         void Explode()
         {
+            Audio.Sfx.Play("vermin.explode", transform.position);
             fuseUntil = -1f;
             var juice = JuiceEngine.Instance;
             Vector3 c = transform.position + Vector3.up * 0.4f;

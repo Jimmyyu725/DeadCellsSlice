@@ -21,6 +21,8 @@ namespace DeadCells.Meta
         public bool cheatsUnlocked;
         public bool fullscreen;
         public bool skipIntro;
+        [Range(0f, 1f)] public float musicVolume = 0.7f;
+        [Range(0f, 1f)] public float sfxVolume = 0.85f;
     }
 
     /// <summary>Survives death: unlocks bought from the Collector and boss-cell progress.</summary>

@@ -1,0 +1,1280 @@
+{
+ "sfx": [
+  {
+   "id": "achievement",
+   "cooldown": 0.03,
+   "files": [
+    "Assets/_Project/Audio/Sfx/achievement__1.wav"
+   ],
+   "pitch": [
+    1.0,
+    1.0
+   ],
+   "spatial": false,
+   "voices": 1,
+   "volume": 0.7
+  },
+  {
+   "id": "area.enter",
+   "cooldown": 0.03,
+   "files": [
+    "Assets/_Project/Audio/Sfx/area.enter__1.wav"
+   ],
+   "pitch": [
+    1.0,
+    1.0
+   ],
+   "spatial": false,
+   "voices": 1,
+   "volume": 0.6
+  },
+  {
+   "id": "arrow.hit",
+   "cooldown": 0.03,
+   "files": [
+    "Assets/_Project/Audio/Sfx/arrow.hit__1.wav",
+    "Assets/_Project/Audio/Sfx/arrow.hit__2.wav"
+   ],
+   "pitch": [
+    0.95,
+    1.05
+   ],
+   "spatial": true,
+   "voices": 4,
+   "volume": 0.55
+  },
+  {
+   "id": "boss.death",
+   "cooldown": 0.03,
+   "files": [
+    "Assets/_Project/Audio/Sfx/boss.death__1.wav"
+   ],
+   "pitch": [
+    1.0,
+    1.0
+   ],
+   "spatial": false,
+   "voices": 1,
+   "volume": 1.0
+  },
+  {
+   "id": "boss.gate",
+   "cooldown": 0.03,
+   "files": [
+    "Assets/_Project/Audio/Sfx/boss.gate__1.wav"
+   ],
+   "pitch": [
+    1.0,
+    1.0
+   ],
+   "spatial": false,
+   "voices": 1,
+   "volume": 0.9
+  },
+  {
+   "id": "boss.intro",
+   "cooldown": 0.03,
+   "files": [
+    "Assets/_Project/Audio/Sfx/boss.intro__1.wav"
+   ],
+   "pitch": [
+    1.0,
+    1.0
+   ],
+   "spatial": false,
+   "voices": 1,
+   "volume": 0.9
+  },
+  {
+   "id": "boss.shockwave",
+   "cooldown": 0.03,
+   "files": [
+    "Assets/_Project/Audio/Sfx/boss.shockwave__1.wav"
+   ],
+   "pitch": [
+    0.95,
+    1.05
+   ],
+   "spatial": true,
+   "voices": 2,
+   "volume": 0.75
+  },
+  {
+   "id": "boss.slam",
+   "cooldown": 0.1,
+   "files": [
+    "Assets/_Project/Audio/Sfx/boss.slam__1.wav",
+    "Assets/_Project/Audio/Sfx/boss.slam__2.wav"
+   ],
+   "pitch": [
+    0.95,
+    1.03
+   ],
+   "spatial": true,
+   "voices": 2,
+   "volume": 1.0
+  },
+  {
+   "id": "boss.sweep",
+   "cooldown": 0.03,
+   "files": [
+    "Assets/_Project/Audio/Sfx/boss.sweep__1.wav",
+    "Assets/_Project/Audio/Sfx/boss.sweep__2.wav"
+   ],
+   "pitch": [
+    0.95,
+    1.05
+   ],
+   "spatial": true,
+   "voices": 2,
+   "volume": 0.85
+  },
+  {
+   "id": "bow.shoot",
+   "cooldown": 0.03,
+   "files": [
+    "Assets/_Project/Audio/Sfx/bow.shoot__1.wav",
+    "Assets/_Project/Audio/Sfx/bow.shoot__2.wav"
+   ],
+   "pitch": [
+    0.95,
+    1.05
+   ],
+   "spatial": true,
+   "voices": 4,
+   "volume": 0.6
+  },
+  {
+   "id": "chest.open",
+   "cooldown": 0.03,
+   "files": [
+    "Assets/_Project/Audio/Sfx/chest.open__1.wav"
+   ],
+   "pitch": [
+    0.95,
+    1.05
+   ],
+   "spatial": true,
+   "voices": 1,
+   "volume": 0.75
+  },
+  {
+   "id": "crossbow.shoot",
+   "cooldown": 0.03,
+   "files": [
+    "Assets/_Project/Audio/Sfx/crossbow.shoot__1.wav",
+    "Assets/_Project/Audio/Sfx/crossbow.shoot__2.wav"
+   ],
+   "pitch": [
+    0.95,
+    1.05
+   ],
+   "spatial": true,
+   "voices": 4,
+   "volume": 0.75
+  },
+  {
+   "id": "door.open",
+   "cooldown": 0.03,
+   "files": [
+    "Assets/_Project/Audio/Sfx/door.open__1.wav"
+   ],
+   "pitch": [
+    0.95,
+    1.05
+   ],
+   "spatial": true,
+   "voices": 1,
+   "volume": 0.8
+  },
+  {
+   "id": "enemy.alert",
+   "cooldown": 0.06,
+   "files": [
+    "Assets/_Project/Audio/Sfx/enemy.alert__1.wav"
+   ],
+   "pitch": [
+    0.98,
+    1.04
+   ],
+   "spatial": true,
+   "voices": 3,
+   "volume": 0.55
+  },
+  {
+   "id": "enemy.attack",
+   "cooldown": 0.04,
+   "files": [
+    "Assets/_Project/Audio/Sfx/enemy.attack__1.wav",
+    "Assets/_Project/Audio/Sfx/enemy.attack__2.wav"
+   ],
+   "pitch": [
+    0.9,
+    1.08
+   ],
+   "spatial": true,
+   "voices": 4,
+   "volume": 0.55
+  },
+  {
+   "id": "enemy.cast",
+   "cooldown": 0.03,
+   "files": [
+    "Assets/_Project/Audio/Sfx/enemy.cast__1.wav"
+   ],
+   "pitch": [
+    0.95,
+    1.05
+   ],
+   "spatial": true,
+   "voices": 3,
+   "volume": 0.5
+  },
+  {
+   "id": "enemy.death",
+   "cooldown": 0.04,
+   "files": [
+    "Assets/_Project/Audio/Sfx/enemy.death__1.wav",
+    "Assets/_Project/Audio/Sfx/enemy.death__2.wav"
+   ],
+   "pitch": [
+    0.9,
+    1.1
+   ],
+   "spatial": true,
+   "voices": 4,
+   "volume": 0.7
+  },
+  {
+   "id": "enemy.kill",
+   "cooldown": 0.03,
+   "files": [
+    "Assets/_Project/Audio/Sfx/enemy.kill__1.wav",
+    "Assets/_Project/Audio/Sfx/enemy.kill__2.wav",
+    "Assets/_Project/Audio/Sfx/enemy.kill__3.wav"
+   ],
+   "pitch": [
+    0.9,
+    1.1
+   ],
+   "spatial": true,
+   "voices": 4,
+   "volume": 0.75
+  },
+  {
+   "id": "enemy.leap",
+   "cooldown": 0.03,
+   "files": [
+    "Assets/_Project/Audio/Sfx/enemy.leap__1.wav"
+   ],
+   "pitch": [
+    0.95,
+    1.05
+   ],
+   "spatial": true,
+   "voices": 3,
+   "volume": 0.55
+  },
+  {
+   "id": "enemy.notice",
+   "cooldown": 0.1,
+   "files": [
+    "Assets/_Project/Audio/Sfx/enemy.notice__1.wav"
+   ],
+   "pitch": [
+    0.95,
+    1.1
+   ],
+   "spatial": true,
+   "voices": 2,
+   "volume": 0.35
+  },
+  {
+   "id": "enemy.orb",
+   "cooldown": 0.03,
+   "files": [
+    "Assets/_Project/Audio/Sfx/enemy.orb__1.wav"
+   ],
+   "pitch": [
+    0.95,
+    1.05
+   ],
+   "spatial": true,
+   "voices": 3,
+   "volume": 0.5
+  },
+  {
+   "id": "explode.fire",
+   "cooldown": 0.05,
+   "files": [
+    "Assets/_Project/Audio/Sfx/explode.fire__1.wav",
+    "Assets/_Project/Audio/Sfx/explode.fire__2.wav"
+   ],
+   "pitch": [
+    0.92,
+    1.05
+   ],
+   "spatial": true,
+   "voices": 3,
+   "volume": 0.95
+  },
+  {
+   "id": "explode.ice",
+   "cooldown": 0.05,
+   "files": [
+    "Assets/_Project/Audio/Sfx/explode.ice__1.wav",
+    "Assets/_Project/Audio/Sfx/explode.ice__2.wav"
+   ],
+   "pitch": [
+    0.95,
+    1.05
+   ],
+   "spatial": true,
+   "voices": 3,
+   "volume": 0.85
+  },
+  {
+   "id": "flyer.dive",
+   "cooldown": 0.03,
+   "files": [
+    "Assets/_Project/Audio/Sfx/flyer.dive__1.wav",
+    "Assets/_Project/Audio/Sfx/flyer.dive__2.wav"
+   ],
+   "pitch": [
+    0.95,
+    1.05
+   ],
+   "spatial": true,
+   "voices": 3,
+   "volume": 0.55
+  },
+  {
+   "id": "fountain.use",
+   "cooldown": 0.03,
+   "files": [
+    "Assets/_Project/Audio/Sfx/fountain.use__1.wav"
+   ],
+   "pitch": [
+    0.95,
+    1.05
+   ],
+   "spatial": true,
+   "voices": 1,
+   "volume": 0.7
+  },
+  {
+   "id": "grenade.throw",
+   "cooldown": 0.03,
+   "files": [
+    "Assets/_Project/Audio/Sfx/grenade.throw__1.wav"
+   ],
+   "pitch": [
+    0.95,
+    1.05
+   ],
+   "spatial": true,
+   "voices": 4,
+   "volume": 0.55
+  },
+  {
+   "id": "harpoon.throw",
+   "cooldown": 0.03,
+   "files": [
+    "Assets/_Project/Audio/Sfx/harpoon.throw__1.wav"
+   ],
+   "pitch": [
+    0.95,
+    1.05
+   ],
+   "spatial": true,
+   "voices": 4,
+   "volume": 0.65
+  },
+  {
+   "id": "hazard.sorrow",
+   "cooldown": 0.03,
+   "files": [
+    "Assets/_Project/Audio/Sfx/hazard.sorrow__1.wav"
+   ],
+   "pitch": [
+    0.95,
+    1.05
+   ],
+   "spatial": true,
+   "voices": 2,
+   "volume": 0.4
+  },
+  {
+   "id": "hazard.spikes",
+   "cooldown": 0.03,
+   "files": [
+    "Assets/_Project/Audio/Sfx/hazard.spikes__1.wav"
+   ],
+   "pitch": [
+    0.95,
+    1.05
+   ],
+   "spatial": true,
+   "voices": 2,
+   "volume": 0.7
+  },
+  {
+   "id": "hazard.vent",
+   "cooldown": 0.03,
+   "files": [
+    "Assets/_Project/Audio/Sfx/hazard.vent__1.wav"
+   ],
+   "pitch": [
+    0.95,
+    1.05
+   ],
+   "spatial": true,
+   "voices": 3,
+   "volume": 0.5
+  },
+  {
+   "id": "hit.bell",
+   "cooldown": 0.05,
+   "files": [
+    "Assets/_Project/Audio/Sfx/hit.bell__1.wav",
+    "Assets/_Project/Audio/Sfx/hit.bell__2.wav"
+   ],
+   "pitch": [
+    0.94,
+    1.06
+   ],
+   "spatial": true,
+   "voices": 3,
+   "volume": 0.8
+  },
+  {
+   "id": "hit.crit",
+   "cooldown": 0.03,
+   "files": [
+    "Assets/_Project/Audio/Sfx/hit.crit__1.wav",
+    "Assets/_Project/Audio/Sfx/hit.crit__2.wav"
+   ],
+   "pitch": [
+    0.95,
+    1.05
+   ],
+   "spatial": true,
+   "voices": 3,
+   "volume": 0.9
+  },
+  {
+   "id": "hit.flesh",
+   "cooldown": 0.025,
+   "files": [
+    "Assets/_Project/Audio/Sfx/hit.flesh__1.wav",
+    "Assets/_Project/Audio/Sfx/hit.flesh__2.wav",
+    "Assets/_Project/Audio/Sfx/hit.flesh__3.wav",
+    "Assets/_Project/Audio/Sfx/hit.flesh__4.wav"
+   ],
+   "pitch": [
+    0.9,
+    1.1
+   ],
+   "spatial": true,
+   "voices": 5,
+   "volume": 0.75
+  },
+  {
+   "id": "hit.heavy",
+   "cooldown": 0.03,
+   "files": [
+    "Assets/_Project/Audio/Sfx/hit.heavy__1.wav",
+    "Assets/_Project/Audio/Sfx/hit.heavy__2.wav"
+   ],
+   "pitch": [
+    0.92,
+    1.05
+   ],
+   "spatial": true,
+   "voices": 3,
+   "volume": 0.9
+  },
+  {
+   "id": "lightning.zap",
+   "cooldown": 0.04,
+   "files": [
+    "Assets/_Project/Audio/Sfx/lightning.zap__1.wav",
+    "Assets/_Project/Audio/Sfx/lightning.zap__2.wav",
+    "Assets/_Project/Audio/Sfx/lightning.zap__3.wav"
+   ],
+   "pitch": [
+    0.9,
+    1.1
+   ],
+   "spatial": true,
+   "voices": 3,
+   "volume": 0.6
+  },
+  {
+   "id": "lore.read",
+   "cooldown": 0.03,
+   "files": [
+    "Assets/_Project/Audio/Sfx/lore.read__1.wav"
+   ],
+   "pitch": [
+    0.95,
+    1.05
+   ],
+   "spatial": false,
+   "voices": 1,
+   "volume": 0.7
+  },
+  {
+   "id": "npc.talk",
+   "cooldown": 0.03,
+   "files": [
+    "Assets/_Project/Audio/Sfx/npc.talk__1.wav",
+    "Assets/_Project/Audio/Sfx/npc.talk__2.wav"
+   ],
+   "pitch": [
+    0.95,
+    1.05
+   ],
+   "spatial": true,
+   "voices": 1,
+   "volume": 0.45
+  },
+  {
+   "id": "pickup.blueprint",
+   "cooldown": 0.03,
+   "files": [
+    "Assets/_Project/Audio/Sfx/pickup.blueprint__1.wav"
+   ],
+   "pitch": [
+    1.0,
+    1.0
+   ],
+   "spatial": false,
+   "voices": 1,
+   "volume": 0.75
+  },
+  {
+   "id": "pickup.cell",
+   "cooldown": 0.03,
+   "files": [
+    "Assets/_Project/Audio/Sfx/pickup.cell__1.wav",
+    "Assets/_Project/Audio/Sfx/pickup.cell__2.wav"
+   ],
+   "pitch": [
+    0.95,
+    1.1
+   ],
+   "spatial": false,
+   "voices": 4,
+   "volume": 0.5
+  },
+  {
+   "id": "pickup.gold",
+   "cooldown": 0.03,
+   "files": [
+    "Assets/_Project/Audio/Sfx/pickup.gold__1.wav",
+    "Assets/_Project/Audio/Sfx/pickup.gold__2.wav",
+    "Assets/_Project/Audio/Sfx/pickup.gold__3.wav"
+   ],
+   "pitch": [
+    0.95,
+    1.12
+   ],
+   "spatial": false,
+   "voices": 4,
+   "volume": 0.4
+  },
+  {
+   "id": "pickup.item",
+   "cooldown": 0.03,
+   "files": [
+    "Assets/_Project/Audio/Sfx/pickup.item__1.wav"
+   ],
+   "pitch": [
+    0.95,
+    1.05
+   ],
+   "spatial": false,
+   "voices": 1,
+   "volume": 0.7
+  },
+  {
+   "id": "pickup.scroll",
+   "cooldown": 0.03,
+   "files": [
+    "Assets/_Project/Audio/Sfx/pickup.scroll__1.wav"
+   ],
+   "pitch": [
+    1.0,
+    1.0
+   ],
+   "spatial": false,
+   "voices": 1,
+   "volume": 0.75
+  },
+  {
+   "id": "player.death",
+   "cooldown": 0.03,
+   "files": [
+    "Assets/_Project/Audio/Sfx/player.death__1.wav"
+   ],
+   "pitch": [
+    1.0,
+    1.0
+   ],
+   "spatial": false,
+   "voices": 1,
+   "volume": 0.9
+  },
+  {
+   "id": "player.double_jump",
+   "cooldown": 0.05,
+   "files": [
+    "Assets/_Project/Audio/Sfx/player.double_jump__1.wav",
+    "Assets/_Project/Audio/Sfx/player.double_jump__2.wav"
+   ],
+   "pitch": [
+    0.95,
+    1.05
+   ],
+   "spatial": true,
+   "voices": 2,
+   "volume": 0.6
+  },
+  {
+   "id": "player.drink",
+   "cooldown": 0.03,
+   "files": [
+    "Assets/_Project/Audio/Sfx/player.drink__1.wav",
+    "Assets/_Project/Audio/Sfx/player.drink__2.wav"
+   ],
+   "pitch": [
+    0.95,
+    1.05
+   ],
+   "spatial": true,
+   "voices": 1,
+   "volume": 0.7
+  },
+  {
+   "id": "player.flask_empty",
+   "cooldown": 0.03,
+   "files": [
+    "Assets/_Project/Audio/Sfx/player.flask_empty__1.wav"
+   ],
+   "pitch": [
+    0.95,
+    1.05
+   ],
+   "spatial": true,
+   "voices": 1,
+   "volume": 0.5
+  },
+  {
+   "id": "player.hurt",
+   "cooldown": 0.03,
+   "files": [
+    "Assets/_Project/Audio/Sfx/player.hurt__1.wav",
+    "Assets/_Project/Audio/Sfx/player.hurt__2.wav",
+    "Assets/_Project/Audio/Sfx/player.hurt__3.wav"
+   ],
+   "pitch": [
+    0.95,
+    1.05
+   ],
+   "spatial": true,
+   "voices": 2,
+   "volume": 0.8
+  },
+  {
+   "id": "player.jump",
+   "cooldown": 0.05,
+   "files": [
+    "Assets/_Project/Audio/Sfx/player.jump__1.wav",
+    "Assets/_Project/Audio/Sfx/player.jump__2.wav"
+   ],
+   "pitch": [
+    0.95,
+    1.05
+   ],
+   "spatial": true,
+   "voices": 2,
+   "volume": 0.45
+  },
+  {
+   "id": "player.land",
+   "cooldown": 0.08,
+   "files": [
+    "Assets/_Project/Audio/Sfx/player.land__1.wav",
+    "Assets/_Project/Audio/Sfx/player.land__2.wav"
+   ],
+   "pitch": [
+    0.9,
+    1.05
+   ],
+   "spatial": true,
+   "voices": 2,
+   "volume": 0.5
+  },
+  {
+   "id": "player.mantle",
+   "cooldown": 0.03,
+   "files": [
+    "Assets/_Project/Audio/Sfx/player.mantle__1.wav",
+    "Assets/_Project/Audio/Sfx/player.mantle__2.wav"
+   ],
+   "pitch": [
+    0.95,
+    1.05
+   ],
+   "spatial": true,
+   "voices": 2,
+   "volume": 0.45
+  },
+  {
+   "id": "player.pound_land",
+   "cooldown": 0.03,
+   "files": [
+    "Assets/_Project/Audio/Sfx/player.pound_land__1.wav",
+    "Assets/_Project/Audio/Sfx/player.pound_land__2.wav"
+   ],
+   "pitch": [
+    0.95,
+    1.05
+   ],
+   "spatial": true,
+   "voices": 1,
+   "volume": 0.85
+  },
+  {
+   "id": "player.pound_start",
+   "cooldown": 0.03,
+   "files": [
+    "Assets/_Project/Audio/Sfx/player.pound_start__1.wav"
+   ],
+   "pitch": [
+    0.95,
+    1.05
+   ],
+   "spatial": true,
+   "voices": 1,
+   "volume": 0.55
+  },
+  {
+   "id": "player.roll",
+   "cooldown": 0.03,
+   "files": [
+    "Assets/_Project/Audio/Sfx/player.roll__1.wav",
+    "Assets/_Project/Audio/Sfx/player.roll__2.wav"
+   ],
+   "pitch": [
+    0.95,
+    1.05
+   ],
+   "spatial": true,
+   "voices": 2,
+   "volume": 0.55
+  },
+  {
+   "id": "player.step",
+   "cooldown": 0.08,
+   "files": [
+    "Assets/_Project/Audio/Sfx/player.step__1.wav",
+    "Assets/_Project/Audio/Sfx/player.step__2.wav",
+    "Assets/_Project/Audio/Sfx/player.step__3.wav",
+    "Assets/_Project/Audio/Sfx/player.step__4.wav",
+    "Assets/_Project/Audio/Sfx/player.step__5.wav"
+   ],
+   "pitch": [
+    0.9,
+    1.1
+   ],
+   "spatial": true,
+   "voices": 2,
+   "volume": 0.28
+  },
+  {
+   "id": "projectile.reflect",
+   "cooldown": 0.03,
+   "files": [
+    "Assets/_Project/Audio/Sfx/projectile.reflect__1.wav"
+   ],
+   "pitch": [
+    0.95,
+    1.05
+   ],
+   "spatial": true,
+   "voices": 2,
+   "volume": 0.7
+  },
+  {
+   "id": "shield.block",
+   "cooldown": 0.03,
+   "files": [
+    "Assets/_Project/Audio/Sfx/shield.block__1.wav",
+    "Assets/_Project/Audio/Sfx/shield.block__2.wav"
+   ],
+   "pitch": [
+    0.95,
+    1.05
+   ],
+   "spatial": true,
+   "voices": 2,
+   "volume": 0.75
+  },
+  {
+   "id": "shield.parry",
+   "cooldown": 0.03,
+   "files": [
+    "Assets/_Project/Audio/Sfx/shield.parry__1.wav",
+    "Assets/_Project/Audio/Sfx/shield.parry__2.wav"
+   ],
+   "pitch": [
+    0.95,
+    1.05
+   ],
+   "spatial": true,
+   "voices": 2,
+   "volume": 0.9
+  },
+  {
+   "id": "shield.raise",
+   "cooldown": 0.03,
+   "files": [
+    "Assets/_Project/Audio/Sfx/shield.raise__1.wav"
+   ],
+   "pitch": [
+    0.95,
+    1.05
+   ],
+   "spatial": true,
+   "voices": 1,
+   "volume": 0.45
+  },
+  {
+   "id": "shop.buy",
+   "cooldown": 0.03,
+   "files": [
+    "Assets/_Project/Audio/Sfx/shop.buy__1.wav"
+   ],
+   "pitch": [
+    0.95,
+    1.05
+   ],
+   "spatial": false,
+   "voices": 1,
+   "volume": 0.7
+  },
+  {
+   "id": "swing.flail",
+   "cooldown": 0.02,
+   "files": [
+    "Assets/_Project/Audio/Sfx/swing.flail__1.wav",
+    "Assets/_Project/Audio/Sfx/swing.flail__2.wav"
+   ],
+   "pitch": [
+    0.92,
+    1.06
+   ],
+   "spatial": true,
+   "voices": 3,
+   "volume": 0.6
+  },
+  {
+   "id": "swing.heavy",
+   "cooldown": 0.02,
+   "files": [
+    "Assets/_Project/Audio/Sfx/swing.heavy__1.wav",
+    "Assets/_Project/Audio/Sfx/swing.heavy__2.wav"
+   ],
+   "pitch": [
+    0.92,
+    1.05
+   ],
+   "spatial": true,
+   "voices": 3,
+   "volume": 0.65
+  },
+  {
+   "id": "swing.light",
+   "cooldown": 0.02,
+   "files": [
+    "Assets/_Project/Audio/Sfx/swing.light__1.wav",
+    "Assets/_Project/Audio/Sfx/swing.light__2.wav",
+    "Assets/_Project/Audio/Sfx/swing.light__3.wav"
+   ],
+   "pitch": [
+    0.92,
+    1.08
+   ],
+   "spatial": true,
+   "voices": 3,
+   "volume": 0.55
+  },
+  {
+   "id": "swing.thrust",
+   "cooldown": 0.02,
+   "files": [
+    "Assets/_Project/Audio/Sfx/swing.thrust__1.wav",
+    "Assets/_Project/Audio/Sfx/swing.thrust__2.wav",
+    "Assets/_Project/Audio/Sfx/swing.thrust__3.wav"
+   ],
+   "pitch": [
+    0.92,
+    1.1
+   ],
+   "spatial": true,
+   "voices": 3,
+   "volume": 0.5
+  },
+  {
+   "id": "teleport.activate",
+   "cooldown": 0.03,
+   "files": [
+    "Assets/_Project/Audio/Sfx/teleport.activate__1.wav"
+   ],
+   "pitch": [
+    1.0,
+    1.0
+   ],
+   "spatial": true,
+   "voices": 1,
+   "volume": 0.6
+  },
+  {
+   "id": "teleport.warp",
+   "cooldown": 0.03,
+   "files": [
+    "Assets/_Project/Audio/Sfx/teleport.warp__1.wav"
+   ],
+   "pitch": [
+    1.0,
+    1.0
+   ],
+   "spatial": false,
+   "voices": 1,
+   "volume": 0.75
+  },
+  {
+   "id": "tk.pillar",
+   "cooldown": 0.03,
+   "files": [
+    "Assets/_Project/Audio/Sfx/tk.pillar__1.wav"
+   ],
+   "pitch": [
+    0.95,
+    1.05
+   ],
+   "spatial": true,
+   "voices": 4,
+   "volume": 0.6
+  },
+  {
+   "id": "tk.rewind",
+   "cooldown": 0.03,
+   "files": [
+    "Assets/_Project/Audio/Sfx/tk.rewind__1.wav"
+   ],
+   "pitch": [
+    1.0,
+    1.0
+   ],
+   "spatial": true,
+   "voices": 1,
+   "volume": 0.85
+  },
+  {
+   "id": "tk.star",
+   "cooldown": 0.05,
+   "files": [
+    "Assets/_Project/Audio/Sfx/tk.star__1.wav",
+    "Assets/_Project/Audio/Sfx/tk.star__2.wav"
+   ],
+   "pitch": [
+    0.95,
+    1.1
+   ],
+   "spatial": true,
+   "voices": 4,
+   "volume": 0.45
+  },
+  {
+   "id": "tk.summon",
+   "cooldown": 0.03,
+   "files": [
+    "Assets/_Project/Audio/Sfx/tk.summon__1.wav"
+   ],
+   "pitch": [
+    0.95,
+    1.05
+   ],
+   "spatial": true,
+   "voices": 2,
+   "volume": 0.6
+  },
+  {
+   "id": "turret.charge",
+   "cooldown": 0.03,
+   "files": [
+    "Assets/_Project/Audio/Sfx/turret.charge__1.wav"
+   ],
+   "pitch": [
+    0.95,
+    1.05
+   ],
+   "spatial": true,
+   "voices": 3,
+   "volume": 0.4
+  },
+  {
+   "id": "turret.fire",
+   "cooldown": 0.03,
+   "files": [
+    "Assets/_Project/Audio/Sfx/turret.fire__1.wav"
+   ],
+   "pitch": [
+    0.95,
+    1.05
+   ],
+   "spatial": true,
+   "voices": 3,
+   "volume": 0.5
+  },
+  {
+   "id": "ui.back",
+   "cooldown": 0.03,
+   "files": [
+    "Assets/_Project/Audio/Sfx/ui.back__1.wav"
+   ],
+   "pitch": [
+    1.0,
+    1.0
+   ],
+   "spatial": false,
+   "voices": 2,
+   "volume": 0.4
+  },
+  {
+   "id": "ui.close",
+   "cooldown": 0.05,
+   "files": [
+    "Assets/_Project/Audio/Sfx/ui.close__1.wav"
+   ],
+   "pitch": [
+    1.0,
+    1.0
+   ],
+   "spatial": false,
+   "voices": 1,
+   "volume": 0.35
+  },
+  {
+   "id": "ui.confirm",
+   "cooldown": 0.03,
+   "files": [
+    "Assets/_Project/Audio/Sfx/ui.confirm__1.wav"
+   ],
+   "pitch": [
+    1.0,
+    1.0
+   ],
+   "spatial": false,
+   "voices": 2,
+   "volume": 0.4
+  },
+  {
+   "id": "ui.error",
+   "cooldown": 0.08,
+   "files": [
+    "Assets/_Project/Audio/Sfx/ui.error__1.wav"
+   ],
+   "pitch": [
+    1.0,
+    1.0
+   ],
+   "spatial": false,
+   "voices": 1,
+   "volume": 0.4
+  },
+  {
+   "id": "ui.move",
+   "volume": 0.3,
+   "pitch": [
+    0.98,
+    1.02
+   ],
+   "cooldown": 0.02,
+   "voices": 2,
+   "spatial": false,
+   "files": [
+    "Assets/_Project/Audio/Sfx/ui.move__1.wav"
+   ]
+  },
+  {
+   "id": "ui.open",
+   "cooldown": 0.05,
+   "files": [
+    "Assets/_Project/Audio/Sfx/ui.open__1.wav"
+   ],
+   "pitch": [
+    1.0,
+    1.0
+   ],
+   "spatial": false,
+   "voices": 1,
+   "volume": 0.4
+  },
+  {
+   "id": "vermin.explode",
+   "cooldown": 0.03,
+   "files": [
+    "Assets/_Project/Audio/Sfx/vermin.explode__1.wav",
+    "Assets/_Project/Audio/Sfx/vermin.explode__2.wav"
+   ],
+   "pitch": [
+    0.95,
+    1.05
+   ],
+   "spatial": true,
+   "voices": 3,
+   "volume": 0.85
+  },
+  {
+   "id": "vermin.fuse",
+   "cooldown": 0.03,
+   "files": [
+    "Assets/_Project/Audio/Sfx/vermin.fuse__1.wav"
+   ],
+   "pitch": [
+    0.95,
+    1.05
+   ],
+   "spatial": true,
+   "voices": 3,
+   "volume": 0.5
+  },
+  {
+   "id": "weapon.equip",
+   "cooldown": 0.03,
+   "files": [
+    "Assets/_Project/Audio/Sfx/weapon.equip__1.wav"
+   ],
+   "pitch": [
+    0.95,
+    1.05
+   ],
+   "spatial": false,
+   "voices": 1,
+   "volume": 0.6
+  }
+ ],
+ "music": [
+  {
+   "id": "music.boss",
+   "file": "Assets/_Project/Audio/Music/music.boss.wav",
+   "loop": true,
+   "seconds": 54.86,
+   "volume": 0.9
+  },
+  {
+   "id": "music.death",
+   "file": "Assets/_Project/Audio/Music/music.death.wav",
+   "loop": false,
+   "seconds": 5.0,
+   "volume": 0.8
+  },
+  {
+   "id": "music.lung",
+   "file": "Assets/_Project/Audio/Music/music.lung.wav",
+   "loop": true,
+   "seconds": 66.21,
+   "volume": 0.75
+  },
+  {
+   "id": "music.menu",
+   "file": "Assets/_Project/Audio/Music/music.menu.wav",
+   "loop": true,
+   "seconds": 80.0,
+   "volume": 0.75
+  },
+  {
+   "id": "music.ossuary",
+   "file": "Assets/_Project/Audio/Music/music.ossuary.wav",
+   "loop": true,
+   "seconds": 73.85,
+   "volume": 0.75
+  },
+  {
+   "id": "music.oubliette",
+   "file": "Assets/_Project/Audio/Music/music.oubliette.wav",
+   "loop": true,
+   "seconds": 83.48,
+   "volume": 0.75
+  },
+  {
+   "id": "music.passage",
+   "file": "Assets/_Project/Audio/Music/music.passage.wav",
+   "loop": true,
+   "seconds": 60.0,
+   "volume": 0.75
+  },
+  {
+   "id": "music.promenade",
+   "file": "Assets/_Project/Audio/Music/music.promenade.wav",
+   "loop": true,
+   "seconds": 76.8,
+   "volume": 0.75
+  },
+  {
+   "id": "music.stilt",
+   "file": "Assets/_Project/Audio/Music/music.stilt.wav",
+   "loop": true,
+   "seconds": 73.85,
+   "volume": 0.75
+  }
+ ],
+ "ambience": [
+  {
+   "id": "amb.clock",
+   "file": "Assets/_Project/Audio/Ambience/amb.clock.wav",
+   "loop": true,
+   "seconds": 20.0,
+   "volume": 0.6
+  },
+  {
+   "id": "amb.dungeon",
+   "file": "Assets/_Project/Audio/Ambience/amb.dungeon.wav",
+   "loop": true,
+   "seconds": 20.0,
+   "volume": 0.6
+  },
+  {
+   "id": "amb.ossuary",
+   "file": "Assets/_Project/Audio/Ambience/amb.ossuary.wav",
+   "loop": true,
+   "seconds": 20.0,
+   "volume": 0.6
+  },
+  {
+   "id": "amb.passage",
+   "file": "Assets/_Project/Audio/Ambience/amb.passage.wav",
+   "loop": true,
+   "seconds": 20.0,
+   "volume": 0.6
+  },
+  {
+   "id": "amb.sea",
+   "file": "Assets/_Project/Audio/Ambience/amb.sea.wav",
+   "loop": true,
+   "seconds": 20.0,
+   "volume": 0.6
+  },
+  {
+   "id": "amb.wind",
+   "file": "Assets/_Project/Audio/Ambience/amb.wind.wav",
+   "loop": true,
+   "seconds": 20.0,
+   "volume": 0.6
+  }
+ ]
+}

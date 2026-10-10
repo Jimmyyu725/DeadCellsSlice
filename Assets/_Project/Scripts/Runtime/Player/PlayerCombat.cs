@@ -350,6 +350,7 @@ namespace DeadCells.Player
             if (Run.flaskCharges <= 0)
             {
                 Hud?.Toast(Loc.Get("hud.flask_empty"), UIColorWarn);
+                Audio.Sfx.Play("player.flask_empty");
                 return false;
             }
             if (health.Current >= health.maxHealth - 0.5f)
@@ -359,6 +360,7 @@ namespace DeadCells.Player
             clock = 0f;
             released = false;
             player.anim.Restart("Drink", 0f);
+            Audio.Sfx.Play("player.drink", transform.position);
             RefreshVisuals();
             return true;
         }
@@ -387,6 +389,8 @@ namespace DeadCells.Player
             RefreshVisuals();
             player.anim.Restart(step.clip, 0f);
             player.anim.SetSpeed(item.animSpeed);
+            Audio.Sfx.Play(string.IsNullOrEmpty(item.swingSound) ? "swing.light" : item.swingSound, transform.position + Vector3.up,
+                1f, step.finisher ? 0.9f : 1f);
             AirHang();
             player.squash.Add(new Vector2(-0.05f, 0.05f));
         }
@@ -670,6 +674,8 @@ namespace DeadCells.Player
             p.spin = item.spin;
             p.hitRadius = item.kind == ItemKind.Bow ? 0.22f : 0.35f;
             player.squash.Add(new Vector2(0.04f, -0.03f));
+            string fire = !string.IsNullOrEmpty(item.fireSound) ? item.fireSound : item.kind == ItemKind.Bow ? "bow.shoot" : "grenade.throw";
+            Audio.Sfx.Play(fire, spawn);
             if (item.kind == ItemKind.Bow)
                 JuiceEngine.Instance?.Shake(new Vector2(-facing, 0f), 0.06f);
         }
@@ -718,6 +724,16 @@ namespace DeadCells.Player
             juice.Ichor(p, info.knockback + Vector2.up, ichorColor, kill ? 18 : 8);
             juice.DamagePopup(target.transform.position + Vector3.up * 2.0f, info.amount, info.critical);
             if (!info.projectile)
+            {
+                var item = slots[Mathf.Clamp(actionSlot, 0, SlotCount - 1)];
+                string hit = item != null && item.id == info.weaponId && !string.IsNullOrEmpty(item.hitSound) ? item.hitSound : "hit.flesh";
+                Audio.Sfx.Play(hit, p);
+            }
+            if (info.critical)
+                Audio.Sfx.Play("hit.crit", p);
+            if (kill)
+                Audio.Sfx.Play("enemy.kill", p);
+            if (!info.projectile)
                 player.squash.Add(new Vector2(0.06f, -0.05f));
         }
 
@@ -733,6 +749,7 @@ namespace DeadCells.Player
             if (mainVisual[slot] != null)
                 mainVisual[slot].transform.localScale = Vector3.one * shieldScale;
             player.anim.Restart("Shield_Block", 0f);
+            Audio.Sfx.Play("shield.raise", transform.position + Vector3.up);
             health.blockMultiplier = slots[slot] != null ? 1f - slots[slot].blockReduction : 0.2f;
             health.Interceptor = Intercept;
         }
@@ -806,6 +823,7 @@ namespace DeadCells.Player
                     juice.Popup(transform.position + Vector3.up * 2.4f, "PARRY!", new Color(1f, 0.85f, 0.25f), true);
                 }
                 player.hitFlash?.Flash(new Color(2.4f, 2.0f, 0.8f), 0.8f);
+                Audio.Sfx.Play("shield.parry", contact);
                 SaveSystem.Data.stats.parries++;
                 Achievements.CheckThresholds();
                 return DamageResult.Parried;
@@ -817,6 +835,7 @@ namespace DeadCells.Player
                 juice.HitSparks(contact, new Vector2(-player.Facing, 0.3f), new Color(2f, 2f, 2.2f), 0.4f);
             }
             player.Body.linearVelocity = new Vector2(-player.Facing * 4.5f, player.Body.linearVelocity.y);
+            Audio.Sfx.Play("shield.block", contact);
             return DamageResult.Blocked;
         }
 

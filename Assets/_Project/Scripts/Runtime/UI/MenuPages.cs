@@ -26,6 +26,16 @@ namespace DeadCells.UI
                 S.screenShake = Mathf.Clamp01(Mathf.Round((S.screenShake + d * 0.25f) * 4f) / 4f);
                 SaveSystem.Save();
             }));
+            page.Add(MenuItem.Option(() => Loc.Get("options.music"), () => Mathf.RoundToInt(S.musicVolume * 100f) + "%", d =>
+            {
+                S.musicVolume = Mathf.Clamp01(Mathf.Round((S.musicVolume + d * 0.1f) * 10f) / 10f);
+                SaveSystem.Save();
+            }));
+            page.Add(MenuItem.Option(() => Loc.Get("options.sfx"), () => Mathf.RoundToInt(S.sfxVolume * 100f) + "%", d =>
+            {
+                S.sfxVolume = Mathf.Clamp01(Mathf.Round((S.sfxVolume + d * 0.1f) * 10f) / 10f);
+                SaveSystem.Save();
+            }));
             page.Add(MenuItem.Option(() => Loc.Get("options.flame"), () => Loc.Get("flame." + S.flameIndex), d =>
             {
                 S.flameIndex = (S.flameIndex + d + 3) % 3;

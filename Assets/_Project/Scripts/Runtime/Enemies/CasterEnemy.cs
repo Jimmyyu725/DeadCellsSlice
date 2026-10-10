@@ -52,6 +52,7 @@ namespace DeadCells.Enemies
                     released = true;
                     Vector3 from = transform.position + new Vector3(FacingDir * 0.7f, 1.8f, 0f);
                     var p = Fire(orbPrefab, from, AimAtPlayer(from, orbSpeed), 0f, baseDamage);
+                    Audio.Sfx.Play("enemy.orb", from);
                     if (p != null)
                     {
                         p.lifetime = 5f;
@@ -74,6 +75,7 @@ namespace DeadCells.Enemies
                 anim.Restart("Cast", 0f);
                 anim.SetSpeed(1f / windupScale);
                 hitFlash?.Flash(new Color(1.2f, 2.6f, 0.8f), 0.5f);
+                Audio.Sfx.Play("enemy.cast", transform.position + Vector3.up * 1.8f);
             }
         }
 

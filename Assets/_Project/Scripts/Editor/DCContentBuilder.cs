@@ -52,6 +52,7 @@ namespace DeadCells.EditorTools
             BuildWorldPrefabs();
             BuildItems();
             BuildBiomes();
+            BuildSoundBank();
             AssetDatabase.SaveAssets();
             Debug.Log("[DC] content built");
         }

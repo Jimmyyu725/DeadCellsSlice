@@ -58,6 +58,7 @@ namespace DeadCells.Items
             origin = transform.position;
             hits.Clear();
             JuiceEngine.Instance?.HitSparks(transform.position, velocity, new Color(1.6f, 2.8f, 1.2f), 0.4f);
+            Audio.Sfx.Play("projectile.reflect", transform.position);
         }
 
         void FixedUpdate()
@@ -145,6 +146,13 @@ namespace DeadCells.Items
             var result = h.TakeDamage(info);
             if ((result == DamageResult.Hit || result == DamageResult.Killed) && hasEffect)
                 h.GetComponent<StatusEffects>()?.Apply(effect, effectDuration);
+            if ((result == DamageResult.Hit || result == DamageResult.Killed) && explodeRadius <= 0f)
+            {
+                if (hasEffect && effect == SkillEffect.Lightning)
+                    Audio.Sfx.Play("lightning.zap", point);
+                else if (fromPlayer)
+                    Audio.Sfx.Play("arrow.hit", point);
+            }
             if (fromPlayer && result != DamageResult.Ignored && result != DamageResult.Parried)
                 Player.PlayerCombat.Instance?.ReportHit(h, info, result);
             return result;
@@ -164,6 +172,7 @@ namespace DeadCells.Items
                         continue;
                     DealDamage(h, h.transform.position + Vector3.up);
                 }
+                Audio.Sfx.Play(hasEffect && effect == SkillEffect.Ice ? "explode.ice" : "explode.fire", transform.position);
                 if (juice != null)
                 {
                     juice.SlamWave(transform.position, explodeRadius);
@@ -174,6 +183,8 @@ namespace DeadCells.Items
             else if (impact && juice != null)
             {
                 juice.HitSparks(transform.position, -velocity, sparkColor, 0.3f);
+                if (fromPlayer)
+                    Audio.Sfx.Play("arrow.hit", transform.position, 0.6f);
             }
             Destroy(gameObject);
         }
