@@ -57,6 +57,12 @@ namespace DeadCells.Core
         public bool armoryFight;
         public string armoryFilter = "";
         public bool jumpTest;
+        public bool blockTest;
+        public bool blockInBiome;
+        public int runSeed;
+        public Vector2Int climbAt = new Vector2Int(-1, -1);
+        public string blockShield = "shield_frontline";
+        public string blockEnemy = "Zombie";
         public bool cancelTest;
         public bool systemsTest;
         InputFrame? overrideInput;
@@ -126,6 +132,18 @@ namespace DeadCells.Core
                     case "-autoplayArmoryFight": d.armoryTest = true; d.armoryFight = true; break;
                     case "-autoplayArmoryFilter": d.armoryFilter = next ?? ""; break;
                     case "-autoplayJumpTest": d.jumpTest = true; break;
+                    case "-autoplayBlockTest": d.blockTest = true; break;
+                    case "-autoplayBlockBiome": d.blockTest = true; d.blockInBiome = true; break;
+                    case "-autoplayRunSeed": int.TryParse(next, out d.runSeed); break;
+                    case "-autoplayClimbAt":
+                    {
+                        var xy = next.Split(',');
+                        if (xy.Length == 2 && int.TryParse(xy[0], out int cx) && int.TryParse(xy[1], out int cy))
+                            d.climbAt = new Vector2Int(cx, cy);
+                        break;
+                    }
+                    case "-autoplayBlockShield": d.blockShield = next; break;
+                    case "-autoplayBlockEnemy": d.blockEnemy = next; break;
                     case "-autoplayCancelTest": d.cancelTest = true; break;
                     case "-autoplaySystems": d.systemsTest = true; break;
                     case "-autoplayClearRunes": SaveSystem.Data.meta.runes.Clear(); break;
@@ -186,6 +204,8 @@ namespace DeadCells.Core
             RunManager.NewRun(difficulty, bossCells, mode);
             if (mode == RunMode.Normal)
                 SaveSystem.Data.run.biome = Mathf.Clamp(startBiome, 0, 4);
+            if (runSeed != 0)
+                SaveSystem.Data.run.seed = runSeed;
             SaveSystem.Save();
             SceneFlow.LoadGame();
         }
@@ -239,6 +259,18 @@ namespace DeadCells.Core
                         systemsTest = false;
                         skipEvery = 0f;
                         StartCoroutine(SystemsTest(rm));
+                    }
+                    if (climbAt.x >= 0 && !rm.InPassage)
+                    {
+                        skipEvery = 0f;
+                        StartCoroutine(ClimbAt(rm, climbAt));
+                        climbAt = new Vector2Int(-1, -1);
+                    }
+                    if (blockTest && rm.InPassage != blockInBiome)
+                    {
+                        blockTest = false;
+                        skipEvery = 0f;
+                        StartCoroutine(BlockTest(rm));
                     }
                     if (jumpTest && rm.InPassage)
                     {
@@ -639,6 +671,97 @@ namespace DeadCells.Core
             }
         }
 
+        /// <summary>
+        /// Performance test: hold a shield against a zombie and log every frame:
+        /// real frame time (rendering hitches) separately from frozen frames
+        /// (hit-stop, timeScale 0), around each block / parry.
+        /// </summary>
+        System.Collections.IEnumerator BlockTest(RunManager rm)
+        {
+            yield return new WaitForSecondsRealtime(2f);
+            var p = PlayerController.Main;
+            var db = Items.ItemDatabase.Instance;
+            Cheats.SetGodMode(false);
+            god = false;
+            p.Combat.Equip(1, db.Get(blockShield));
+            p.Health.maxHealth = 100000f;
+            p.Health.SetCurrent(100000f);
+            var zombie = rm.biomes.Where(b => b != null).SelectMany(b => b.ground.Concat(b.flying).Concat(b.turrets)).Select(e => e.prefab)
+                .FirstOrDefault(g => g != null && g.name.Contains(blockEnemy));
+            float gap = blockEnemy == "Zombie" ? 2.2f : 7f;
+            var go = Instantiate(zombie, p.transform.position + Vector3.right * gap, Quaternion.identity, rm.EntityParent);
+            var enemy = go.GetComponent<EnemyBase>();
+            enemy.Configure(0, false);
+            enemy.Engage();
+            p.anim.SetFacing(1);
+            int blocks = 0, parries = 0, frames = 0, frozen = 0, slow = 0;
+            float worst = 0f, frozenTime = 0f;
+            var samples = new List<(float t, float dt)>();
+            var impacts = new List<float>();
+            p.Health.Damaged += (info, result) =>
+            {
+                impacts.Add(Time.realtimeSinceStartup);
+                if (result == Combat.DamageResult.Blocked) blocks++;
+                if (result == Combat.DamageResult.Parried) parries++;
+                log.WriteLine($"[{Elapsed:F2}] block test: {result} dmg={info.amount:F1} frame={Time.frameCount} projectile={info.projectile} enemyHp={(enemy != null ? enemy.Health.Current : -1f):F0}");
+            };
+            float until = Time.realtimeSinceStartup + 14f;
+            float nextRaise = Time.realtimeSinceStartup;
+            bool holding = false;
+            while (Time.realtimeSinceStartup < until)
+            {
+                // Hold the shield, re-raising it every ~1.3 s so some hits land in the parry window.
+                bool raise = Time.realtimeSinceStartup >= nextRaise;
+                if (raise)
+                {
+                    nextRaise = Time.realtimeSinceStartup + 1.3f;
+                    overrideInput = new InputFrame();
+                    holding = false;
+                    yield return null;
+                }
+                overrideInput = new InputFrame { secondaryPressed = !holding, secondaryHeld = true };
+                holding = true;
+                if (enemy == null || enemy.IsDead)
+                {
+                    go = Instantiate(zombie, p.transform.position + Vector3.right * gap, Quaternion.identity, rm.EntityParent);
+                    enemy = go.GetComponent<EnemyBase>();
+                    enemy.Configure(0, false);
+                    enemy.Engage();
+                }
+                yield return null;
+                frames++;
+                float dt = Time.unscaledDeltaTime;
+                if (Time.timeScale == 0f)
+                {
+                    frozen++;
+                    frozenTime += dt;
+                }
+                if (dt > 0.034f)
+                {
+                    slow++;
+                    log.WriteLine($"[{Elapsed:F2}] block test: slow frame {dt * 1000f:F1} ms frame={Time.frameCount} timeScale={Time.timeScale} state={p.State}");
+                }
+                worst = Mathf.Max(worst, dt);
+                samples.Add((Time.realtimeSinceStartup, dt));
+            }
+            overrideInput = null;
+            // Frame times near an attack's impact (wind-up .. follow-through) vs the rest.
+            var near = new List<float>();
+            var far = new List<float>();
+            foreach (var (t, dt) in samples)
+                (impacts.Any(i => t > i - 0.7f && t < i + 0.4f) ? near : far).Add(dt * 1000f);
+            string Stats(List<float> v)
+            {
+                if (v.Count == 0) return "n=0";
+                v.Sort();
+                return $"n={v.Count} avg={v.Average():F1} p50={v[v.Count / 2]:F1} p95={v[(int)(v.Count * 0.95f)]:F1} max={v[v.Count - 1]:F1} >17ms={v.Count(x => x > 17.5f)} >25ms={v.Count(x => x > 25f)}";
+            }
+            log.WriteLine($"[{Elapsed:F1}] block test frames near attacks: {Stats(near)}");
+            log.WriteLine($"[{Elapsed:F1}] block test frames otherwise: {Stats(far)}");
+            log.WriteLine($"[{Elapsed:F1}] block test screen {Screen.width}x{Screen.height}");
+            log.WriteLine($"[{Elapsed:F1}] block test ({blockShield}): blocks={blocks} parries={parries} frames={frames} frozenFrames={frozen} frozen={frozenTime * 1000f:F0}ms slowFrames={slow} worst={worst * 1000f:F1}ms");
+        }
+
         /// <summary>Test hook: measure single and double jump heights from flat floor.</summary>
         System.Collections.IEnumerator JumpTest()
         {
@@ -809,6 +932,50 @@ namespace DeadCells.Core
                 yield return new WaitForSecondsRealtime(0.3f);
             }
             log.WriteLine($"[{Elapsed:F1}] shaft test {rm.Current.id}: {passed}/{tested}");
+        }
+
+        /// <summary>Repro: from a reported cell, try to climb with plain jumps, then hugging the right wall.</summary>
+        System.Collections.IEnumerator ClimbAt(RunManager rm, Vector2Int cell)
+        {
+            yield return new WaitForSecondsRealtime(2f);
+            var p = PlayerController.Main;
+            Cheats.SetGodMode(true);
+            log.WriteLine($"[{Elapsed:F1}] climb: level seed {rm.LevelSeed}");
+            foreach (int hug in new[] { 0, 1, 2 })
+            {
+                // hug 0: hold jump, 1: hug the right wall, 2: quick taps only (no holding).
+                p.Teleport(new Vector3(cell.x + 0.5f, cell.y + 0.05f, 0f));
+                if (rm.vcam != null)
+                    rm.vcam.PreviousStateIsValid = false;
+                yield return new WaitForSeconds(0.5f);
+                float best = p.transform.position.y, t0 = Time.time, nextLog = 0f;
+                float jumpAt = Time.time + 0.2f, holdUntil = 0f;
+                while (Time.time - t0 < 7f)
+                {
+                    var f = new InputFrame { moveX = hug == 1 ? 1 : 0 };
+                    if (p.Grounded && Time.time >= jumpAt)
+                    {
+                        f.jumpPressed = true;
+                        holdUntil = Time.time + 0.75f;
+                        jumpAt = Time.time + 0.95f;
+                    }
+                    else if (!p.Grounded && p.Body.linearVelocity.y < 0.5f && Time.time < holdUntil + 0.2f && Time.time > holdUntil - 0.45f)
+                        f.jumpPressed = true;   // double jump near the apex
+                    f.jumpHeld = hug == 2 ? f.jumpPressed : Time.time < holdUntil;
+                    overrideInput = f;
+                    yield return null;
+                    best = Mathf.Max(best, p.transform.position.y);
+                    if (Time.time >= nextLog)
+                    {
+                        nextLog = Time.time + 0.25f;
+                        log.WriteLine($"[{Elapsed:F2}] climb hug={hug} pos=({p.transform.position.x:F2},{p.transform.position.y:F2}) vy={p.Body.linearVelocity.y:F1} grounded={p.Grounded} state={p.State}");
+                    }
+                }
+                overrideInput = new InputFrame();
+                log.WriteLine($"[{Elapsed:F1}] climb hug={hug}: start y={cell.y} best={best:F2}");
+                Capture($"climb_{hug}");
+            }
+            overrideInput = null;
         }
 
         InputFrame ScriptedClimb(PlayerController player)

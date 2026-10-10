@@ -69,6 +69,9 @@ namespace DeadCells.Items
 
         void OnDisable() => Live.Remove(this);
 
+        /// <summary>Sent back by the player's shield: enemies (monks) cannot turn it around again.</summary>
+        public bool ShieldReflected { get; private set; }
+
         public void Reverse(GameObject newOwner)
         {
             if (!reflectable)
@@ -78,6 +81,12 @@ namespace DeadCells.Items
             owner = newOwner;
             origin = transform.position;
             hits.Clear();
+            // Forget the old target and the trip home: a reflected shot must not
+            // steer or boomerang back to whoever just sent it away.
+            homingTarget = null;
+            retargetAt = 0f;
+            boomerang = false;
+            returning = false;
             JuiceEngine.Instance?.HitSparks(transform.position, velocity, new Color(1.6f, 2.8f, 1.2f), 0.4f);
             Audio.Sfx.Play("projectile.reflect", transform.position);
         }
@@ -167,6 +176,7 @@ namespace DeadCells.Items
                 {
                     // Shields send projectiles back at their owner.
                     Reverse(h.gameObject);
+                    ShieldReflected = true;
                     damage *= Player.PlayerCombat.Instance != null ? Player.PlayerCombat.Instance.ReflectMultiplier : 1.5f;
                     return;
                 }

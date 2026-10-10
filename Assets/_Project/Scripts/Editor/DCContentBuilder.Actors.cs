@@ -526,6 +526,9 @@ namespace DeadCells.EditorTools
                 var (root, anim, flash, sq, model) = EnemyRig("Zombie", $"{CharDir}/Zombie/Zombie.fbx", "Zombie", 1.12f, "M_Zombie", new Vector2(0.62f, 1.62f));
                 var e = root.AddComponent<MeleeEnemy>();
                 Wire(e, anim, flash, sq, model, "enemy.zombie", 70f, 14f, 2);
+                // Attack clip: wind-up holds on 18, the arms swing down over 18-21.
+                e.holdFrame = 18;
+                e.strikeFrames = new Vector2Int(20, 26);
                 Save(root, "Enemies/Zombie");
             }
             // Clock-hand sentinel.

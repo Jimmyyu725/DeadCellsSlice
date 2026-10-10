@@ -671,7 +671,8 @@ MonoBehaviour:
   attackClip: Attack
   windupSpeed: 0.62
   strikeSpeed: 1.25
-  strikeFrames: {x: 19, y: 24}
+  strikeFrames: {x: 20, y: 26}
+  holdFrame: 18
   windupHold: 0.16
   reactionDelay: 0.4
   lungeSpeed: 7

@@ -48,7 +48,10 @@ namespace DeadCells.Player
         public float fallGravityMultiplier = 1.45f;
         public float maxFallSpeed = 24f;
         [Tooltip("Upward velocity kept when jump is released early.")]
-        [Range(0f, 1f)] public float jumpCutMultiplier = 0.42f;
+        [Range(0f, 1f)] public float jumpCutMultiplier = 0.5f;
+        [Tooltip("A tapped jump still rises this long before release can cut it (about 2.4 tiles).")]
+        public float minJumpTime = 0.12f;
+        float jumpStartTime;
         public float apexHangThreshold = 1.6f;
         public float apexGravityMultiplier = 0.55f;
         public float coyoteTime = 0.12f;
@@ -481,6 +484,7 @@ namespace DeadCells.Player
             {
                 v.y = jumpVelocity;
                 isJumping = true;
+                jumpStartTime = Time.time;
                 jumpCutApplied = false;
                 lastJumpPressedTime = -10f;
                 lastGroundedTime = -10f;
@@ -494,6 +498,7 @@ namespace DeadCells.Player
             {
                 // Wall jump: up and away from the wall; the double jump comes back.
                 v.y = jumpVelocity * 0.92f;
+                jumpStartTime = Time.time;
                 v.x = -lastWallSide * runSpeed * 1.1f;
                 wallJumpDir = -lastWallSide;
                 wallJumpLockUntil = Time.time + wallJumpLock;
@@ -516,6 +521,7 @@ namespace DeadCells.Player
                 airJumpsLeft--;
                 v.y = doubleJumpVelocity;
                 isJumping = true;
+                jumpStartTime = Time.time;
                 jumpCutApplied = false;
                 lastJumpPressedTime = -10f;
                 squash.Punch(new Vector2(0.85f, 1.2f));
@@ -527,7 +533,7 @@ namespace DeadCells.Player
             }
 
             // Variable height: releasing early cuts the ascent.
-            if (isJumping && !input.jumpHeld && v.y > 0f && !jumpCutApplied)
+            if (isJumping && !input.jumpHeld && v.y > 0f && !jumpCutApplied && Time.time - jumpStartTime >= minJumpTime)
             {
                 v.y *= jumpCutMultiplier;
                 jumpCutApplied = true;
@@ -833,7 +839,7 @@ namespace DeadCells.Player
             var juice = JuiceEngine.Instance;
             if (juice != null)
             {
-                juice.HitStop(0.07f);
+                // No hit-stop when hurt: freezing the whole frame reads as a dropped frame.
                 juice.Shake(info.knockback, 0.55f);
                 juice.HitSparks(transform.position + Vector3.up * 1.1f, info.knockback, new Color(2.2f, 0.4f, 0.4f), 0.6f);
                 juice.DamagePopup(transform.position + Vector3.up * 2.1f, info.amount, false, new Color(1f, 0.35f, 0.3f));

@@ -269,9 +269,11 @@ def anim_attack(arm):
                 head=(-10, 0, 0), feet={"L": (-0.48, 0.09, 0), "R": (0.30, 0.12, 25)},
                 **{"arm.L": (-75, -95, 0, -10, 0), "arm.R": (-65, -88, 0, 10, 0), "chest:scale": (1, 1.06, 1)})
     hold = M_(strike, hips_loc=(0, -0.20, -0.18), spine=(42, 0, 0), **{"chest:scale": (1, 1, 1)})
-    rig.author_action(arm, f"{NAME}_Attack", 36,
-                      [(1, STANCE), (8, windup), (18, windup2), (19, strike), (26, hold), (36, STANCE)],
-                      modes={1: "BEZIER", 8: "LINEAR", 18: "CONSTANT", 19: "LINEAR", 26: "BEZIER"},
+    # The swing travels over three frames (18 -> 21) instead of a one-frame cut,
+    # so the arms read as moving rather than as a skipped frame.
+    rig.author_action(arm, f"{NAME}_Attack", 38,
+                      [(1, STANCE), (8, windup), (18, windup2), (21, strike), (28, hold), (38, STANCE)],
+                      modes={1: "BEZIER", 8: "LINEAR", 18: "LINEAR", 21: "LINEAR", 28: "BEZIER"},
                       chain_fn=RAG(18, (10, 8, 6), (8, 10, 12)), chain_step=1)
 
 

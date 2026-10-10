@@ -13,11 +13,18 @@ namespace DeadCells.EditorTools
         [MenuItem("Dead Cells/Build macOS Player")]
         public static void BuildMac()
         {
-            Directory.CreateDirectory("Builds");
+            // -dcBuildPath <path>: test builds go elsewhere so a running copy of the
+            // game (Builds/DeadCellsSlice.app) never has its data swapped underneath it.
+            string path = OutputPath;
+            var args = System.Environment.GetCommandLineArgs();
+            int ai = System.Array.IndexOf(args, "-dcBuildPath");
+            if (ai >= 0 && ai + 1 < args.Length)
+                path = args[ai + 1];
+            Directory.CreateDirectory(Path.GetDirectoryName(Path.GetFullPath(path)));
             var options = new BuildPlayerOptions
             {
                 scenes = DCSceneBuilder.Scenes,
-                locationPathName = OutputPath,
+                locationPathName = path,
                 target = BuildTarget.StandaloneOSX,
                 options = BuildOptions.None,
             };

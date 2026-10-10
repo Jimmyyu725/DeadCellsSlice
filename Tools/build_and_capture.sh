@@ -26,7 +26,7 @@ if (( SKIP == 0 )); then
 fi
 OUT="$PWD/Captures/$NAME"
 rm -rf "$OUT" && mkdir -p "$OUT"
-"Builds/DeadCellsSlice.app/Contents/MacOS/Dead Cells Slice" -autoplay -captureDir "$OUT" -autoplaySeconds "$SECONDS_RUN" \
+"${APP:-Builds/DeadCellsSlice.app}/Contents/MacOS/Dead Cells Slice" -autoplay -captureDir "$OUT" -autoplaySeconds "$SECONDS_RUN" \
   -captureInterval 2 -screen-width 1920 -screen-height 1080 -screen-fullscreen 0 -logFile "$OUT/player.log" "${EXTRA[@]}" &
 PID=$!
 for i in $(seq 1 $((SECONDS_RUN + 90))); do

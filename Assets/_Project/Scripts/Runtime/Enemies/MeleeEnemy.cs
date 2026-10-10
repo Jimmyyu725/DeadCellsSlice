@@ -22,6 +22,8 @@ namespace DeadCells.Enemies
         public float windupSpeed = 0.62f;
         public float strikeSpeed = 1.25f;
         public Vector2Int strikeFrames = new Vector2Int(19, 24);
+        [Tooltip("Frame the wind-up holds on before the strike (0 = the frame before strikeFrames.x).")]
+        public int holdFrame;
         [Tooltip("Seconds the anticipation pose is held before the strike (scaled by difficulty).")]
         public float windupHold = 0.16f;
         [Tooltip("Delay after first spotting the player before the first attack may start.")]
@@ -62,6 +64,7 @@ namespace DeadCells.Enemies
 
         protected override void OnInterrupted()
         {
+            Tremble(false);
             if (state == State.Windup || state == State.Strike || state == State.Recover)
             {
                 nextAttack = Mathf.Max(nextAttack, Time.time + 0.35f);
@@ -94,16 +97,20 @@ namespace DeadCells.Enemies
                         anim.Play(Mathf.Abs(body.linearVelocity.x) > 0.3f ? "Run" : "Idle", 0.08f);
                     break;
                 case State.Windup:
-                    if (Frame < strikeFrames.x - 1)
+                    int hold = holdFrame > 0 ? holdFrame : strikeFrames.x - 1;
+                    if (Frame < hold)
                         clock += dt * windupSpeed / windupScale;
                     else
                     {
-                        // Hold the anticipation pose so the "!" gives time to react.
+                        // Hold the anticipation pose so the "!" gives time to react, trembling
+                        // with effort rather than freezing (a dead-still pose reads as a stutter).
                         anim.SetSpeed(0f);
                         held += dt;
+                        Tremble(true);
                     }
-                    if (Frame >= strikeFrames.x - 1 && held >= windupHold * windupScale)
+                    if (Frame >= hold && held >= windupHold * windupScale)
                     {
+                        Tremble(false);
                         Enter(State.Strike);
                         anim.SetSpeed(strikeSpeed);
                         hit = false;
@@ -127,6 +134,30 @@ namespace DeadCells.Enemies
                         Enter(State.Chase);
                     }
                     break;
+            }
+        }
+
+        Vector3 trembleBase;
+        bool trembling;
+
+        void Tremble(bool on)
+        {
+            var t = anim.yawPivot;
+            if (t == null)
+                return;
+            if (on)
+            {
+                if (!trembling)
+                {
+                    trembling = true;
+                    trembleBase = t.localPosition;
+                }
+                t.localPosition = trembleBase + new Vector3(Mathf.Sin(Time.time * 70f) * 0.025f, Mathf.Abs(Mathf.Sin(Time.time * 45f)) * 0.012f, 0f);
+            }
+            else if (trembling)
+            {
+                trembling = false;
+                t.localPosition = trembleBase;
             }
         }
 

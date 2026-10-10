@@ -85,7 +85,8 @@ namespace DeadCells.Enemies
                 return;
             foreach (var p in Projectile.Live)
             {
-                if (p == null || !p.fromPlayer || !p.reflectable)
+                // A shot the player parried back stays the player's: no ping-pong.
+                if (p == null || !p.fromPlayer || !p.reflectable || p.ShieldReflected)
                     continue;
                 if (Vector2.Distance(p.transform.position, transform.position + Vector3.up * 1.2f) > reverseRadius)
                     continue;

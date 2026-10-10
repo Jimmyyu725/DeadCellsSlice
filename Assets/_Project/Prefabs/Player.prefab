@@ -1661,7 +1661,8 @@ MonoBehaviour:
   timeToApex: 0.38
   fallGravityMultiplier: 1.45
   maxFallSpeed: 24
-  jumpCutMultiplier: 0.42
+  jumpCutMultiplier: 0.5
+  minJumpTime: 0.12
   apexHangThreshold: 1.6
   apexGravityMultiplier: 0.55
   coyoteTime: 0.12

@@ -364,6 +364,8 @@ namespace DeadCells.Enemies
         protected virtual void OnDied(DamageInfo info)
         {
             IsDead = true;
+            if (Core.AutoplayDirector.Active)
+                Debug.Log($"[DC] enemy died {name} frame={Time.frameCount}");
             OnInterrupted();
             anim.SetSpeed(1f);
             anim.Restart("Death", 0f);
@@ -380,6 +382,8 @@ namespace DeadCells.Enemies
 
         void Burst()
         {
+            if (Core.AutoplayDirector.Active)
+                Debug.Log($"[DC] enemy burst {name} frame={Time.frameCount}");
             var juice = JuiceEngine.Instance;
             Vector3 c = transform.position + Vector3.up * 0.6f * transform.localScale.y;
             if (juice != null)

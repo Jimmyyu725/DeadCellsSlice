@@ -1214,7 +1214,7 @@ namespace DeadCells.Player
                 }
                 if (juice != null)
                 {
-                    juice.HitStop(0.11f);
+                    juice.HitStop(0.05f);
                     juice.Shake(new Vector2(player.Facing, 0.2f), 0.6f);
                     juice.HitSparks(contact, new Vector2(-player.Facing, 0.4f), new Color(3f, 2.3f, 0.6f), 1f);
                     juice.Popup(transform.position + Vector3.up * 2.4f, "PARRY!", new Color(1f, 0.85f, 0.25f), true);
@@ -1227,7 +1227,6 @@ namespace DeadCells.Player
             }
             if (juice != null)
             {
-                juice.HitStop(0.045f);
                 juice.Shake(new Vector2(-player.Facing, 0f), 0.22f);
                 juice.HitSparks(contact, new Vector2(-player.Facing, 0.3f), new Color(2f, 2f, 2.2f), 0.4f);
             }
