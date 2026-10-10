@@ -85,6 +85,8 @@ namespace DeadCells.Core
         string lastArea = "";
         // Bot state.
         float attackTimer, jumpHoldUntil, skillTimer, stuckTimer, pathTimer;
+        float bestGoalDist = float.MaxValue, lastImprove;
+        int unstickTrick;
         Vector3 lastProgressPos;
         readonly List<Vector2Int> path = new List<Vector2Int>();
         int pathIndex;
@@ -244,6 +246,8 @@ namespace DeadCells.Core
                     lastArea = area;
                     lastSkip = Elapsed;
                     path.Clear();
+                    bestGoalDist = float.MaxValue;
+                    lastImprove = Time.time;
                     log.WriteLine($"[{Elapsed:F1}] area {area} rooms={rm.Level.data.rooms.Count} size={rm.Level.data.width}x{rm.Level.data.height} enemies={rm.Level.enemies.Count} hp={player?.Health.Current:F0}"
                         + $" secrets={Object.FindObjectsByType<Breakable>(FindObjectsSortMode.None).Length} guardians={Object.FindObjectsByType<RuneGuardian>(FindObjectsSortMode.None).Length}"
                         + $" timed={Object.FindObjectsByType<TimedDoor>(FindObjectsSortMode.None).Length} cursed={Object.FindObjectsByType<Chest>(FindObjectsSortMode.None).Count(c => c.cursed)}");
@@ -1224,6 +1228,33 @@ namespace DeadCells.Core
             if (player.Health.Normalized < 0.35f && SaveSystem.Data.run.flaskCharges > 0)
                 f.flaskPressed = true;
 
+            // An enemy standing right overhead (often on the ledge we need): jump and hit it in the air.
+            var over = OverheadEnemy(pos);
+            if (over != null && Time.time > ignoreFightUntil)
+            {
+                float odx = over.transform.position.x - pos.x;
+                f.moveX = Mathf.Abs(odx) > 0.7f ? Mathf.Sign(odx) : 0f;
+                if (player.Grounded)
+                {
+                    f.jumpPressed = true;
+                    jumpHoldUntil = Time.time + 0.4f;
+                }
+                f.jumpHeld = Time.time < jumpHoldUntil;
+                if (!player.Grounded && attackTimer <= 0f)
+                {
+                    if (Mathf.Abs(odx) > 0.2f && Mathf.Sign(odx) != player.Facing)
+                        f.moveX = Mathf.Sign(odx);
+                    f.primaryPressed = true;
+                    attackTimer = 0.16f;
+                }
+                if (skillTimer <= 0f)
+                {
+                    f.skill1Pressed = true;
+                    skillTimer = 1.5f;
+                }
+                return f;
+            }
+
             var target = NearestEnemy(pos, 9f);
             if (target != null && fightStuck > 3f)
             {
@@ -1275,6 +1306,19 @@ namespace DeadCells.Core
             return f;
         }
 
+        EnemyBase OverheadEnemy(Vector3 pos)
+        {
+            foreach (var e in RunManager.Instance.Level.enemies)
+            {
+                if (e == null || e.IsDead)
+                    continue;
+                Vector3 d = e.transform.position - pos;
+                if (Mathf.Abs(d.x) < 2.6f && d.y > 0.8f && d.y < 5f)
+                    return e;
+            }
+            return null;
+        }
+
         EnemyBase NearestEnemy(Vector3 pos, float range)
         {
             EnemyBase best = null;
@@ -1302,6 +1346,34 @@ namespace DeadCells.Core
             if (rm.Level.boss != null && !rm.Level.boss.IsDead)
                 goal = rm.Level.boss.transform.position;
 
+            // No real progress towards the goal for a while (bouncing in place counts as moving):
+            // try something different - roll, drop through a platform or jump the other way.
+            float gd = Mathf.Abs(goal.x - pos.x) + Mathf.Abs(goal.y - pos.y);
+            if (gd < bestGoalDist - 1f || Time.time - lastImprove > 30f)
+            {
+                bestGoalDist = gd;
+                lastImprove = Time.time;
+            }
+            if (Time.time - lastImprove > 7f)
+            {
+                lastImprove = Time.time - 4f;   // retry every 3 s
+                int trick = unstickTrick++ % 3;
+                f.moveX = trick == 2 ? -Mathf.Sign(goal.x - pos.x) : Mathf.Sign(goal.x - pos.x);
+                if (trick == 0)
+                    f.dodgePressed = true;
+                else if (trick == 1)
+                {
+                    f.down = true;
+                    f.jumpPressed = true;
+                }
+                else
+                {
+                    f.jumpPressed = true;
+                    f.jumpHeld = true;
+                }
+                log.WriteLine($"[{Elapsed:F1}] bot unstick #{unstickTrick} at ({pos.x:F1},{pos.y:F1}) goal=({goal.x:F0},{goal.y:F0})");
+                return;
+            }
             if ((pos - lastProgressPos).sqrMagnitude > 1f)
             {
                 lastProgressPos = pos;
