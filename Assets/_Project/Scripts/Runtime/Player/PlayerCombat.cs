@@ -138,6 +138,8 @@ namespace DeadCells.Player
             mainVisual[slot] = offVisual[slot] = null;
             slots[slot] = item;
             comboIndex[slot] = 0;
+            if (item == null || item.kind != ItemKind.Skill)
+                cooldownUntil[slot] = 0f; // a fresh weapon is ready at once (skills keep theirs: no swap exploit)
             if (item != null)
             {
                 mainVisual[slot] = Spawn(item.visual, item.mount);
@@ -282,7 +284,12 @@ namespace DeadCells.Player
             if (input.skill1Pressed) lastPressed[2] = Time.time;
             if (input.skill2Pressed) lastPressed[3] = Time.time;
             if (input.flaskPressed) flaskPressed = Time.time;
+            // Holding a weapon button keeps attacking; shields use the hold to block instead.
+            if (input.primaryHeld && RepeatsWhileHeld(0)) lastPressed[0] = Time.time;
+            if (input.secondaryHeld && RepeatsWhileHeld(1)) lastPressed[1] = Time.time;
         }
+
+        bool RepeatsWhileHeld(int slot) => slots[slot] != null && (slots[slot].kind == ItemKind.Melee || slots[slot].kind == ItemKind.Bow);
 
         bool Buffered(int slot) => Time.time - lastPressed[slot] <= attackBufferTime;
 
@@ -361,8 +368,12 @@ namespace DeadCells.Player
 
         // -------------------------------------------------------------- melee
 
+        /// <summary>Count of attacks/shots started (test statistics).</summary>
+        public int ActionsStarted { get; private set; }
+
         void StartMelee(int slot, int index)
         {
+            ActionsStarted++;
             var item = slots[slot];
             action = ActionKind.Melee;
             actionSlot = slot;
@@ -391,6 +402,7 @@ namespace DeadCells.Player
 
         void StartRanged(int slot, ActionKind kind, string clip)
         {
+            ActionsStarted++;
             action = kind;
             actionSlot = slot;
             clock = 0f;
@@ -569,6 +581,10 @@ namespace DeadCells.Player
                     return ct.FacingDir == side; // facing away from the player
                 case CritRule.Disabled:
                     return ct != null && ct.IsDisabled;
+                case CritRule.AfterDodge:
+                    return Time.time - player.LastDodgeTime <= 1.5f;
+                case CritRule.LowHealth:
+                    return target.Current <= target.maxHealth * 0.35f;
                 default:
                     return false;
             }

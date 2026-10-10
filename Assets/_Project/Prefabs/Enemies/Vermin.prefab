@@ -318,7 +318,7 @@ MonoBehaviour:
   - {fileID: 6612666338276715214}
   - {fileID: 5684365525668335750}
   runSpeed: 6.5
-  fuse: 0.55
+  fuse: 0.7
   blastRadius: 2.2
   runClip: Run
 --- !u!1 &4366245283681037210

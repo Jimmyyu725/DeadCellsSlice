@@ -47,6 +47,9 @@ namespace DeadCells.Core
         public bool allowPrologue;
         public float dieAfter;
         public bool breakPost;
+        public bool armoryTest;
+        bool holdAttack;
+        bool standStill;
         bool diedOnce;
         bool scripted;
         float scriptJumpAt, scriptHoldUntil;
@@ -103,6 +106,7 @@ namespace DeadCells.Core
                     case "-autoplayPrologue": d.allowPrologue = true; break;
                     case "-autoplayDieAfter": float.TryParse(next, out d.dieAfter); break;
                     case "-autoplayBreakPost": d.breakPost = true; break;
+                    case "-autoplayArmory": d.armoryTest = true; break;
                     case "-autoplayDifficulty":
                         d.difficulty = next == "easy" ? BaseDifficulty.Easy : next == "hard" ? BaseDifficulty.Hard : BaseDifficulty.Normal;
                         break;
@@ -196,6 +200,12 @@ namespace DeadCells.Core
                     Invoke(nameof(CaptureArea), 2.5f);
                     if (breakPost)
                         Invoke(nameof(BreakPost), 1.5f);
+                    if (armoryTest && rm.InPassage)
+                    {
+                        armoryTest = false;
+                        skipEvery = 0f;
+                        StartCoroutine(ArmoryTest(rm));
+                    }
                     if (shaftTest && !rm.InPassage && shaftAreas < 3)
                     {
                         shaftAreas++;
@@ -232,6 +242,81 @@ namespace DeadCells.Core
         }
 
         void CaptureArea() => Capture("area_" + lastArea.Replace('/', '_'));
+
+        /// <summary>Player chest position in screen pixels, for cropping test captures.</summary>
+        static string ScreenTag(PlayerController p)
+        {
+            var cam = Camera.main;
+            if (cam == null)
+                return "0x0";
+            Vector3 sp = cam.WorldToScreenPoint(p.transform.position + Vector3.up * 1.1f);
+            return $"{Mathf.RoundToInt(sp.x)}x{Mathf.RoundToInt(sp.y)}";
+        }
+
+        /// <summary>
+        /// Test hook: equip every weapon in turn, hold the attack button (the
+        /// combo must keep chaining) and capture close-ups mid-swing.
+        /// </summary>
+        System.Collections.IEnumerator ArmoryTest(RunManager rm)
+        {
+            yield return new WaitForSecondsRealtime(2f);
+            Cheats.SetGodMode(true);
+            standStill = true;
+            var composer = rm.vcam != null ? rm.vcam.GetComponent<Unity.Cinemachine.CinemachinePositionComposer>() : null;
+            float distance = composer != null ? composer.CameraDistance : 0f;
+            if (composer != null)
+                composer.CameraDistance = 8f;
+            var p = PlayerController.Main;
+            // Stand in the open: the widest stretch of clear floor in the room.
+            var tiles = rm.Level.data.tiles;
+            int bestX = -1, bestRun = 0;
+            int floorY = Mathf.FloorToInt(rm.Level.playerStart.y) - 1;
+            for (int x = 1, run = 0; x < rm.Level.data.width - 1; x++)
+            {
+                bool clear = tiles[x, floorY] == Tile.Solid;
+                for (int dy = 1; dy <= 5 && clear; dy++)
+                    clear = floorY + dy < rm.Level.data.height && tiles[x, floorY + dy] == Tile.Air;
+                run = clear ? run + 1 : 0;
+                if (run > bestRun)
+                {
+                    bestRun = run;
+                    bestX = x - run + 3; // left end: lunges travel right across the open floor
+                }
+            }
+            foreach (var item in Items.ItemDatabase.Instance.items)
+            {
+                if (item.kind == Items.ItemKind.Skill)
+                    continue;
+                if (bestX > 0)
+                {
+                    p.Teleport(new Vector3(bestX + 0.5f, floorY + 1.05f, 0f));
+                    p.anim.SetFacing(1);
+                    if (rm.vcam != null)
+                        rm.vcam.PreviousStateIsValid = false;
+                    yield return new WaitForSecondsRealtime(0.3f);
+                }
+                p.Combat.Equip(0, item);
+                yield return new WaitForSecondsRealtime(0.4f);
+                int startHits = p.Combat.ActionsStarted;
+                holdAttack = true; // shields block while held
+                float t0 = Time.time;
+                yield return new WaitForSeconds(0.12f);
+                Capture($"armory_{item.id}_a_{ScreenTag(p)}");
+                yield return new WaitForSeconds(0.3f);
+                Capture($"armory_{item.id}_b_{ScreenTag(p)}");
+                yield return new WaitForSeconds(0.4f);
+                Capture($"armory_{item.id}_c_{ScreenTag(p)}");
+                while (Time.time - t0 < 2.2f)
+                    yield return null;
+                holdAttack = false;
+                log.WriteLine($"[{Elapsed:F1}] armory {item.id}: {p.Combat.ActionsStarted - startHits} attacks while held 2.2 s");
+                yield return new WaitForSecondsRealtime(0.6f);
+            }
+            if (composer != null)
+                composer.CameraDistance = distance;
+            standStill = false;
+            log.WriteLine($"[{Elapsed:F1}] armory test done");
+        }
 
         /// <summary>Test hook: wipe the post profile's component list the way a bad reload did.</summary>
         void BreakPost()
@@ -455,6 +540,8 @@ namespace DeadCells.Core
             var rm = RunManager.Instance;
             if (player == null || rm == null || rm.Level == null || rm.Transitioning)
                 return f;
+            if (holdAttack || standStill)
+                return new InputFrame { primaryHeld = holdAttack };
             if (scripted)
                 return ScriptedClimb(player);
             float dt = Time.deltaTime;

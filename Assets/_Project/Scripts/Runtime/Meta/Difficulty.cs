@@ -37,7 +37,7 @@ namespace DeadCells.Meta
         };
 
         /// <summary>Telegraph slow-down: lower difficulty gives longer wind-ups.</summary>
-        public static float EnemyWindupScale => Base(1.35f, 1f, 0.85f) * Mathf.Max(0.7f, 1f - 0.05f * Run.bossCells);
+        public static float EnemyWindupScale => Base(1.6f, 1.25f, 1f) * Mathf.Max(0.7f, 1f - 0.05f * Run.bossCells);
 
         public static string Label(BaseDifficulty d) => Loc.Get("difficulty." + d.ToString().ToLowerInvariant());
     }

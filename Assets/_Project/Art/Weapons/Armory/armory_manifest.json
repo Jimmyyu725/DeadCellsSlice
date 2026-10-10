@@ -1,0 +1,133 @@
+{
+  "generator": "Tools/Blender/build_armory.py",
+  "unity_axes": "Unity (x,y,z) = Blender (x,z,y)",
+  "atlases": {
+    "Armory": {
+      "albedo": "Assets/_Project/Art/Weapons/Armory/Textures/Armory_Albedo.png",
+      "normal": "Assets/_Project/Art/Weapons/Armory/Textures/Armory_Normal.png",
+      "orm": "Assets/_Project/Art/Weapons/Armory/Textures/Armory_ORM.png",
+      "emission": "Assets/_Project/Art/Weapons/Armory/Textures/Armory_Emission.png"
+    }
+  },
+  "materials": {
+    "Armory": "M_Armory"
+  },
+  "emission_colors": {
+    "BellMaul clapper": "#FFB347",
+    "PendulumRapier gem + pendulum": "#FFD27A",
+    "TideScythe sea-glass": "#FFD27A",
+    "ChainFlail windows": "#FF8A3A",
+    "GraveShovel star chips": "#FFE9A0",
+    "Crossbow sight": "#FFD27A"
+  },
+  "modules": [
+    {
+      "name": "BellMaul",
+      "fbx": "Assets/_Project/Art/Weapons/Armory/BellMaul.fbx",
+      "atlas": "Armory",
+      "unity_bounds_min": [
+        -0.338,
+        -0.405,
+        -0.1789
+      ],
+      "unity_bounds_max": [
+        0.2001,
+        1.295,
+        0.1789
+      ],
+      "sockets": {},
+      "tris": 2278,
+      "usage": "Bell-Breaker maul: ash haft (grip centre at origin), a cracked bronze bell as the head with the mouth toward +X and an iron spike toward -X at y=1.06. Emission = the ember clapper in the mouth."
+    },
+    {
+      "name": "PendulumRapier",
+      "fbx": "Assets/_Project/Art/Weapons/Armory/PendulumRapier.fbx",
+      "atlas": "Armory",
+      "unity_bounds_min": [
+        -0.1244,
+        -0.2945,
+        -0.069
+      ],
+      "unity_bounds_max": [
+        0.1244,
+        1.125,
+        0.069
+      ],
+      "sockets": {},
+      "tris": 2690,
+      "usage": "Clockmaker's rapier: needle blade +Y to y=1.12, brass cup guard with a gear disc facing the camera, S quillons, knuckle bow on +X, pendulum charm under the pommel. Emission = gear gem + pendulum glass."
+    },
+    {
+      "name": "TideScythe",
+      "fbx": "Assets/_Project/Art/Weapons/Armory/TideScythe.fbx",
+      "atlas": "Armory",
+      "unity_bounds_min": [
+        -0.1054,
+        -0.69,
+        -0.0264
+      ],
+      "unity_bounds_max": [
+        0.7895,
+        1.1724,
+        0.0264
+      ],
+      "sockets": {},
+      "tris": 1740,
+      "usage": "Tide scythe: driftwood snath (grip at origin, y=-0.6..1.1), crescent blade from the top toward +X curving down to (0.78, 0.76), edge on the inner side; kelp strips, side nib on -X. Emission = sea-glass line along the blade spine."
+    },
+    {
+      "name": "ChainFlail",
+      "fbx": "Assets/_Project/Art/Weapons/Armory/ChainFlail.fbx",
+      "atlas": "Armory",
+      "unity_bounds_min": [
+        -0.026,
+        -0.205,
+        -0.1024
+      ],
+      "unity_bounds_max": [
+        0.3081,
+        0.7445,
+        0.1024
+      ],
+      "sockets": {},
+      "tris": 2942,
+      "usage": "Chain flail: dark-wood handle (grip at origin, y=-0.19..0.24), interlocked chain arcing to a spiked iron ball centred at (0.19, 0.62). Emission = molten windows on both ball faces."
+    },
+    {
+      "name": "GraveShovel",
+      "fbx": "Assets/_Project/Art/Weapons/Armory/GraveShovel.fbx",
+      "atlas": "Armory",
+      "unity_bounds_min": [
+        -0.118,
+        -0.6065,
+        -0.0323
+      ],
+      "unity_bounds_max": [
+        0.118,
+        1.2,
+        0.0323
+      ],
+      "sockets": {},
+      "tris": 1392,
+      "usage": "Gravedigger's shovel: ash shaft (grip at origin, y=-0.6..0.86), D-handle at the bottom, pointed spade y=0.84..1.2 facing the camera (+-Z). Emission = three embedded star chips."
+    },
+    {
+      "name": "Crossbow",
+      "fbx": "Assets/_Project/Art/Weapons/Armory/Crossbow.fbx",
+      "atlas": "Armory",
+      "unity_bounds_min": [
+        -0.025,
+        -0.218,
+        -0.455
+      ],
+      "unity_bounds_max": [
+        0.025,
+        0.406,
+        0.3263
+      ],
+      "sockets": {},
+      "tris": 1456,
+      "usage": "Fishbone crossbow (Bow mount convention): pistol grip at origin, stock along Y with the butt at +Y, bone prod with limbs along +-Z at y=-0.34, a bolt loaded toward -Y. Emission = glass sight."
+    }
+  ]
+}

@@ -586,6 +586,79 @@ namespace DeadCells.EditorTools
             };
             list.Add(daggers);
 
+            // Bell-Breaker: two crushing swings; the toll stuns, and stunned foes take critical hits.
+            var maul = Item("melee_bellmaul", ItemKind.Melee, "BellMaul", MountPoint.Weapon, 0, 170, 1, CritRule.Disabled, 2.2f);
+            maul.animSpeed = 0.66f;
+            maul.bladeLength = 1.3f;
+            maul.arcColor = new Color(3.2f, 1.9f, 0.5f);
+            maul.arcCore = new Color(6.5f, 5.5f, 3.5f);
+            maul.sparkColor = new Color(3.2f, 2.2f, 0.8f);
+            maul.combo = new[]
+            {
+                Step("Slash_Combo_1", 18, 4, 8, 10, 3, 6, 3f, 30, new Vector2(1.5f, 1.1f), new Vector2(3.0f, 2.4f), 8f, 0.9f, 0.8f, 0.4f),
+                Step("Slash_Combo_3", 24, 5, 10, 15, 4, 8, 4.5f, 46, new Vector2(1.6f, 0.9f), new Vector2(3.3f, 2.6f), 13f, 0.7f, 1f, 0.65f, true),
+            };
+            list.Add(maul);
+
+            // Pendulum Rapier: quick thrusts that crit right after a roll.
+            var rapier = Item("melee_rapier", ItemKind.Melee, "PendulumRapier", MountPoint.Weapon, 35, 165, 2, CritRule.AfterDodge, 2.4f);
+            rapier.animSpeed = 1.3f;
+            rapier.bladeLength = 1.1f;
+            rapier.arcColor = new Color(3f, 2.5f, 1.1f);
+            rapier.arcCore = new Color(6.5f, 6f, 4.5f);
+            rapier.sparkColor = new Color(3f, 2.6f, 1.4f);
+            rapier.combo = new[]
+            {
+                Step("Spear_Thrust_1", 16, 4, 7, 7, 3, 6, 6f, 10, new Vector2(1.6f, 1.15f), new Vector2(3.0f, 0.8f), 3f, 0.1f, 0.25f, 0.12f),
+                Step("Spear_Thrust_2", 16, 4, 7, 7, 3, 6, 6f, 11, new Vector2(1.6f, 1.2f), new Vector2(3.0f, 0.8f), 3f, 0.1f, 0.25f, 0.12f),
+                Step("Spear_Thrust_3", 22, 5, 9, 12, 4, 8, 9f, 20, new Vector2(1.9f, 1.1f), new Vector2(3.6f, 0.9f), 7f, 0.3f, 0.8f, 0.3f, true),
+            };
+            list.Add(rapier);
+
+            // Tide Scythe: slow, very wide sweeps.
+            var scythe = Item("melee_scythe", ItemKind.Melee, "TideScythe", MountPoint.Weapon, 45, 190, 2, CritRule.Finisher, 2f);
+            scythe.animSpeed = 0.85f;
+            scythe.bladeLength = 1.5f;
+            scythe.arcColor = new Color(0.6f, 2.6f, 3.0f);
+            scythe.arcCore = new Color(4.5f, 6.5f, 6.5f);
+            scythe.sparkColor = new Color(1.6f, 2.8f, 3f);
+            scythe.combo = new[]
+            {
+                Step("Slash_Combo_2", 18, 4, 8, 9, 3, 6, 4f, 17, new Vector2(1.6f, 1.3f), new Vector2(3.4f, 2.8f), 5f, 0.2f, 0.4f, 0.22f),
+                Step("Slash_Combo_1", 18, 4, 8, 9, 3, 6, 4f, 17, new Vector2(1.6f, 1.0f), new Vector2(3.4f, 2.2f), 5f, 0.2f, 0.4f, 0.22f),
+                Step("Slash_Combo_3", 24, 5, 10, 14, 4, 8, 6f, 34, new Vector2(1.7f, 1.0f), new Vector2(3.6f, 2.6f), 11f, 0.4f, 1f, 0.5f, true),
+            };
+            list.Add(scythe);
+
+            // Chain Flail: the last hit of the combo sends enemies flying.
+            var flail = Item("melee_flail", ItemKind.Melee, "ChainFlail", MountPoint.Weapon, 0, 150, 1, CritRule.Finisher, 2f);
+            flail.animSpeed = 0.95f;
+            flail.bladeLength = 0.9f;
+            flail.arcColor = new Color(3.2f, 1.2f, 0.4f);
+            flail.arcCore = new Color(6.5f, 4.5f, 3f);
+            flail.sparkColor = new Color(3.2f, 1.6f, 0.6f);
+            flail.combo = new[]
+            {
+                Step("Slash_Combo_1", 18, 4, 7, 9, 3, 6, 4f, 15, new Vector2(1.4f, 1.1f), new Vector2(2.7f, 2.0f), 7f, 0.2f, 0.35f, 0.2f),
+                Step("Slash_Combo_2", 18, 4, 7, 9, 3, 6, 4f, 15, new Vector2(1.4f, 1.3f), new Vector2(2.7f, 2.3f), 7f, 0.2f, 0.35f, 0.2f),
+                Step("Slash_Combo_3", 24, 5, 9, 14, 4, 8, 6f, 32, new Vector2(1.5f, 0.9f), new Vector2(3.0f, 2.2f), 15f, 0.5f, 1f, 0.55f, true),
+            };
+            list.Add(flail);
+
+            // Gravedigger's Shovel: finishes off anything below 35% health.
+            var shovel = Item("melee_shovel", ItemKind.Melee, "GraveShovel", MountPoint.Weapon, 25, 140, 1, CritRule.LowHealth, 2.5f);
+            shovel.animSpeed = 1f;
+            shovel.bladeLength = 1.2f;
+            shovel.arcColor = new Color(2.6f, 2.3f, 1.8f);
+            shovel.arcCore = new Color(6f, 6f, 5.5f);
+            shovel.sparkColor = new Color(2.6f, 2.4f, 2f);
+            shovel.combo = new[]
+            {
+                Step("Slash_Combo_1", 18, 4, 7, 9, 3, 6, 4.5f, 18, new Vector2(1.4f, 1.0f), new Vector2(2.7f, 2.0f), 6f, 0.2f, 0.35f, 0.2f),
+                Step("Slash_Combo_3", 24, 5, 9, 13, 4, 8, 6.5f, 28, new Vector2(1.5f, 0.8f), new Vector2(3.0f, 1.8f), 10f, 0.4f, 0.9f, 0.45f, true),
+            };
+            list.Add(shovel);
+
             var shield = Item("shield_frontline", ItemKind.Shield, "FrontlineShield", MountPoint.Shield, 0, 140, 1, CritRule.None, 1.5f);
             shield.parryWindow = 0.2f;
             shield.blockReduction = 0.85f;
@@ -601,6 +674,17 @@ namespace DeadCells.EditorTools
             bow.cooldown = 0.5f;
             bow.effectColor = new Color(2.2f, 2.4f, 2.8f);
             list.Add(bow);
+
+            // Fishbone Crossbow: slow bolts that pierce every enemy in a line.
+            var crossbow = Item("bow_crossbow", ItemKind.Bow, "Crossbow", MountPoint.Bow, 40, 190, 2, CritRule.None, 1.5f);
+            crossbow.projectile = ProjectilePrefab("P_Arrow");
+            crossbow.projectileSpeed = 42f;
+            crossbow.projectileGravity = 0f;
+            crossbow.damage = 30f;
+            crossbow.cooldown = 1.1f;
+            crossbow.pierce = true;
+            crossbow.effectColor = new Color(2.8f, 2.2f, 1.2f);
+            list.Add(crossbow);
 
             var fire = Item("skill_fire_grenade", ItemKind.Skill, "FireGrenade", MountPoint.Weapon, 0, 130, 1, CritRule.None, 1.5f);
             fire.projectile = ProjectilePrefab("P_FireGrenade");

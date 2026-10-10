@@ -18,6 +18,8 @@ namespace DeadCells.Items
         Behind,       // target is facing away
         Disabled,     // target stunned or frozen
         LongRange,    // projectile travelled > 6 m
+        AfterDodge,   // within 1.5 s of a dodge roll
+        LowHealth,    // target below 35% health
     }
 
     public enum SkillEffect

@@ -24,7 +24,7 @@ open "Builds/DeadCellsSlice.app"
 |---|---|---|
 | 移动 | A / D 或 ← → | 左摇杆 / 十字键 |
 | 跳跃（按住更高；撞墙时自动攀上边缘） | Space | A |
-| 主武器 / 副武器 | J 或左键 / K 或右键 | X / Y |
+| 主武器 / 副武器（按住连续攻击） | J 或左键 / K 或右键 | X / Y |
 | 技能 1 / 技能 2 | Q / E | LT / RT |
 | 翻滚（无敌帧） | Shift 或 L | B |
 | 交互（拾取、购买、开箱、传送、阅读） | F | LB |
@@ -52,8 +52,8 @@ open "Builds/DeadCellsSlice.app"
 
 | 类型 | 物品 |
 |---|---|
-| 近战 | 锈蚀的刽子手砍刀（初始）、生锈的剑、阔剑、潮卫长矛、双子蜱刺（背刺暴击） |
-| 盾 / 弓 | 前线盾牌、尖刺弓（远距离暴击，会被兰灯僧侣反弹） |
+| 近战 | 锈蚀的刽子手砍刀（初始）、生锈的剑、碎钟锤（钟鸣眩晕）、锁链流星（终结击飞）、掘墓铲（残血暴击）、阔剑、潮卫长矛、钟摆细剑（翻滚后暴击）、潮汐镰刀（超大范围）、双子蜱刺（背刺暴击） |
+| 盾 / 弓 | 前线盾牌、尖刺弓（远距离暴击，会被兰灯僧侣反弹）、鱼骨十字弩（慢速贯穿） |
 | 技能 | 硫磺手雷（燃烧）、水银冰霜手雷（冻结，冻住的敌人吃暴击）、结晶闪电鱼叉（贯穿 + 感电） |
 | 消耗 | 生命血瓶、力量 / 活力卷轴 |
 
@@ -72,7 +72,7 @@ open "Builds/DeadCellsSlice.app"
 
 | 路径 | 内容 |
 |---|---|
-| `Tools/Blender/` | 资产生成脚本：角色 `build_beheaded.py`、`build_zombie.py`、`build_enemies.py`（哨兵、僧侣、渔民、两个 Boss、生物），武器 `build_weapons.py`、`build_arsenal.py`，道具 `build_props.py`，环境 `build_environment.py`、`build_biome.py`（四个区域套件） |
+| `Tools/Blender/` | 资产生成脚本：角色 `build_beheaded.py`、`build_zombie.py`、`build_enemies.py`（哨兵、僧侣、渔民、两个 Boss、生物），武器 `build_weapons.py`、`build_arsenal.py`、`build_armory.py`，道具 `build_props.py`，环境 `build_environment.py`、`build_biome.py`（四个区域套件） |
 | `Tools/PIPELINE.md`、`Tools/BIOMES.md` | Blender → Unity 资产约定、区域套件约定 |
 | `Tools/Rooms/` | 房间模板（`make_rooms.py` 按坐标定义）和两个校验器：单房间（含镜像）可达性 `validate_rooms.py`，整关可达性 `validate_levels.py` |
 | `Assets/_Project/Art/` | 导出的 FBX 与烘焙贴图 |

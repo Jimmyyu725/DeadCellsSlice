@@ -670,6 +670,8 @@ MonoBehaviour:
   windupSpeed: 0.62
   strikeSpeed: 1.25
   strikeFrames: {x: 19, y: 24}
+  windupHold: 0.16
+  reactionDelay: 0.4
   lungeSpeed: 7
   hitboxOffset: {x: 1, y: 1}
   hitboxSize: {x: 1.6, y: 1.5}

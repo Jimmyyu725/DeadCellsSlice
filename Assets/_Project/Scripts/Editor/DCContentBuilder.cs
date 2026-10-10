@@ -27,6 +27,7 @@ namespace DeadCells.EditorTools
         const string CharDir = ArtDir + "/Characters";
         const string WeaponDir = ArtDir + "/Weapons";
         const string ArsenalDir = ArtDir + "/Weapons/Arsenal";
+        const string ArmoryDir = ArtDir + "/Weapons/Armory";
         const string PropsDir = ArtDir + "/Props";
         const string EnvDir = ArtDir + "/Environment";
         const string BiomeArtDir = ArtDir + "/Biomes";
@@ -313,6 +314,16 @@ namespace DeadCells.EditorTools
                 m.SetColor("_EmissionColor", new Color(2.6f, 1.5f, 0.6f));
                 m.SetFloat("_EmissionPulseAmp", 0.35f);
                 m.SetFloat("_EmissionPulseSpeed", 6f);
+                m.SetFloat("_OutlinePixels", 0.75f);
+                m.SetFloat("_GlintThreshold", 0.35f);
+                m.SetFloat("_GlintIntensity", 2.2f);
+            });
+            Mat("M_Armory", "DeadCells/CharacterLit", m =>
+            {
+                Textures(m, $"{ArmoryDir}/Textures", "Armory");
+                m.SetColor("_EmissionColor", new Color(3.0f, 1.7f, 0.55f));
+                m.SetFloat("_EmissionPulseAmp", 0.35f);
+                m.SetFloat("_EmissionPulseSpeed", 5f);
                 m.SetFloat("_OutlinePixels", 0.75f);
                 m.SetFloat("_GlintThreshold", 0.35f);
                 m.SetFloat("_GlintIntensity", 2.2f);

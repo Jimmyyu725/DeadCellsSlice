@@ -59,7 +59,7 @@ namespace DeadCells.Enemies
                     }
                     break;
                 case State.Windup:
-                    if (t >= 0.55f * windupScale)
+                    if (t >= 0.65f * windupScale)
                     {
                         state = State.Dive;
                         t = 0f;

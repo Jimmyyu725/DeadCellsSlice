@@ -1017,6 +1017,7 @@ MonoBehaviour:
   leapCooldown: 4
   leapVelocity: {x: 8, y: 11}
   leapDamage: 16
+  leapWindup: 0.42
 --- !u!1 &5530117622821697707
 GameObject:
   m_ObjectHideFlags: 0

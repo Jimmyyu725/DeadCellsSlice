@@ -10,7 +10,7 @@ namespace DeadCells.Enemies
     public class VerminEnemy : EnemyBase
     {
         public float runSpeed = 6.5f;
-        public float fuse = 0.55f;
+        public float fuse = 0.7f;
         public float blastRadius = 2.2f;
         public string runClip = "Run";
 

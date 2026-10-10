@@ -46,8 +46,8 @@ namespace DeadCells.Enemies
             {
                 Telegraph(false);
                 hopping = true;
-                hopStart = Time.time + 0.35f * windupScale;
-                Invoke(nameof(Launch), 0.35f * windupScale);
+                hopStart = Time.time + 0.5f * windupScale;
+                Invoke(nameof(Launch), 0.5f * windupScale);
             }
         }
 

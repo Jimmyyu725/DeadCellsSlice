@@ -22,6 +22,10 @@ namespace DeadCells.Enemies
         public float windupSpeed = 0.62f;
         public float strikeSpeed = 1.25f;
         public Vector2Int strikeFrames = new Vector2Int(19, 24);
+        [Tooltip("Seconds the anticipation pose is held before the strike (scaled by difficulty).")]
+        public float windupHold = 0.16f;
+        [Tooltip("Delay after first spotting the player before the first attack may start.")]
+        public float reactionDelay = 0.4f;
         public float lungeSpeed = 7f;
         public Vector2 hitboxOffset = new Vector2(1.0f, 1.0f);
         public Vector2 hitboxSize = new Vector2(1.6f, 1.5f);
@@ -30,6 +34,7 @@ namespace DeadCells.Enemies
 
         State state = State.Patrol;
         float clock;
+        float held;
         float nextAttack;
         bool hit;
         Vector3 home;
@@ -72,6 +77,7 @@ namespace DeadCells.Enemies
                     if (CanSeePlayer())
                     {
                         Enter(State.Chase);
+                        nextAttack = Mathf.Max(nextAttack, Time.time + reactionDelay * windupScale);
                         JuiceEngine.Instance?.Popup(transform.position + Vector3.up * 2.3f, "?", new Color(1f, 0.9f, 0.5f), false);
                     }
                     anim.Play(Mathf.Abs(body.linearVelocity.x) > 0.2f ? "Run" : "Idle", 0.12f);
@@ -87,8 +93,15 @@ namespace DeadCells.Enemies
                         anim.Play(Mathf.Abs(body.linearVelocity.x) > 0.3f ? "Run" : "Idle", 0.08f);
                     break;
                 case State.Windup:
-                    clock += dt * windupSpeed / windupScale;
-                    if (Frame >= strikeFrames.x - 1)
+                    if (Frame < strikeFrames.x - 1)
+                        clock += dt * windupSpeed / windupScale;
+                    else
+                    {
+                        // Hold the anticipation pose so the "!" gives time to react.
+                        anim.SetSpeed(0f);
+                        held += dt;
+                    }
+                    if (Frame >= strikeFrames.x - 1 && held >= windupHold * windupScale)
                     {
                         Enter(State.Strike);
                         anim.SetSpeed(strikeSpeed);
@@ -120,6 +133,7 @@ namespace DeadCells.Enemies
             anim.SetFacing(DirToPlayer);
             Enter(State.Windup);
             clock = 0f;
+            held = 0f;
             anim.Restart(attackClip, 0f);
             anim.SetSpeed(windupSpeed / windupScale);
             Telegraph();

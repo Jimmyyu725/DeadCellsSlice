@@ -163,7 +163,7 @@ namespace DeadCells.EditorTools
             playerGo.transform.position = new Vector3(10f, 10f, 0f);
             var player = playerGo.GetComponent<PlayerController>();
 
-            var cam = BuildCamera(new Vector3(10f, 12f, -17f));
+            var cam = BuildCamera(new Vector3(10f, 12f, -22f));
             cam.gameObject.AddComponent<CinemachineBrain>().IgnoreTimeScale = true;
             var vcamGo = new GameObject("CM_Follow");
             var vcam = vcamGo.AddComponent<CinemachineCamera>();
@@ -171,7 +171,7 @@ namespace DeadCells.EditorTools
             Transform target = playerGo.transform.Find("CameraTarget");
             vcam.Target.TrackingTarget = target != null ? target : playerGo.transform;
             var composer = vcamGo.AddComponent<CinemachinePositionComposer>();
-            composer.CameraDistance = 17f;
+            composer.CameraDistance = 22f;
             composer.Damping = new Vector3(0.35f, 0.5f, 0f);
             composer.Lookahead = new LookaheadSettings { Enabled = true, Time = 0.28f, Smoothing = 6f, IgnoreY = true };
             var comp = composer.Composition;

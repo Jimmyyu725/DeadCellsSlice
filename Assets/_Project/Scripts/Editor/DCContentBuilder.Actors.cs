@@ -34,23 +34,34 @@ namespace DeadCells.EditorTools
             ItemVisual("Harpoon", $"{ArsenalDir}/Harpoon.fbx", arsenal);
             ItemVisual("Flask", $"{ArsenalDir}/Flask.fbx", arsenal);
             ItemVisual("Scroll", $"{ArsenalDir}/Scroll.fbx", arsenal);
+            var armory = LoadMat("M_Armory");
+            ItemVisual("BellMaul", $"{ArmoryDir}/BellMaul.fbx", armory, new Vector2(0f, 0.9f), new Vector2(0.15f, 1.18f));
+            ItemVisual("PendulumRapier", $"{ArmoryDir}/PendulumRapier.fbx", armory, new Vector2(0f, 0.15f), new Vector2(0f, 1.1f));
+            ItemVisual("TideScythe", $"{ArmoryDir}/TideScythe.fbx", armory, new Vector2(0.05f, 1.1f), new Vector2(0.76f, 0.8f));
+            ItemVisual("ChainFlail", $"{ArmoryDir}/ChainFlail.fbx", armory, new Vector2(0.05f, 0.4f), new Vector2(0.2f, 0.66f));
+            ItemVisual("GraveShovel", $"{ArmoryDir}/GraveShovel.fbx", armory, new Vector2(0f, 0.86f), new Vector2(0f, 1.2f));
+            ItemVisual("Crossbow", $"{ArmoryDir}/Crossbow.fbx", armory);
             ItemVisual("Greatsword", $"{CharDir}/RoyalGuardian/Greatsword.fbx", LoadMat("M_Greatsword"));
             ItemVisual("Shovel", $"{CharDir}/TimeKeeper/Shovel.fbx", LoadMat("M_Shovel"));
         }
 
-        static void ItemVisual(string name, string fbx, Material mat, float bladeBase = -1f, float bladeTip = -1f)
+        static void ItemVisual(string name, string fbx, Material mat, float bladeBase = -1f, float bladeTip = -1f) =>
+            ItemVisual(name, fbx, mat, new Vector2(0f, bladeBase), new Vector2(0f, bladeTip));
+
+        /// <summary>Item prefab; BladeBase/BladeTip (item space, x = edge side, y = blade axis) drive the slash trail.</summary>
+        static void ItemVisual(string name, string fbx, Material mat, Vector2 bladeBase, Vector2 bladeTip)
         {
             var go = Instance(fbx);
             go.name = name;
             AssignAll(go, mat);
-            if (bladeTip > 0f)
+            if (bladeTip.y > 0f)
             {
                 var b = new GameObject("BladeBase").transform;
                 b.SetParent(go.transform, false);
-                b.localPosition = new Vector3(0f, bladeBase, 0f);
+                b.localPosition = bladeBase;
                 var t = new GameObject("BladeTip").transform;
                 t.SetParent(go.transform, false);
-                t.localPosition = new Vector3(0f, bladeTip, 0f);
+                t.localPosition = bladeTip;
             }
             Save(go, "Items/" + name);
         }

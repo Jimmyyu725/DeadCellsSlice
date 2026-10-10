@@ -114,7 +114,7 @@ namespace DeadCells.EditorTools
             Set("m_AdditionalLightsRenderingMode", p => p.intValue = 1);
             Set("m_AdditionalLightsPerObjectLimit", p => p.intValue = 8);
             Set("m_AdditionalLightShadowsSupported", p => p.boolValue = false);
-            Set("m_ShadowDistance", p => p.floatValue = 28f);
+            Set("m_ShadowDistance", p => p.floatValue = 34f);
             Set("m_ShadowCascadeCount", p => p.intValue = 2);
             Set("m_SoftShadowsSupported", p => p.boolValue = true);
             Set("m_ColorGradingMode", p => p.intValue = 1); // HDR grading

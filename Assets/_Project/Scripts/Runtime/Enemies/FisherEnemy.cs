@@ -19,8 +19,10 @@ namespace DeadCells.Enemies
         public float leapCooldown = 4f;
         public Vector2 leapVelocity = new Vector2(8f, 11f);
         public float leapDamage = 16f;
+        [Tooltip("Crouch before the leap (scaled by difficulty), so the \"!\" can be answered.")]
+        public float leapWindup = 0.42f;
 
-        enum State { Idle, Chase, Throw, Leap }
+        enum State { Idle, Chase, Throw, LeapWindup, Leap }
 
         State state;
         float clock;
@@ -42,7 +44,11 @@ namespace DeadCells.Enemies
                 case State.Idle:
                     anim.Play("Idle", 0.15f);
                     if (CanSeePlayer())
+                    {
                         state = State.Chase;
+                        nextThrow = Mathf.Max(nextThrow, Time.time + 0.5f * windupScale);
+                        nextLeap = Mathf.Max(nextLeap, Time.time + 0.9f * windupScale);
+                    }
                     break;
                 case State.Chase:
                     if (!CanSeePlayer(1.5f))
@@ -51,6 +57,7 @@ namespace DeadCells.Enemies
                         break;
                     }
                     anim.SetFacing(DirToPlayer);
+                    anim.SetSpeed(1f);
                     anim.Play(Mathf.Abs(body.linearVelocity.x) > 0.3f ? "Run" : "Idle", 0.1f);
                     bool heightGap = Mathf.Abs(DistY) > 1.5f;
                     if (Time.time >= nextLeap && (heightGap || DistX > 4f) && DistX < 9f && Grounded)
@@ -79,6 +86,11 @@ namespace DeadCells.Enemies
                         nextThrow = Time.time + throwCooldown * Random.Range(0.8f, 1.2f);
                     }
                     break;
+                case State.LeapWindup:
+                    clock += dt;
+                    if (clock >= leapWindup * windupScale)
+                        Launch();
+                    break;
                 case State.Leap:
                     clock += dt;
                     if (airborne && clock > 0.25f && Grounded)
@@ -106,16 +118,26 @@ namespace DeadCells.Enemies
 
         void StartLeap()
         {
+            state = State.LeapWindup;
+            clock = 0f;
+            anim.SetFacing(DirToPlayer);
+            anim.Restart("Leap", 0f);
+            anim.SetSpeed(0f);
+            squash?.Punch(new Vector2(1.2f, 0.8f));
+            Telegraph(false);
+        }
+
+        void Launch()
+        {
             state = State.Leap;
             clock = 0f;
             airborne = true;
-            anim.Restart("Leap", 0f);
+            anim.SetSpeed(1f);
             int dir = DirToPlayer;
             float vx = Mathf.Clamp((player.position.x - transform.position.x) * 1.15f, -leapVelocity.x, leapVelocity.x);
             float vy = leapVelocity.y + Mathf.Clamp(DistY, 0f, 4f) * 1.5f;
             body.linearVelocity = new Vector2(vx == 0f ? dir * 2f : vx, vy);
             squash?.Punch(new Vector2(0.8f, 1.25f));
-            Telegraph(false);
         }
 
         protected override void Move(float dt)
@@ -130,6 +152,7 @@ namespace DeadCells.Enemies
                     break;
                 case State.Idle:
                 case State.Throw:
+                case State.LeapWindup:
                     v.x = Mathf.MoveTowards(v.x, 0f, 30f * dt);
                     break;
                 case State.Leap:

@@ -108,6 +108,9 @@ namespace DeadCells.Player
         float lastGroundedTime = -10f;
         float lastJumpPressedTime = -10f;
         float lastDodgePressedTime = -10f;
+
+        /// <summary>Time the last dodge roll started (for after-dodge crits).</summary>
+        public float LastDodgeTime { get; private set; } = -10f;
         bool jumpCutApplied;
         bool isJumping;
         bool airDashAvailable = true;
@@ -514,6 +517,7 @@ namespace DeadCells.Player
             if (!Grounded)
                 airDashAvailable = false;
             combat.CancelAttack();
+            LastDodgeTime = Time.time;
             EnterState(PlayerState.Dodge);
             return true;
         }
