@@ -27,6 +27,10 @@ namespace DeadCells.Run
         public GameObject cell;
         public GameObject bossGate;
         public GameObject spikes;
+        public GameObject mutator, blacksmith, tailor;
+        public GameObject timedDoor, curseShroud;
+        public GameObject crackedBlock, ramSlab, vineBulb, variantDoor;
+        public GameObject runeVine, runeRam, runeSpider;
         public Material deepMaterial;
         public Material shaftMaterial;
         public Material liquidWater, liquidWine, liquidVoid, liquidBrass;

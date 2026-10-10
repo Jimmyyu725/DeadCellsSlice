@@ -42,7 +42,7 @@ namespace DeadCells.Run
             if (db == null)
                 return Enumerable.Empty<ItemDef>();
             int maxTier = Mathf.Clamp(1 + depth / 2 + 1, 1, 3);
-            return db.Unlocked().Where(i => i.tier <= maxTier && (skills ? i.kind == ItemKind.Skill : i.kind != ItemKind.Skill));
+            return db.Unlocked().Where(i => i.tier <= maxTier && i.kind != ItemKind.Amulet && (skills ? i.kind == ItemKind.Skill : i.kind != ItemKind.Skill));
         }
 
         public static ItemDef RandomItem(int depth, System.Random rng = null)
@@ -63,7 +63,20 @@ namespace DeadCells.Run
                 return;
             var go = Object.Instantiate(W.itemDrop, pos, Quaternion.identity, Parent);
             go.transform.position = new Vector3(pos.x, Mathf.Floor(pos.y), 0.3f);
-            go.GetComponent<ItemPickup>().Setup(item, 0);
+            go.GetComponent<ItemPickup>().Setup(ItemForge.Roll(item, depth), 0);
+            SnapToFloor(go.transform);
+        }
+
+        /// <summary>A random amulet (always at least one affix).</summary>
+        public static void DropAmulet(Vector3 pos, int depth)
+        {
+            var db = ItemDatabase.Instance;
+            var pool = db != null ? db.Unlocked().Where(i => i.kind == ItemKind.Amulet).ToList() : null;
+            if (pool == null || pool.Count == 0 || W.itemDrop == null)
+                return;
+            var go = Object.Instantiate(W.itemDrop, pos, Quaternion.identity, Parent);
+            go.transform.position = new Vector3(pos.x, Mathf.Floor(pos.y), 0.3f);
+            go.GetComponent<ItemPickup>().Setup(ItemForge.Roll(pool[Random.Range(0, pool.Count)], depth), 0);
             SnapToFloor(go.transform);
         }
 
@@ -110,8 +123,12 @@ namespace DeadCells.Run
             var carried = new HashSet<string> { run.primary, run.secondary, run.skill1, run.skill2 };
             var pool = db.Unlocked().Where(i => !carried.Contains(i.id) && (i.kind != ItemKind.Shield || rng.NextDouble() < 0.6))
                 .OrderBy(_ => rng.Next()).Take(3).ToList();
-            foreach (var item in pool)
-                list.Add((item, Mathf.RoundToInt(item.PriceFor(depth) / Mathf.Max(0.5f, Difficulty.RewardMultiplier))));
+            foreach (var baseItem in pool)
+            {
+                var item = ItemForge.Roll(baseItem, depth, rng);
+                float q = item.quality >= ItemForge.Legendary ? 2.5f : 1f + 0.35f * item.quality;
+                list.Add((item, Mathf.RoundToInt(baseItem.PriceFor(depth) * q / Mathf.Max(0.5f, Difficulty.RewardMultiplier))));
+            }
             return list;
         }
     }

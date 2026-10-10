@@ -235,6 +235,7 @@ namespace DeadCells.EditorTools
             wp.cell = LoadPrefab("World/Cell");
             wp.bossGate = LoadPrefab("World/BossGate");
             wp.spikes = LoadPrefab("World/Spikes");
+            BuildSanctumWorld(wp);
             wp.deepMaterial = LoadMat("M_ENV_Deep");
             wp.shaftMaterial = LoadMat("M_LightShaft");
             wp.liquidWater = LoadMat("M_Liquid_Water");
@@ -749,6 +750,7 @@ namespace DeadCells.EditorTools
             list.Add(harpoon);
 
             BuildArmoryItems(list);
+            BuildSanctumItems(list);
             foreach (var d in list)
                 EditorUtility.SetDirty(d);
             var db = Asset<ItemDatabase>($"{ResourcesDir}/ItemDatabase.asset");

@@ -27,7 +27,10 @@ namespace DeadCells.UI
         Health health;
         PlayerCombat combat;
         RectTransform root;
-        RectTransform fill, trail;
+        RectTransform fill, trail, recover;
+        UILabel statB, statT, statS, curseText, mutationText;
+        Image amuletIcon, amuletFrame, packIcon, packFrame;
+        UILabel cardAffix;
         UILabel hpText, goldText, cellsText, timerText, areaText, flaskText, coordText;
         Image damageOverlay, fadeOverlay, goldIcon, cellIcon;
         readonly Image[] slotFrame = new Image[4];
@@ -119,6 +122,7 @@ namespace DeadCells.UI
             UIKit.Box("HPFrame", root, bl, new Vector2(18 * u, 10 * u), new Vector2(132 * u, 9 * u), UIKit.Ink);
             UIKit.Box("HPBack", root, bl, new Vector2(19 * u, 11 * u), new Vector2(130 * u, 7 * u), new Color(0.08f, 0.12f, 0.12f, 1f));
             trail = UIKit.Box("HPTrail", root, bl, new Vector2(19 * u, 11 * u), new Vector2(130 * u, 7 * u), new Color(0.85f, 0.25f, 0.2f, 1f)).rectTransform;
+            recover = UIKit.Box("HPRecover", root, bl, new Vector2(19 * u, 11 * u), new Vector2(130 * u, 7 * u), new Color(1f, 0.55f, 0.15f, 1f)).rectTransform;
             fill = UIKit.Box("HPFill", root, bl, new Vector2(19 * u, 11 * u), new Vector2(130 * u, 7 * u), new Color(0.18f, 0.78f, 0.38f, 1f)).rectTransform;
             var shine = UIKit.Box("HPShine", fill, new Vector2(0f, 1f), Vector2.zero, new Vector2(0f, 2 * u), new Color(0.6f, 1f, 0.7f, 0.45f)).rectTransform;
             shine.anchorMin = new Vector2(0f, 1f);
@@ -146,6 +150,21 @@ namespace DeadCells.UI
                 slotKey[i] = UIKit.Label("Key" + i, slotFrame[i].transform, new Vector2(1f, 0f), new Vector2(-1 * u, 1 * u), new Vector2(8 * u, 7 * u), TextAnchor.LowerRight, new Color(0.85f, 0.9f, 0.95f), 2f, UILabel.Style.Pixel, 30, new Vector2(1f, 0f));
                 slotKey[i].Text = keys[i];
             }
+
+            // Amulet + backpack beside the slots, scroll levels and curse above them.
+            amuletFrame = UIKit.Box("AmuletSlot", root, bl, new Vector2(122 * u, 23 * u), new Vector2(15 * u, 15 * u), UIKit.Ink);
+            UIKit.Box("AmuletInner", amuletFrame.transform, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(13 * u, 13 * u), new Color(0.07f, 0.08f, 0.12f, 1f));
+            amuletIcon = UIKit.Box("AmuletIcon", amuletFrame.transform, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(12 * u, 12 * u), Color.white);
+            packFrame = UIKit.Box("PackSlot", root, bl, new Vector2(139 * u, 23 * u), new Vector2(15 * u, 15 * u), UIKit.Ink);
+            UIKit.Box("PackInner", packFrame.transform, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(13 * u, 13 * u), new Color(0.07f, 0.08f, 0.12f, 1f));
+            packIcon = UIKit.Box("PackIcon", packFrame.transform, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(12 * u, 12 * u), new Color(1f, 1f, 1f, 0.6f));
+            var packKey = UIKit.Label("PackKey", packFrame.transform, new Vector2(1f, 0f), new Vector2(-1 * u, 1 * u), new Vector2(8 * u, 6 * u), TextAnchor.LowerRight, new Color(0.85f, 0.9f, 0.95f), 1.5f, UILabel.Style.Pixel, 30, new Vector2(1f, 0f));
+            packKey.Text = "C";
+            statB = UIKit.Label("StatB", root, bl, new Vector2(18 * u, 46 * u), new Vector2(20 * u, 7 * u), TextAnchor.MiddleLeft, ScrollPickup.Tint(ItemColor.Brutality), 2.5f);
+            statT = UIKit.Label("StatT", root, bl, new Vector2(38 * u, 46 * u), new Vector2(20 * u, 7 * u), TextAnchor.MiddleLeft, ScrollPickup.Tint(ItemColor.Tactics), 2.5f);
+            statS = UIKit.Label("StatS", root, bl, new Vector2(58 * u, 46 * u), new Vector2(20 * u, 7 * u), TextAnchor.MiddleLeft, ScrollPickup.Tint(ItemColor.Survival), 2.5f);
+            curseText = UIKit.Label("Curse", root, bl, new Vector2(80 * u, 46 * u), new Vector2(80 * u, 7 * u), TextAnchor.MiddleLeft, new Color(0.85f, 0.45f, 1f), 2.5f);
+            mutationText = UIKit.Label("Mutations", root, bl, new Vector2(18 * u, 54 * u), new Vector2(200 * u, 7 * u), TextAnchor.MiddleLeft, new Color(0.75f, 0.85f, 0.75f, 0.85f), 2f, UILabel.Style.Body, 22);
 
             // Gold + cells (bottom-right).
             Vector2 br = new Vector2(1f, 0f);
@@ -188,6 +207,7 @@ namespace DeadCells.UI
             cardKind = UIKit.Label("CardKind", cardRoot, new Vector2(0f, 1f), new Vector2(26 * u, -14 * u), new Vector2(140 * u, 6 * u), TextAnchor.UpperLeft, UIKit.TextDim, 2f, UILabel.Style.Pixel, 30, new Vector2(0f, 1f));
             cardStats = UIKit.Label("CardStats", cardRoot, new Vector2(0f, 1f), new Vector2(26 * u, -22 * u), new Vector2(140 * u, 6 * u), TextAnchor.UpperLeft, UIKit.Gold, 2f, UILabel.Style.Pixel, 30, new Vector2(0f, 1f));
             cardDesc = UIKit.Label("CardDesc", cardRoot, new Vector2(0f, 1f), new Vector2(4 * u, -31 * u), new Vector2(162 * u, 20 * u), TextAnchor.UpperLeft, new Color(0.82f, 0.86f, 0.9f), 2f, UILabel.Style.Body, 22, new Vector2(0f, 1f));
+            cardAffix = UIKit.Label("CardAffix", cardRoot, Vector2.zero, new Vector2(4 * u, 3 * u), new Vector2(162 * u, 6 * u), TextAnchor.LowerLeft, new Color(0.6f, 0.9f, 1f), 2f, UILabel.Style.Body, 22, Vector2.zero);
             cardPrice = UIKit.Label("CardPrice", cardRoot, new Vector2(1f, 1f), new Vector2(-4 * u, -4 * u), new Vector2(60 * u, 8 * u), TextAnchor.UpperRight, UIKit.Gold, 2.5f, UILabel.Style.Pixel, 30, Vector2.one);
             promptRoot.gameObject.SetActive(false);
             cardRoot.gameObject.SetActive(false);
@@ -280,8 +300,17 @@ namespace DeadCells.UI
                 var sprite = PixelIcons.For(item);
                 slotIcon[i].sprite = sprite;
                 slotIcon[i].enabled = sprite != null;
-                slotFrame[i].color = item != null ? KindColor[(int)item.kind] : UIKit.Ink;
+                slotFrame[i].color = item != null ? (item.quality > 0 ? ItemForge.QualityColor(item.quality) * 0.75f : KindColor[(int)item.kind]) : UIKit.Ink;
             }
+            var amulet = combat.Amulet;
+            amuletIcon.sprite = PixelIcons.For(amulet);
+            amuletIcon.enabled = amuletIcon.sprite != null;
+            amuletFrame.color = amulet != null ? ItemForge.QualityColor(amulet.quality) * 0.75f : UIKit.Ink;
+            bool hasPack = SaveSystem.Data.meta.backpackUnlocked;
+            packFrame.gameObject.SetActive(hasPack);
+            var pack = combat.Backpack;
+            packIcon.sprite = PixelIcons.For(pack);
+            packIcon.enabled = packIcon.sprite != null;
         }
 
         // ------------------------------------------------------------- update
@@ -326,7 +355,14 @@ namespace DeadCells.UI
                 trailValue = Mathf.MoveTowards(trailValue, n, dt * 0.8f);
             trailValue = Mathf.Max(trailValue, n);
             trail.sizeDelta = new Vector2(width * trailValue, trail.sizeDelta.y);
+            float rec = player != null ? player.Recoverable : 0f;
+            recover.sizeDelta = new Vector2(width * Mathf.Clamp01(n + rec / Mathf.Max(1f, health.maxHealth)), recover.sizeDelta.y);
             hpText.Text = $"{Mathf.CeilToInt(health.Current)} / {Mathf.CeilToInt(health.maxHealth)}";
+            statB.Text = run.brutality.ToString();
+            statT.Text = run.tactics.ToString();
+            statS.Text = run.survival.ToString();
+            curseText.Text = run.curse > 0 ? Loc.Get("hud.curse", run.curse) : "";
+            mutationText.Text = MutationLine(run);
             flaskText.Text = $"x{run.flaskCharges}";
 
             damagePulse = Mathf.MoveTowards(damagePulse, 0f, dt * 2.5f);
@@ -348,6 +384,23 @@ namespace DeadCells.UI
             UpdatePrompt();
             UpdateBoss();
             UpdateToasts();
+        }
+
+        string mutationKey;
+        string mutationLine = "";
+
+        string MutationLine(RunState run)
+        {
+            string key = string.Join(",", run.mutations) + Loc.Current;
+            if (key != mutationKey)
+            {
+                mutationKey = key;
+                var names = new List<string>();
+                foreach (var id in run.mutations)
+                    names.Add(Loc.Get("mutation." + id + ".name"));
+                mutationLine = string.Join("  ·  ", names);
+            }
+            return mutationLine;
         }
 
         void UpdateSlots()
@@ -423,11 +476,21 @@ namespace DeadCells.UI
             if (item == null)
                 return;
             cardIcon.sprite = PixelIcons.For(item);
-            cardTitle.Text = item.DisplayName;
+            cardTitle.Text = ItemForge.FullName(item);
+            cardTitle.Color = ItemForge.QualityColor(item.quality);
+            string affix = ItemForge.AffixLines(item).TrimStart('\n');
+            int lines = affix.Length == 0 ? 0 : affix.Split('\n').Length;
+            cardAffix.Text = affix;
+            // Body text runs ~13.5 units per line at this size.
+            ((RectTransform)cardAffix.transform).sizeDelta = new Vector2(162 * uiScale, 14 * uiScale * lines);
+            cardRoot.sizeDelta = new Vector2(170 * uiScale, (54 + 14 * lines) * uiScale);
             int slot = combat != null ? combat.SlotFor(item) : -1;
             var replaced = slot >= 0 ? combat.Slot(slot) : null;
             string kind = Loc.Get("kind." + item.kind.ToString().ToLowerInvariant());
-            cardKind.Text = replaced != null ? kind + "  -  " + Loc.Get("hud.replace", replaced.DisplayName) : kind;
+            string colors = ItemForge.ColorTags(item);
+            if (colors.Length > 0)
+                kind += "  ·  " + colors;
+            cardKind.Text = replaced != null ? kind + "  -  " + Loc.Get("hud.replace", ItemForge.FullName(replaced)) : kind;
             string crit = item.crit == CritRule.None ? "" : "   " + Loc.Get("hud.crit_label", Loc.Get("crit." + item.crit.ToString().ToLowerInvariant()));
             cardStats.Text = item.StatLine + crit;
             cardDesc.Text = item.Description;

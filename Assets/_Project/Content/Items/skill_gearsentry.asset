@@ -79,3 +79,12 @@ MonoBehaviour:
   interval: 0.7
   count: 4
   power: 1
+  colors: 2
+  quality: 0
+  affixes: 
+  hasAffixEffect: 0
+  affixEffect: 0
+  affixEffectChance: 0
+  bonusVsAfflicted: 0
+  healOnKill: 0
+  killBurst: 0

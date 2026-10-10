@@ -67,6 +67,9 @@ namespace DeadCells.Combat
             current = Mathf.Clamp(value, 0f, maxHealth);
         }
 
+        /// <summary>Asked when a hit would kill; return true after restoring health to survive.</summary>
+        public System.Func<bool> LethalSave;
+
         public DamageResult TakeDamage(DamageInfo info)
         {
             if (IsDead || IsInvulnerable)
@@ -88,6 +91,12 @@ namespace DeadCells.Combat
             }
 
             current = Mathf.Max(0f, current - info.amount);
+            if (current <= 0f && LethalSave != null && LethalSave())
+            {
+                // Something (the yolo mutation) caught the killing blow and set our health.
+                Damaged?.Invoke(info, result);
+                return result;
+            }
             if (current <= 0f)
             {
                 Damaged?.Invoke(info, DamageResult.Killed);

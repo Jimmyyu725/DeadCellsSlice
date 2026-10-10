@@ -27,6 +27,18 @@ MonoBehaviour:
   cell: {fileID: 7605437714641940085, guid: 784bb6bf5a7034c58bf341acf98f7a7e, type: 3}
   bossGate: {fileID: 5383794035065958356, guid: 14b247f727be94614a2b4a113090d27c, type: 3}
   spikes: {fileID: 2833862118195287408, guid: 4e373c650fa1c4c2684aa0754d31bab7, type: 3}
+  mutator: {fileID: 3911035117393268657, guid: c56156b3d511540fb8d133ba805c8982, type: 3}
+  blacksmith: {fileID: 5334861582408829268, guid: 1be2818f778114cabb09256fe2233b77, type: 3}
+  tailor: {fileID: 2620526109815898672, guid: d8843f7cc70f44713b3477e0ef9d844e, type: 3}
+  timedDoor: {fileID: 5976880417768635204, guid: 9dc4a026792ec40358c73924c07878e0, type: 3}
+  curseShroud: {fileID: 3970413360870924265, guid: 54c07d0df1c3b41e99cabf5721f5d10f, type: 3}
+  crackedBlock: {fileID: 0}
+  ramSlab: {fileID: 0}
+  vineBulb: {fileID: 0}
+  variantDoor: {fileID: 0}
+  runeVine: {fileID: 0}
+  runeRam: {fileID: 0}
+  runeSpider: {fileID: 0}
   deepMaterial: {fileID: 2100000, guid: 3287d021a0ce64d318c5bf7ddf285504, type: 2}
   shaftMaterial: {fileID: 2100000, guid: 624f905db3e464eeebfdd6d8bce9c256, type: 2}
   liquidWater: {fileID: 2100000, guid: 58d4c8a1d83824e26894bd7b313c05f5, type: 2}

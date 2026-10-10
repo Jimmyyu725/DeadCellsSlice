@@ -1,7 +1,9 @@
 using DeadCells.Combat;
 using DeadCells.Core;
 using DeadCells.FX;
+using DeadCells.Items;
 using DeadCells.Meta;
+using DeadCells.Run;
 using UnityEngine;
 
 namespace DeadCells.Player
@@ -116,6 +118,25 @@ namespace DeadCells.Player
 
         /// <summary>Time the last dodge roll started (for after-dodge crits).</summary>
         public float LastDodgeTime { get; private set; } = -10f;
+
+        /// <summary>
+        /// Health lost to the last hits that can still be won back by hitting
+        /// enemies soon (Dead Cells' recovery); drains away after a short delay.
+        /// </summary>
+        public float Recoverable { get; private set; }
+        float recoverDrainAt;
+
+        public float RecoverRatio => 0.6f * (1f + 0.5f * ItemForge.AmuletCount(Affix.Recovery)) * Mutations.RecoveryMultiplier;
+
+        /// <summary>Called when the player deals damage: wins back recoverable health.</summary>
+        public void Recover(float dealt)
+        {
+            if (Recoverable <= 0f || dealt <= 0f || State == PlayerState.Dead)
+                return;
+            float heal = Mathf.Min(Recoverable, dealt * 0.5f + 1f);
+            Recoverable -= heal;
+            health.Heal(heal);
+        }
         bool jumpCutApplied;
         bool isJumping;
         bool airDashAvailable = true;
@@ -153,6 +174,7 @@ namespace DeadCells.Player
             health = GetComponent<Health>();
             combat = GetComponent<PlayerCombat>();
             flameBlock = new MaterialPropertyBlock();
+            Meta.Outfits.Apply(gameObject);
             gravity = 2f * jumpHeight / (timeToApex * timeToApex);
             jumpVelocity = gravity * timeToApex;
             doubleJumpVelocity = Mathf.Sqrt(2f * gravity * doubleJumpHeight);
@@ -161,6 +183,7 @@ namespace DeadCells.Player
             body.interpolation = RigidbodyInterpolation2D.Interpolate;
             body.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
             health.Damaged += OnDamaged;
+            health.LethalSave = () => Mutations.TryRevive(this);
             health.Died += OnDied;
             if (InputSource == null)
                 InputSource = GetComponent<IInputSource>();
@@ -174,6 +197,12 @@ namespace DeadCells.Player
                 Input = InputSource.Read();
             if (Cheats.GodMode && State != PlayerState.Dead)
                 health.InvulnerableUntil = Mathf.Max(health.InvulnerableUntil, Time.time + 0.2f);
+            if (Recoverable > 0f)
+            {
+                if (Time.time > recoverDrainAt)
+                    Recoverable = Mathf.Max(0f, Recoverable - health.maxHealth * 0.07f * Time.deltaTime);
+                Recoverable = Mathf.Min(Recoverable, health.maxHealth - health.Current);
+            }
             var input = Input;
             if (input.jumpPressed)
                 lastJumpPressedTime = Time.time;
@@ -276,6 +305,8 @@ namespace DeadCells.Player
 
             if (TryGroundPound(input) || TryDodge(input))
                 return;
+            if (input.backpackPressed)
+                combat.SwapBackpack();
             int shield = combat.HeldShield(input);
             if (shield >= 0)
             {
@@ -410,7 +441,7 @@ namespace DeadCells.Player
         Vector2 Locomotion(Vector2 v, float dt)
         {
             var input = Input;
-            float target = input.moveX * runSpeed;
+            float target = input.moveX * runSpeed * SpeedMultiplier;
             float rate;
             if (Grounded)
                 rate = Mathf.Abs(target) > 0.01f ? groundAcceleration : groundDeceleration;
@@ -720,6 +751,10 @@ namespace DeadCells.Player
             health.InvulnerableUntil = Time.time + hurtInvulnerability;
             hitFlash?.Flash(new Color(2.4f, 0.35f, 0.3f));
             squash.Punch(new Vector2(0.82f, 1.15f));
+            Recoverable = Mathf.Min(health.maxHealth - health.Current, Recoverable + info.amount * RecoverRatio);
+            Mutations.OnHurt();
+            RunManager.Instance?.OnPlayerHurt();
+            recoverDrainAt = Time.time + 1.4f;
             Audio.Sfx.Play("player.hurt", transform.position + Vector3.up);
             var juice = JuiceEngine.Instance;
             if (juice != null)
@@ -741,16 +776,24 @@ namespace DeadCells.Player
             combat.CancelAttack();
             combat.EndBlock();
             EnterState(PlayerState.Dead);
+            Recoverable = 0f;
             anim.Restart("Death", 0f);
             Audio.Sfx.Play("player.death");
             Died?.Invoke();
         }
 
         /// <summary>Max health from meta upgrades (Collector) and this run's vitality scrolls.</summary>
+        /// <summary>Movement multiplier from the amulet (and mutations).</summary>
+        public float SpeedMultiplier { get; set; } = 1f;
+
         public void RecalculateStats(bool refill)
         {
             var d = SaveSystem.Data;
-            float max = baseMaxHealth * (1f + 0.1f * d.meta.vitalityLevel) * (1f + 0.15f * d.run.scrollsVitality);
+            var r = d.run;
+            // Every scroll adds health; Survival adds the most (Dead Cells' colour stats).
+            float max = baseMaxHealth * (1f + 0.1f * d.meta.vitalityLevel) * (1f + 0.08f * (r.brutality + r.tactics) + 0.25f * r.survival)
+                        * (1f + 0.15f * ItemForge.AmuletCount(Affix.MaxHealth)) * Mutations.HealthMultiplier;
+            SpeedMultiplier = (1f + 0.1f * ItemForge.AmuletCount(Affix.MoveSpeed)) * Mutations.SpeedMultiplier;
             float ratio = health.maxHealth > 0f ? health.Current / health.maxHealth : 1f;
             health.maxHealth = Mathf.Round(max);
             if (refill)

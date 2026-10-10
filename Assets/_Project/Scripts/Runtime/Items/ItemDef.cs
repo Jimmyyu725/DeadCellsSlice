@@ -9,6 +9,44 @@ namespace DeadCells.Items
         Shield,
         Bow,
         Skill,
+        Amulet,     // passive slot: stat affixes only
+    }
+
+    /// <summary>Scroll colours an item scales with (Dead Cells' Brutality / Tactics / Survival).</summary>
+    [System.Flags]
+    public enum ItemColor
+    {
+        None = 0,
+        Brutality = 1,
+        Tactics = 2,
+        Survival = 4,
+    }
+
+    /// <summary>Random modifiers rolled onto dropped items (count grows with quality).</summary>
+    public enum Affix
+    {
+        Damage,         // +20% damage
+        VsAfflicted,    // +50% damage against targets with a status
+        Ignite,         // 30% chance to burn
+        Bleed,          // 40% chance to bleed
+        Poison,         // 35% chance to poison
+        Freeze,         // 15% chance to freeze
+        HealOnKill,     // kills heal 3% max health
+        CritDamage,     // +40% critical damage
+        Cooldown,       // -25% cooldown
+        Lifesteal,      // 6% of damage healed
+        ExtraProjectile,
+        Pierce,
+        KillBurst,      // kills explode
+        AttackSpeed,    // +15% attack speed
+        Oil,            // 40% chance to coat in oil
+        // Amulet affixes
+        MaxHealth,      // +15% max health
+        AllDamage,      // +10% damage with everything
+        GoldFind,       // +30% gold
+        Recovery,       // recover 50% more of damage taken
+        MoveSpeed,      // +10% move speed
+        FlaskPower,     // flasks heal 30% more
     }
 
     public enum CritRule
@@ -32,6 +70,9 @@ namespace DeadCells.Items
         Lightning,
         Poison,     // stacking damage over time
         Slow,       // enemy time runs at 45%
+        Bleed,      // stacking damage over time (blades)
+        Oil,        // fire on an oiled target bursts and burns hotter
+        Root,       // cannot move (can still attack)
     }
 
     /// <summary>What a skill does when used.</summary>
@@ -191,7 +232,23 @@ namespace DeadCells.Items
         [Tooltip("Vortex pull strength / dash distance / buff damage bonus.")]
         public float power = 1f;
 
-        public bool IsWeapon => kind != ItemKind.Skill;
+        [Header("Scroll colours and rolls")]
+        public ItemColor colors = ItemColor.Brutality;
+        [Tooltip("0 normal, 1 '+', 2 '++', 3 legendary. Set on runtime copies by ItemForge.")]
+        public int quality;
+        public Affix[] affixes = new Affix[0];
+        [Tooltip("Extra on-hit status from an affix (in addition to `effect`).")]
+        public bool hasAffixEffect;
+        public SkillEffect affixEffect;
+        public float affixEffectChance;
+        [Tooltip("Damage bonus against targets carrying any status (affix).")]
+        public float bonusVsAfflicted;
+        [Tooltip("Fraction of max health healed per kill (affix).")]
+        public float healOnKill;
+        [Tooltip("Kills explode for this fraction of the killing blow (affix).")]
+        public float killBurst;
+
+        public bool IsWeapon => kind != ItemKind.Skill && kind != ItemKind.Amulet;
 
         public string StatLine
         {
@@ -206,6 +263,8 @@ namespace DeadCells.Items
                         return Loc.Get("hud.damage_label", Mathf.RoundToInt(total / Mathf.Max(1, combo.Length)));
                     case ItemKind.Shield:
                         return Loc.Get("hud.damage_label", Mathf.RoundToInt(parryDamage));
+                    case ItemKind.Amulet:
+                        return "";
                     default:
                         string cd = Loc.Get("hud.dps_label", cooldown.ToString("0.#"));
                         return damage > 0f ? Loc.Get("hud.damage_label", Mathf.RoundToInt(damage)) + "   " + cd : cd;

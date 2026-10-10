@@ -1,0 +1,243 @@
+{
+  "generator": "Tools/Blender/sanctum_props.py",
+  "unity_axes": "Unity (x,y,z) = Blender (x,z,y)",
+  "atlases": {
+    "Relics": {
+      "albedo": "Assets/_Project/Art/Props/Relics/Textures/Relics_Albedo.png",
+      "normal": "Assets/_Project/Art/Props/Relics/Textures/Relics_Normal.png",
+      "orm": "Assets/_Project/Art/Props/Relics/Textures/Relics_ORM.png",
+      "emission": "Assets/_Project/Art/Props/Relics/Textures/Relics_Emission.png"
+    }
+  },
+  "materials": {
+    "Relics": "M_Relics"
+  },
+  "emission_colors": {
+    "glow_fire": "#FF7A22",
+    "glow_ice": "#7FE8FF",
+    "glow_bolt": "#8FB4FF",
+    "glow_poison": "#8CFF4A",
+    "glow_moon": "#E6EEFF",
+    "glow_violet": "#B57CFF",
+    "glow_gold": "#FFCF6A",
+    "glow_red": "#FF3048"
+  },
+  "modules": [
+    {
+      "name": "AmuletEmber",
+      "fbx": "Assets/_Project/Art/Props/Relics/AmuletEmber.fbx",
+      "atlas": "Relics",
+      "unity_bounds_min": [
+        -0.1514,
+        -0.1514,
+        -0.045
+      ],
+      "unity_bounds_max": [
+        0.1514,
+        0.3071,
+        0.0361
+      ],
+      "sockets": {},
+      "tris": 1908,
+      "usage": "Amulet: brass sun disc with an obsidian ember core and flame prongs; centred, faces -Y."
+    },
+    {
+      "name": "AmuletTide",
+      "fbx": "Assets/_Project/Art/Props/Relics/AmuletTide.fbx",
+      "atlas": "Relics",
+      "unity_bounds_min": [
+        -0.1235,
+        -0.1233,
+        -0.051
+      ],
+      "unity_bounds_max": [
+        0.1241,
+        0.3171,
+        0.0361
+      ],
+      "sockets": {},
+      "tris": 1498,
+      "usage": "Amulet: silver scallop shell with a blue tide gem and a wave curl."
+    },
+    {
+      "name": "AmuletBone",
+      "fbx": "Assets/_Project/Art/Props/Relics/AmuletBone.fbx",
+      "atlas": "Relics",
+      "unity_bounds_min": [
+        -0.108,
+        -0.182,
+        -0.062
+      ],
+      "unity_bounds_max": [
+        0.108,
+        0.3071,
+        0.0361
+      ],
+      "sockets": {},
+      "tris": 1912,
+      "usage": "Amulet: bone ring with a small skull charm and red gem eyes."
+    },
+    {
+      "name": "AmuletStar",
+      "fbx": "Assets/_Project/Art/Props/Relics/AmuletStar.fbx",
+      "atlas": "Relics",
+      "unity_bounds_min": [
+        -0.13,
+        -0.13,
+        -0.0361
+      ],
+      "unity_bounds_max": [
+        0.13,
+        0.3371,
+        0.0361
+      ],
+      "sockets": {},
+      "tris": 1284,
+      "usage": "Amulet: gold eight-point star with a moonstone heart and violet rays."
+    },
+    {
+      "name": "RuneVine",
+      "fbx": "Assets/_Project/Art/Props/Relics/RuneVine.fbx",
+      "atlas": "Relics",
+      "unity_bounds_min": [
+        -0.1782,
+        -0.2573,
+        -0.0683
+      ],
+      "unity_bounds_max": [
+        0.17,
+        0.23,
+        0.0534
+      ],
+      "sockets": {},
+      "tris": 848,
+      "usage": "Vine rune (grows vines from bulbs). Rune tablet 0.34 x 0.46 m, centred, faces -Y. Emission = glyph."
+    },
+    {
+      "name": "RuneRam",
+      "fbx": "Assets/_Project/Art/Props/Relics/RuneRam.fbx",
+      "atlas": "Relics",
+      "unity_bounds_min": [
+        -0.17,
+        -0.23,
+        -0.0683
+      ],
+      "unity_bounds_max": [
+        0.17,
+        0.23,
+        0.0399
+      ],
+      "sockets": {},
+      "tris": 938,
+      "usage": "Ram rune (ground pound breaks rune floors). Rune tablet 0.34 x 0.46 m, centred, faces -Y. Emission = glyph."
+    },
+    {
+      "name": "RuneSpider",
+      "fbx": "Assets/_Project/Art/Props/Relics/RuneSpider.fbx",
+      "atlas": "Relics",
+      "unity_bounds_min": [
+        -0.1709,
+        -0.23,
+        -0.0804
+      ],
+      "unity_bounds_max": [
+        0.1967,
+        0.23,
+        0.0358
+      ],
+      "sockets": {},
+      "tris": 944,
+      "usage": "Spider rune (wall-jump). Rune tablet 0.34 x 0.46 m, centred, faces -Y. Emission = glyph."
+    },
+    {
+      "name": "CrackedBlock",
+      "fbx": "Assets/_Project/Art/Props/Relics/CrackedBlock.fbx",
+      "atlas": "Relics",
+      "unity_bounds_min": [
+        -0.495,
+        0.0,
+        -0.5443
+      ],
+      "unity_bounds_max": [
+        0.4973,
+        0.9979,
+        0.4879
+      ],
+      "sockets": {},
+      "tris": 548,
+      "usage": "Breakable wall block, exactly 1 x 1 x 1 m (x -0.5..0.5, z 0..1, y -0.5..0.5). Four cracked bricks; emission = embers glowing in the cracks."
+    },
+    {
+      "name": "RamSlab",
+      "fbx": "Assets/_Project/Art/Props/Relics/RamSlab.fbx",
+      "atlas": "Relics",
+      "unity_bounds_min": [
+        -0.55,
+        0.0,
+        -0.536
+      ],
+      "unity_bounds_max": [
+        0.55,
+        1.036,
+        0.5
+      ],
+      "sockets": {},
+      "tris": 932,
+      "usage": "Ram-rune floor block, exactly 1 x 1 x 1 m (x -0.5..0.5, z 0..1). Iron-bound stone with a glowing ram sigil on the top and the front."
+    },
+    {
+      "name": "VineBulb",
+      "fbx": "Assets/_Project/Art/Props/Relics/VineBulb.fbx",
+      "atlas": "Relics",
+      "unity_bounds_min": [
+        -0.505,
+        0.0,
+        -0.492
+      ],
+      "unity_bounds_max": [
+        0.505,
+        0.64,
+        0.492
+      ],
+      "sockets": {},
+      "tris": 1298,
+      "usage": "Vine-rune seed bulb ~0.7 m, floor pivot, faces -Y. Emission = rune ring + bulb veins."
+    },
+    {
+      "name": "VineStalk",
+      "fbx": "Assets/_Project/Art/Props/Relics/VineStalk.fbx",
+      "atlas": "Relics",
+      "unity_bounds_min": [
+        -0.2802,
+        -0.0116,
+        -0.2816
+      ],
+      "unity_bounds_max": [
+        0.2802,
+        1.0114,
+        0.1183
+      ],
+      "sockets": {},
+      "tris": 630,
+      "usage": "Climbing vine segment, tileable: 1 m tall (z 0..1), three stems twisting one full turn so stacked copies line up. Leaves on the front."
+    },
+    {
+      "name": "VineLeaf",
+      "fbx": "Assets/_Project/Art/Props/Relics/VineLeaf.fbx",
+      "atlas": "Relics",
+      "unity_bounds_min": [
+        -0.7617,
+        -0.3,
+        -0.3528
+      ],
+      "unity_bounds_max": [
+        0.7617,
+        0.115,
+        0.3528
+      ],
+      "sockets": {},
+      "tris": 496,
+      "usage": "Leaf pad platform 1.5 x 0.7 m, top surface at z = 0.1 (stand on it). Pivot = centre of the pad's underside; stem stub at x = 0."
+    }
+  ]
+}

@@ -34,6 +34,14 @@ namespace DeadCells.Meta
         public List<string> unlockedItems = new List<string>();
         public List<string> blueprints = new List<string>();      // found, not yet unlocked
         public int flaskLevel;            // extra flask charges bought (0..3)
+        public int forgeLevel;            // better drop quality (0..3)
+        public bool backpackUnlocked;
+        public List<string> mutationsUnlocked = new List<string>();
+        public int goldKeep;              // gold kept through death, 10% per level (0..3)
+        public int keptGold;              // gold carried into the next run
+        public List<string> runes = new List<string>();            // vine, ram, spider (permanent)
+        public string outfit = "prisoner";
+        public List<string> outfitsUnlocked = new List<string>();
         public int vitalityLevel;         // +10% max HP per level (0..5)
         public int bossCellsUnlocked;     // highest boss-cell level selectable (0..4)
         public bool introSeen;
@@ -53,13 +61,28 @@ namespace DeadCells.Meta
         public float health = -1f;
         public int gold;
         public int cells;
-        public int scrollsVitality;
-        public int scrollsPower;
+        public int scrollsVitality;       // legacy (pre-0.6): migrated into survival
+        public int scrollsPower;          // legacy (pre-0.6): migrated into brutality
+        public int brutality;
+        public int tactics;
+        public int survival;
         public int flaskCharges;
         public string primary = "melee_cleaver";
         public string secondary = "shield_frontline";
         public string skill1 = "";
         public string skill2 = "";
+        // Item rolls ("quality:affix,affix", see ItemForge) for the slots above.
+        public string primaryRoll = "";
+        public string secondaryRoll = "";
+        public string skill1Roll = "";
+        public string skill2Roll = "";
+        public string amulet = "";
+        public string amuletRoll = "";
+        public string backpack = "";
+        public string backpackRoll = "";
+        public List<string> mutations = new List<string>();
+        public bool mutationPicked;       // one mutation per passage
+        public int curse;                 // kills left before a cursed chest's curse lifts (any hit kills meanwhile)
         public int biomeKills;
         public int goldEarned;
         public float time;
@@ -140,6 +163,13 @@ namespace DeadCells.Meta
                 }
             }
             data ??= new SaveData();
+            // 0.6: power/vitality scrolls became Brutality/Survival.
+            if (data.run.scrollsPower > 0 || data.run.scrollsVitality > 0)
+            {
+                data.run.brutality += data.run.scrollsPower;
+                data.run.survival += data.run.scrollsVitality;
+                data.run.scrollsPower = data.run.scrollsVitality = 0;
+            }
             Loc.Current = data.settings.language;
         }
 

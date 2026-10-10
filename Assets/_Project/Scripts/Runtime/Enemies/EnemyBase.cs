@@ -199,6 +199,8 @@ namespace DeadCells.Enemies
                 return;
             }
             Move(dt * TimeFactor);
+            if (status != null && status.Rooted)
+                body.linearVelocity = new Vector2(0f, body.linearVelocity.y);
             if (TimeFactor < 1f)
             {
                 var sv = body.linearVelocity;

@@ -745,9 +745,25 @@ namespace DeadCells.Run
                         break;
                     }
                     case 'C':
-                        Place(w.chest, parent, pos + new Vector3(0f, 0f, 0.6f));
+                    {
+                        var go = Place(w.chest, parent, pos + new Vector3(0f, 0f, 0.6f));
+                        // Cursed chests from the second biome on, more often with Boss Cells.
+                        if (biome.depth >= 1 && rng.NextDouble() < 0.15 + 0.03 * SaveSystem.Data.run.bossCells)
+                            go.GetComponent<Chest>()?.Curse(w.curseShroud);
                         built.treasures.Add(pos);
                         break;
+                    }
+                    case 'Q':
+                    {
+                        if (w.timedDoor == null || biome.isPassage)
+                            break;
+                        var go = Place(w.timedDoor, parent, pos + new Vector3(0f, 0f, 1.2f));
+                        var td = go.GetComponent<TimedDoor>();
+                        if (td != null)
+                            td.limit = TimedDoor.LimitFor(biome.depth);
+                        built.treasures.Add(pos);
+                        break;
+                    }
                     case '$':
                         Loot.SpawnGoldPile(pos + Vector3.up * 0.5f, Mathf.RoundToInt((20 + rng.Next(30)) * (1f + 0.6f * biome.depth) * Difficulty.RewardMultiplier), parent);
                         break;
@@ -796,6 +812,18 @@ namespace DeadCells.Run
                         break;
                     case 'K':
                         Place(w.collector, parent, pos + new Vector3(0f, 0f, 1.0f), 180f);
+                        break;
+                    case 'U':
+                        if (w.mutator != null)
+                            Place(w.mutator, parent, pos + new Vector3(0f, 0f, 1.0f));
+                        break;
+                    case 'H':
+                        if (w.blacksmith != null)
+                            Place(w.blacksmith, parent, pos + new Vector3(0f, 0f, 1.0f));
+                        break;
+                    case 'Y':
+                        if (w.tailor != null)
+                            Place(w.tailor, parent, pos + new Vector3(0f, 0f, 1.0f));
                         break;
                     case 'D':
                     {

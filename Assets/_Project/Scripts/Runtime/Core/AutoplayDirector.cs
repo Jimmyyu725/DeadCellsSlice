@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using DeadCells.Enemies;
 using DeadCells.Meta;
 using DeadCells.Player;
@@ -52,6 +53,7 @@ namespace DeadCells.Core
         public string armoryFilter = "";
         public bool jumpTest;
         public bool cancelTest;
+        public bool systemsTest;
         InputFrame? overrideInput;
         bool holdAttack;
         bool standStill;
@@ -116,6 +118,7 @@ namespace DeadCells.Core
                     case "-autoplayArmoryFilter": d.armoryFilter = next ?? ""; break;
                     case "-autoplayJumpTest": d.jumpTest = true; break;
                     case "-autoplayCancelTest": d.cancelTest = true; break;
+                    case "-autoplaySystems": d.systemsTest = true; break;
                     case "-autoplayDifficulty":
                         d.difficulty = next == "easy" ? BaseDifficulty.Easy : next == "hard" ? BaseDifficulty.Hard : BaseDifficulty.Normal;
                         break;
@@ -214,6 +217,12 @@ namespace DeadCells.Core
                         cancelTest = false;
                         skipEvery = 0f;
                         StartCoroutine(CancelTest());
+                    }
+                    if (systemsTest && rm.InPassage)
+                    {
+                        systemsTest = false;
+                        skipEvery = 0f;
+                        StartCoroutine(SystemsTest(rm));
                     }
                     if (jumpTest && rm.InPassage)
                     {
@@ -319,6 +328,150 @@ namespace DeadCells.Core
             Capture("coords_hud");
         }
 
+        /// <summary>
+        /// Test hook (0.6 systems, in the passage): scroll choice, mutations,
+        /// rolled items + HUD card, amulet, backpack, recovery health, the
+        /// Blacksmith / Mutator / Tailor menus, a timed door, a cursed chest and
+        /// finally the curse killing the player on the next hit.
+        /// </summary>
+        System.Collections.IEnumerator SystemsTest(RunManager rm)
+        {
+            yield return new WaitForSecondsRealtime(2f);
+            var p = PlayerController.Main;
+            var db = Items.ItemDatabase.Instance;
+            var w = WorldPrefabs.Instance;
+            var run = SaveSystem.Data.run;
+            var ui = UI.GameUI.Instance;
+            Cheats.SetGodMode(true);
+            overrideInput = new InputFrame();   // hold still: the bot would walk out of the passage
+            Capture("sys_passage");
+            log.WriteLine($"[{Elapsed:F1}] sys: npcs mutator={Object.FindObjectsByType<NpcInteractable>(FindObjectsSortMode.None).Length} worldPrefabs mutator={(w.mutator != null)} smith={(w.blacksmith != null)} tailor={(w.tailor != null)} timed={(w.timedDoor != null)} shroud={(w.curseShroud != null)}");
+
+            // Scrolls: two colours offered, each pick raises one stat.
+            float hp0 = p.Health.maxHealth;
+            var scrollGo = Object.Instantiate(w.scroll, p.transform.position + Vector3.right * 1.5f, Quaternion.identity);
+            var scroll = scrollGo.GetComponent<ScrollPickup>();
+            yield return null;
+            scroll.Interact(p);
+            yield return new WaitForSecondsRealtime(0.6f);
+            Capture("sys_scroll_menu");
+            yield return null;
+            yield return null;
+            ui.CloseAllForTest();
+            scroll.Apply(p, Items.ItemColor.Survival);
+            log.WriteLine($"[{Elapsed:F1}] sys: scroll B/T/S={run.brutality}/{run.tactics}/{run.survival} maxHP {hp0:F0}->{p.Health.maxHealth:F0}");
+
+            // Mutations.
+            foreach (var n in Object.FindObjectsByType<NpcInteractable>(FindObjectsSortMode.None))
+            {
+                if (n.role == NpcInteractable.Role.Merchant || n.role == NpcInteractable.Role.Collector)
+                    continue;
+                p.Teleport(n.transform.position + Vector3.left * 1.2f + Vector3.up * 0.1f);
+                yield return new WaitForSecondsRealtime(0.5f);
+                n.Interact(p);
+                yield return new WaitForSecondsRealtime(0.7f);
+                Capture("sys_npc_" + n.role.ToString().ToLowerInvariant());
+                yield return null;
+                yield return null;
+                ui.CloseAllForTest();
+                yield return new WaitForSecondsRealtime(0.3f);
+            }
+            float hp1 = p.Health.maxHealth;
+            Mutations.Take("tough");
+            Mutations.Take("combo");
+            Mutations.Take("yolo");
+            log.WriteLine($"[{Elapsed:F1}] sys: mutations [{string.Join(",", run.mutations)}] maxHP {hp1:F0}->{p.Health.maxHealth:F0}");
+
+            // Rolled items: a legendary on the floor shows the coloured card with affixes.
+            var rusty = db.Get("melee_rusty");
+            var legendary = Items.ItemForge.Build(rusty, Items.ItemForge.Legendary, new[] { Items.Affix.Damage, Items.Affix.Bleed, Items.Affix.CritDamage });
+            float baseDmg = rusty.combo[0].damage, rolledDmg = legendary.combo[0].damage;
+            var drop = Object.Instantiate(w.itemDrop, p.transform.position + Vector3.right * 1.2f, Quaternion.identity);
+            drop.GetComponent<ItemPickup>().Setup(legendary, 0);
+            yield return new WaitForSecondsRealtime(0.8f);
+            Capture("sys_card_legendary");
+            yield return null;
+            yield return null;
+            log.WriteLine($"[{Elapsed:F1}] sys: legendary '{Items.ItemForge.FullName(legendary)}' dmg {baseDmg:F1}->{rolledDmg:F1} roll='{Items.ItemForge.Encode(legendary)}' decode={(Items.ItemForge.Decode(rusty, Items.ItemForge.Encode(legendary)).combo[0].damage):F1}");
+            drop.GetComponent<ItemPickup>().Interact(p);
+            yield return new WaitForSecondsRealtime(0.3f);
+            log.WriteLine($"[{Elapsed:F1}] sys: primary now '{Items.ItemForge.FullName(p.Combat.Slot(0))}' saved='{run.primaryRoll}'");
+
+            // Amulet.
+            Loot.DropAmulet(p.transform.position + Vector3.right * 1.0f, 2);
+            yield return new WaitForSecondsRealtime(0.6f);
+            var amuletPickup = Object.FindObjectsByType<ItemPickup>(FindObjectsSortMode.None).FirstOrDefault(i => i.CardItem != null && i.CardItem.kind == Items.ItemKind.Amulet);
+            if (amuletPickup != null)
+            {
+                p.Teleport(amuletPickup.transform.position + Vector3.left * 0.6f + Vector3.up * 0.1f);
+                yield return new WaitForSecondsRealtime(0.5f);
+                Capture("sys_card_amulet");
+                yield return null;
+                yield return null;
+                amuletPickup.Interact(p);
+            }
+            yield return new WaitForSecondsRealtime(0.3f);
+            var am = p.Combat.Amulet;
+            log.WriteLine($"[{Elapsed:F1}] sys: amulet '{(am != null ? Items.ItemForge.FullName(am) : "none")}' affixes [{(am != null ? string.Join(",", am.affixes) : "")}] maxHP {p.Health.maxHealth:F0}");
+
+            // Backpack.
+            SaveSystem.Data.meta.backpackUnlocked = true;
+            p.Combat.Equip(0, db.Get("melee_rusty"));
+            bool s1 = p.Combat.SwapBackpack();
+            string after1 = p.Combat.Slot(0)?.id ?? "none";
+            p.Combat.Equip(0, db.Get("melee_spear"));
+            bool s2 = p.Combat.SwapBackpack();
+            log.WriteLine($"[{Elapsed:F1}] sys: backpack swap1={s1} primary={after1} swap2={s2} primary={p.Combat.Slot(0)?.id} pack={p.Combat.Backpack?.id}");
+
+            // Recovery health: a hit leaves an orange bar that attacks win back.
+            Cheats.SetGodMode(false);
+            p.Health.InvulnerableUntil = 0f;
+            float before = p.Health.Current;
+            p.Health.TakeDamage(new Combat.DamageInfo { amount = 30f, source = gameObject, effect = -1 });
+            yield return new WaitForSecondsRealtime(0.5f);
+            log.WriteLine($"[{Elapsed:F1}] sys: hit {before:F0}->{p.Health.Current:F0} recoverable={p.Recoverable:F1}");
+            Capture("sys_recovery_bar");
+            Cheats.SetGodMode(true);
+
+            // Timed door: open in time, drops land.
+            var td = Object.Instantiate(w.timedDoor, p.transform.position + new Vector3(3f, 0f, 1.2f), Quaternion.identity);
+            var tdc = td.GetComponent<TimedDoor>();
+            tdc.limit = run.time + 90f;
+            yield return new WaitForSecondsRealtime(0.8f);
+            Capture("sys_timed_door");
+            int pickups0 = Object.FindObjectsByType<ItemPickup>(FindObjectsSortMode.None).Length;
+            tdc.Interact(p);
+            yield return new WaitForSecondsRealtime(1.6f);
+            Capture("sys_timed_door_open");
+            log.WriteLine($"[{Elapsed:F1}] sys: timed door opened, item pickups {pickups0}->{Object.FindObjectsByType<ItemPickup>(FindObjectsSortMode.None).Length}");
+            var expired = Object.Instantiate(w.timedDoor, p.transform.position + new Vector3(-3f, 0f, 1.2f), Quaternion.identity).GetComponent<TimedDoor>();
+            expired.limit = 1f;
+            yield return null;
+            log.WriteLine($"[{Elapsed:F1}] sys: expired door prompt '{expired.Prompt}'");
+
+            // Cursed chest.
+            var chestGo = Object.Instantiate(w.chest, p.transform.position + new Vector3(-2f, 0f, 0.6f), Quaternion.identity);
+            var chest = chestGo.GetComponent<Chest>();
+            chest.Curse(w.curseShroud);
+            yield return new WaitForSecondsRealtime(0.8f);
+            Capture("sys_cursed_chest");
+            log.WriteLine($"[{Elapsed:F1}] sys: cursed chest prompt '{chest.Prompt}'");
+            chest.Interact(p);
+            yield return new WaitForSecondsRealtime(1.2f);
+            Capture("sys_cursed_open");
+            log.WriteLine($"[{Elapsed:F1}] sys: curse={run.curse}");
+
+            // YOLO saves the first lethal hit; the curse makes any hit lethal.
+            Cheats.SetGodMode(false);
+            god = false;
+            p.Health.InvulnerableUntil = 0f;
+            p.Health.TakeDamage(new Combat.DamageInfo { amount = 5f, source = gameObject, effect = -1 });
+            yield return new WaitForSecondsRealtime(0.5f);
+            log.WriteLine($"[{Elapsed:F1}] sys: cursed hit -> dead={p.Health.IsDead} hp={p.Health.Current:F0} yoloLeft={Mutations.Has("yolo")} curse={run.curse}");
+            Capture("sys_after_curse");
+            overrideInput = null;
+        }
+
         /// <summary>Test hook: measure single and double jump heights from flat floor.</summary>
         System.Collections.IEnumerator JumpTest()
         {
@@ -394,7 +547,7 @@ namespace DeadCells.Core
             }
             foreach (var item in Items.ItemDatabase.Instance.items)
             {
-                if (!string.IsNullOrEmpty(armoryFilter) && !item.id.StartsWith(armoryFilter))
+                if (!string.IsNullOrEmpty(armoryFilter) && !item.id.StartsWith(armoryFilter) || item.kind == Items.ItemKind.Amulet)
                     continue;
                 if (item.kind == Items.ItemKind.Skill)
                 {

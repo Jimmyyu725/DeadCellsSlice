@@ -17,7 +17,7 @@ from mathutils import Euler, Vector
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent.parent
 OUT = ROOT / "Assets" / "_Project" / "Art" / "Icons"
-KITS = {"ArmoryMelee": "melee", "ArmoryRanged": "ranged", "ArmoryGear": "gear"}
+KITS = {"ArmoryMelee": "melee", "ArmoryRanged": "ranged", "ArmoryGear": "gear", "Relics": "gear"}
 SHIELDS = {"BellShield", "MirrorMoon", "SpikedShell", "ClockfaceBuckler", "EmberTarge", "WhalescaleTower"}
 SIZE = 64
 
@@ -72,7 +72,11 @@ def frame(cam, objs, view):
 def main():
     OUT.mkdir(parents=True, exist_ok=True)
     count = 0
+    argv = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []
+    only = next((a.split("=", 1)[1].split(",") for a in argv if a.startswith("--kits=")), None)
     for kit, mode in KITS.items():
+        if only and kit not in only:
+            continue
         blend = ROOT / "Tools" / "_out" / kit.lower() / f"{kit}.blend"
         if not blend.exists():
             print("[icons] missing", blend)

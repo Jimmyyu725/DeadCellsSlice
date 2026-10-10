@@ -43,8 +43,8 @@ MonoBehaviour:
   damage: 30
   cooldown: 10
   hasEffect: 1
-  effect: 4
-  effectDuration: 3
+  effect: 7
+  effectDuration: 2.5
   radius: 0
   pierce: 0
   spin: 0
@@ -79,3 +79,12 @@ MonoBehaviour:
   interval: 0.8
   count: 4
   power: 1
+  colors: 2
+  quality: 0
+  affixes: 
+  hasAffixEffect: 0
+  affixEffect: 0
+  affixEffectChance: 0
+  bonusVsAfflicted: 0
+  healOnKill: 0
+  killBurst: 0

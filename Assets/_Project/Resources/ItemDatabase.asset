@@ -89,6 +89,10 @@ MonoBehaviour:
   - {fileID: 11400000, guid: e78922189c56f49229bce15c2521575d, type: 2}
   - {fileID: 11400000, guid: 92631cb1428ba4eb4ac027ab491e1ca2, type: 2}
   - {fileID: 11400000, guid: ab8780613d00944bea65f46f28e50c56, type: 2}
+  - {fileID: 11400000, guid: c37fc380974a14742966962edc60cc23, type: 2}
+  - {fileID: 11400000, guid: 7b5fe6464fab4441f8758968a465df24, type: 2}
+  - {fileID: 11400000, guid: 0d9e7de2221e045bdad61fb5e9f73315, type: 2}
+  - {fileID: 11400000, guid: 51977f28a70864a2bab918ec7f2bd7f0, type: 2}
   coinPrefab: {fileID: 3501257684351700819, guid: 77c395b43bd32426cb52a92bc482585d, type: 3}
   cellPrefab: {fileID: 7605437714641940085, guid: 784bb6bf5a7034c58bf341acf98f7a7e, type: 3}
   flaskPrefab: {fileID: 2038994953114026806, guid: 5f00b5e9973fe4f19af2469b0f4abd72, type: 3}

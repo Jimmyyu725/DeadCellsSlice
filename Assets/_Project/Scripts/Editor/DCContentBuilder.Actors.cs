@@ -43,6 +43,7 @@ namespace DeadCells.EditorTools
             ItemVisual("Crossbow", $"{ArmoryDir}/Crossbow.fbx", armory);
             ItemVisual("Greatsword", $"{CharDir}/RoyalGuardian/Greatsword.fbx", LoadMat("M_Greatsword"));
             BuildArmoryVisuals();
+            BuildRelicVisuals();
             ItemVisual("Shovel", $"{CharDir}/TimeKeeper/Shovel.fbx", LoadMat("M_Shovel"));
         }
 

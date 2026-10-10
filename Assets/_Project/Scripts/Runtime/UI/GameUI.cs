@@ -383,6 +383,73 @@ namespace DeadCells.UI
                     }
                 },
             });
+            int[] forgeCost = { 50, 100, 150 };
+            page.Add(new MenuItem
+            {
+                label = () => Loc.Get("npc.collector.forge"),
+                value = () => meta.forgeLevel >= forgeCost.Length ? Loc.Get("npc.collector.max") : Loc.Get("npc.collector.cost", forgeCost[meta.forgeLevel]),
+                description = () => Loc.Get("npc.collector.forge.desc"),
+                enabled = () => meta.forgeLevel < forgeCost.Length,
+                confirm = () =>
+                {
+                    if (Spend(forgeCost[meta.forgeLevel]))
+                    {
+                        meta.forgeLevel++;
+                        SaveSystem.Save();
+                    }
+                },
+            });
+            page.Add(new MenuItem
+            {
+                label = () => Loc.Get("npc.collector.backpack"),
+                value = () => meta.backpackUnlocked ? Loc.Get("npc.collector.unlocked") : Loc.Get("npc.collector.cost", 40),
+                description = () => Loc.Get("npc.collector.backpack.desc"),
+                enabled = () => !meta.backpackUnlocked,
+                confirm = () =>
+                {
+                    if (Spend(40))
+                    {
+                        meta.backpackUnlocked = true;
+                        SaveSystem.Save();
+                    }
+                },
+            });
+            int[] keepCost = { 60, 120, 200 };
+            page.Add(new MenuItem
+            {
+                label = () => Loc.Get("npc.collector.goldkeep"),
+                value = () => meta.goldKeep >= keepCost.Length ? Loc.Get("npc.collector.max") : Loc.Get("npc.collector.cost", keepCost[meta.goldKeep]),
+                description = () => Loc.Get("npc.collector.goldkeep.desc", meta.goldKeep * 10),
+                enabled = () => meta.goldKeep < keepCost.Length,
+                confirm = () =>
+                {
+                    if (Spend(keepCost[meta.goldKeep]))
+                    {
+                        meta.goldKeep++;
+                        SaveSystem.Save();
+                    }
+                },
+            });
+            foreach (var mut in Mutations.All.Where(m => m.cost > 0))
+            {
+                var mu = mut;
+                page.Add(new MenuItem
+                {
+                    label = () => Loc.Get("npc.collector.mutation", Loc.Get($"mutation.{mu.id}.name")),
+                    value = () => Mutations.IsUnlocked(mu) ? Loc.Get("npc.collector.unlocked") : Loc.Get("npc.collector.cost", mu.cost),
+                    description = () => Loc.Get($"mutation.{mu.id}.desc"),
+                    enabled = () => !Mutations.IsUnlocked(mu),
+                    confirm = () =>
+                    {
+                        if (Spend(mu.cost))
+                        {
+                            meta.mutationsUnlocked.Add(mu.id);
+                            SaveSystem.Save();
+                            GameHUD.Instance?.Toast(Loc.Get("npc.collector.done"), UIKit.CellBlue);
+                        }
+                    },
+                });
+            }
             var db = ItemDatabase.Instance;
             if (db != null)
             {
@@ -414,6 +481,227 @@ namespace DeadCells.UI
             page.Add(MenuItem.Button(() => Loc.Get("npc.collector.leave"), menu.CloseAll));
             page.onBack = menu.CloseAll;
             menu.Push(page);
+        }
+
+        // ------------------------------------------------------ scroll choice
+
+        /// <summary>Scroll of Power: pick one of two colours.</summary>
+        public void ChooseScroll(ItemColor a, ItemColor b, Action<ItemColor> picked)
+        {
+            var page = new MenuPage { title = () => Loc.Get("scroll.title"), body = () => Loc.Get("scroll.body") };
+            foreach (var c in new[] { a, b })
+            {
+                var col = c;
+                string key = col.ToString().ToLowerInvariant();
+                page.Add(MenuItem.Button(() => Loc.Get("color." + key) + "  (" + LevelOf(col) + " > " + (LevelOf(col) + 1) + ")", () =>
+                {
+                    menu.CloseAll();
+                    picked(col);
+                }, () => Loc.Get("scroll." + key + ".desc")));
+            }
+            page.Add(MenuItem.Button(() => Loc.Get("menu.back"), menu.CloseAll));
+            page.onBack = menu.CloseAll;
+            menu.Push(page);
+        }
+
+        static int LevelOf(ItemColor c)
+        {
+            var r = SaveSystem.Data.run;
+            return c == ItemColor.Brutality ? r.brutality : c == ItemColor.Tactics ? r.tactics : r.survival;
+        }
+
+        // ---------------------------------------------------------- mutations
+
+        /// <summary>The mutation NPC: one pick per passage, three slots.</summary>
+        public void OpenMutations()
+        {
+            var run = SaveSystem.Data.run;
+            var page = new MenuPage
+            {
+                title = () => Loc.Get("npc.mutator.title"),
+                body = () => (run.mutationPicked ? Loc.Get("npc.mutator.done") : Loc.Get("npc.mutator.greet")) + "\n" +
+                             Loc.Get("npc.mutator.slots", run.mutations.Count, Mutations.Slots),
+                visibleRows = 8,
+            };
+            foreach (var m in Mutations.All)
+            {
+                var mu = m;
+                page.Add(new MenuItem
+                {
+                    label = () => Loc.Get($"mutation.{mu.id}.name"),
+                    value = () => Mutations.Has(mu.id) ? "*" : Mutations.IsUnlocked(mu) ? "" : Loc.Get("npc.mutator.locked"),
+                    description = () => Loc.Get($"mutation.{mu.id}.desc"),
+                    enabled = () => Mutations.IsUnlocked(mu) && !Mutations.Has(mu.id) && !run.mutationPicked,
+                    tint = () => Mutations.Has(mu.id) ? UIKit.Gold : Mutations.IsUnlocked(mu) ? (Color?)null : new Color(0.5f, 0.52f, 0.58f),
+                    confirm = () =>
+                    {
+                        if (run.mutations.Count < Mutations.Slots)
+                        {
+                            Mutations.Take(mu.id);
+                            Audio.Sfx.Play("pickup.blueprint");
+                            menu.CloseAll();
+                            return;
+                        }
+                        var replace = new MenuPage { title = () => Loc.Get("npc.mutator.replace") };
+                        foreach (var cur in run.mutations.ToArray())
+                        {
+                            var c = cur;
+                            replace.Add(MenuItem.Button(() => Loc.Get($"mutation.{c}.name"), () =>
+                            {
+                                Mutations.Take(mu.id, c);
+                                Audio.Sfx.Play("pickup.blueprint");
+                                menu.CloseAll();
+                            }, () => Loc.Get($"mutation.{c}.desc")));
+                        }
+                        replace.Add(MenuItem.Button(() => Loc.Get("menu.back"), menu.Pop));
+                        menu.Push(replace);
+                    },
+                });
+            }
+            page.Add(MenuItem.Button(() => Loc.Get("npc.collector.leave"), menu.CloseAll));
+            page.onBack = menu.CloseAll;
+            menu.Push(page);
+        }
+
+        // ---------------------------------------------------------- blacksmith
+
+        /// <summary>The blacksmith: upgrade an equipped item's quality or reroll its affixes for gold.</summary>
+        public void OpenBlacksmith()
+        {
+            var run = SaveSystem.Data.run;
+            var combat = player != null ? player.Combat : null;
+            if (combat == null)
+                return;
+            float depthScale = 1f + 0.5f * (RunManager.Instance != null ? RunManager.Instance.BiomeDepth : 0);
+            var page = new MenuPage
+            {
+                title = () => Loc.Get("npc.smith.title"),
+                body = () => Loc.Get("npc.smith.greet") + "\n" + Loc.Get("npc.smith.gold", run.gold),
+                visibleRows = 8,
+            };
+            for (int i = -1; i < PlayerCombat.SlotCount; i++)
+            {
+                int slot = i;
+                ItemDef Current() => slot < 0 ? combat.Amulet : combat.Slot(slot);
+                if (Current() == null)
+                    continue;
+                int UpCost() => Mathf.RoundToInt(120 * ((Current()?.quality ?? 0) + 1) * depthScale);
+                int RerollCost() => Mathf.RoundToInt(80 * depthScale);
+                page.Add(new MenuItem
+                {
+                    label = () => Current() != null ? Loc.Get("npc.smith.upgrade", ItemForge.FullName(Current())) : Loc.Get("npc.smith.empty"),
+                    value = () => Current() == null || Current().quality >= 2 ? "-" : UpCost() + "G",
+                    description = () => Current() == null ? "" : Loc.Get("npc.smith.upgrade.desc") + ItemForge.AffixLines(Current()),
+                    enabled = () => Current() != null && Current().quality < 2,
+                    confirm = () =>
+                    {
+                        var cur = Current();
+                        if (!PayGold(UpCost()))
+                            return;
+                        var pool = ItemForge.PoolFor(cur.kind).Where(a => !cur.affixes.Contains(a)).ToArray();
+                        var affixes = cur.affixes.ToList();
+                        if (pool.Length > 0)
+                            affixes.Add(pool[UnityEngine.Random.Range(0, pool.Length)]);
+                        Replace(combat, slot, ItemForge.Build(ItemForge.BaseOf(cur), cur.quality + 1, affixes.ToArray()));
+                    },
+                });
+                page.Add(new MenuItem
+                {
+                    label = () => Current() != null ? Loc.Get("npc.smith.reroll", ItemForge.FullName(Current())) : Loc.Get("npc.smith.empty"),
+                    value = () => Current() == null || Current().affixes.Length == 0 ? "-" : RerollCost() + "G",
+                    description = () => Current() == null ? "" : Loc.Get("npc.smith.reroll.desc") + ItemForge.AffixLines(Current()),
+                    enabled = () => Current() != null && Current().affixes.Length > 0,
+                    confirm = () =>
+                    {
+                        var cur = Current();
+                        if (!PayGold(RerollCost()))
+                            return;
+                        var pool = ItemForge.PoolFor(cur.kind).ToList();
+                        var affixes = new List<Affix>();
+                        for (int k = 0; k < cur.affixes.Length && pool.Count > 0; k++)
+                        {
+                            var a = pool[UnityEngine.Random.Range(0, pool.Count)];
+                            pool.Remove(a);
+                            affixes.Add(a);
+                        }
+                        Replace(combat, slot, ItemForge.Build(ItemForge.BaseOf(cur), cur.quality, affixes.ToArray()));
+                    },
+                });
+            }
+            page.Add(MenuItem.Button(() => Loc.Get("npc.collector.leave"), menu.CloseAll));
+            page.onBack = menu.CloseAll;
+            menu.Push(page);
+        }
+
+        // -------------------------------------------------------------- tailor
+
+        /// <summary>The Tailor: buy and wear outfits.</summary>
+        public void OpenTailor()
+        {
+            var meta = SaveSystem.Data.meta;
+            var page = new MenuPage
+            {
+                title = () => Loc.Get("npc.tailor.title"),
+                body = () => Loc.Get("npc.tailor.greet") + "\n" + Loc.Get("npc.collector.cells", SaveSystem.Data.run.cells),
+                visibleRows = 8,
+            };
+            foreach (var o in Outfits.All)
+            {
+                var od = o;
+                page.Add(new MenuItem
+                {
+                    label = () => Loc.Get($"outfit.{od.id}.name"),
+                    value = () => meta.outfit == od.id ? Loc.Get("npc.tailor.wearing")
+                        : Outfits.Owned(od) ? ""
+                        : od.cost > 0 ? Loc.Get("npc.collector.cost", od.cost) : Loc.Get("npc.mutator.locked"),
+                    description = () => Outfits.Owned(od) || od.cost > 0 ? Loc.Get($"outfit.{od.id}.desc") : Loc.Get($"outfit.req.{od.requires}"),
+                    enabled = () => meta.outfit != od.id && (Outfits.Owned(od) || od.cost > 0),
+                    tint = () => meta.outfit == od.id ? UIKit.Gold : Outfits.Owned(od) ? (Color?)null : new Color(0.55f, 0.57f, 0.62f),
+                    confirm = () =>
+                    {
+                        if (!Outfits.Owned(od))
+                        {
+                            if (!Spend(od.cost))
+                                return;
+                            meta.outfitsUnlocked.Add(od.id);
+                        }
+                        meta.outfit = od.id;
+                        SaveSystem.Save();
+                        Outfits.Apply(player);
+                        Audio.Sfx.Play("pickup.blueprint");
+                        if (player != null)
+                            FX.JuiceEngine.Instance?.Embers(player.transform.position + Vector3.up, 30, od.flame);
+                    },
+                });
+            }
+            page.Add(MenuItem.Button(() => Loc.Get("npc.collector.leave"), menu.CloseAll));
+            page.onBack = menu.CloseAll;
+            menu.Push(page);
+        }
+
+        void Replace(PlayerCombat combat, int slot, ItemDef item)
+        {
+            if (slot < 0)
+                combat.EquipAmulet(item);
+            else
+                combat.Equip(slot, item);
+            Audio.Sfx.Play("weapon.equip");
+            GameHUD.Instance?.Toast(ItemForge.FullName(item), ItemForge.QualityColor(item.quality));
+        }
+
+        bool PayGold(int gold)
+        {
+            var run = SaveSystem.Data.run;
+            if (run.gold < gold)
+            {
+                GameHUD.Instance?.Toast(Loc.Get("hud.not_enough_gold"), new Color(1f, 0.5f, 0.4f));
+                Audio.Sfx.Play("ui.error");
+                return false;
+            }
+            RunManager.Instance.SpendGold(gold);
+            SaveSystem.Data.stats.goldSpent += gold;
+            Audio.Sfx.Play("shop.buy");
+            return true;
         }
 
         bool Spend(int cells)

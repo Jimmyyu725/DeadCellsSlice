@@ -270,6 +270,8 @@ MonoBehaviour:
   promptOffset: {x: 0, y: 2.6, z: 0}
   lid: {fileID: 4536650047732815623}
   glow: {fileID: 1029144807936309693}
+  cursed: 0
+  shroud: {fileID: 0}
 --- !u!1 &9177910263445706928
 GameObject:
   m_ObjectHideFlags: 0

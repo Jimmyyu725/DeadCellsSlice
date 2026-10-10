@@ -259,14 +259,14 @@ r = add("rooms_main", Room("exit_a", 30, 14, "exit", nomirror=True))
 r.floor(1).door_l(2)
 r.box(18, 2, 29, 3)
 r.plat(13, 17, 4)
-r.puts(2, [(6, "e")]).put(24, 4, "D").put(20, 4, "T")
+r.puts(2, [(6, "e")]).put(24, 4, "D").put(20, 4, "T").put(10, 2, "Q")
 r.puts(8, [(21, "t"), (27, "t")])
 
 r = add("rooms_main", Room("exit_b", 34, 16, "exit", nomirror=True))
 r.floor(1).door_l(2)
 r.plat(5, 9, 4).plat(10, 14, 7)
 r.box(15, 2, 33, 7)
-r.puts(2, [(4, "e"), (12, "e")]).put(20, 8, "T").put(27, 8, "D").put(12, 8, "e")
+r.puts(2, [(4, "e"), (12, "e")]).put(20, 8, "T").put(27, 8, "D").put(12, 8, "e").put(31, 8, "Q")
 r.puts(11, [(18, "t"), (30, "t")])
 
 
@@ -340,7 +340,7 @@ r = add("rooms_special", Room("oub_start", 40, 16, "start", "Oubliette", nomirro
 r.floor(1).door_r(2)
 r.box(1, 2, 9, 2, "~")
 r.box(1, 10, 6, 14).box(7, 12, 9, 14)
-r.put(13, 2, "P").put(20, 2, "W").put(24, 2, "W").put(30, 2, "T")
+r.put(13, 2, "P").put(20, 2, "W").put(24, 2, "W").put(30, 2, "T").put(35, 2, "Y")
 r.plat(15, 19, 4).plat(21, 25, 7)
 r.puts(9, [(17, "t"), (33, "t")])
 
@@ -352,12 +352,18 @@ r.plat(19, 23, 5)
 r.puts(8, [(10, "t"), (26, "t")])
 
 # ================================================================== passage
-r = add("rooms_special", Room("passage_a", 46, 14, "passage", "Passage", nomirror=True))
+# Passage: fountain, Mutator (U), Collector (K), Blacksmith (H), teleporter,
+# the main exit (D) on the low ledge and the variant-route door (d) on the high
+# ledge, reached by growing the vine bulb (V) or wall-jumping the shaft (x 60-62).
+r = add("rooms_special", Room("passage_a", 64, 18, "passage", "Passage", nomirror=True))
 r.floor(1)
-r.box(36, 2, 45, 3)
-r.put(4, 2, "P").put(13, 2, "F").put(22, 2, "K").put(32, 2, "T").put(41, 4, "D")
-r.plat(16, 20, 5)
-r.puts(8, [(8, "t"), (18, "t"), (28, "t"), (40, "t")])
+r.box(51, 2, 57, 3)
+r.box(50, 12, 59, 12)
+r.box(58, 2, 59, 11)
+r.put(4, 2, "P").put(10, 2, "F").put(18, 2, "U").put(27, 2, "K").put(36, 2, "H").put(44, 2, "T")
+r.put(54, 4, "D").put(54, 13, "d").put(48, 2, "V")
+r.plat(13, 16, 5).plat(30, 33, 5)
+r.puts(8, [(8, "t"), (22, "t"), (40, "t")]).puts(15, [(55, "t")])
 
 # ===================================================================== menu
 r = add("rooms_special", Room("menu_hall", 40, 14, "menu", "all", nomirror=True))

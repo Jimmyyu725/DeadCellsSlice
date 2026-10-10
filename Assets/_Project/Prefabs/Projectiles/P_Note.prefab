@@ -262,6 +262,10 @@ MonoBehaviour:
   pull: 0
   burstItem: {fileID: 0}
   bomblet: 0
+  bonusVsAfflicted: 0
+  hasAffixEffect: 0
+  affixEffect: 0
+  affixEffectChance: 0
 --- !u!96 &7920174282908243207
 TrailRenderer:
   serializedVersion: 4

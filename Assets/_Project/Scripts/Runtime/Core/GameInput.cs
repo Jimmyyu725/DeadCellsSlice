@@ -22,6 +22,7 @@ namespace DeadCells.Core
         public bool flaskPressed;
         public bool mapPressed;
         public bool pausePressed;
+        public bool backpackPressed;
     }
 
     public interface IInputSource
@@ -39,7 +40,7 @@ namespace DeadCells.Core
     /// </summary>
     public class GameInput : MonoBehaviour, IInputSource
     {
-        InputAction move, jump, primary, secondary, skill1, skill2, dodge, interact, flask, map, pause;
+        InputAction move, jump, primary, secondary, skill1, skill2, dodge, interact, flask, map, pause, backpack;
 
         /// <summary>When false (menus open) the player receives an empty frame.</summary>
         public static bool GameplayEnabled = true;
@@ -66,6 +67,7 @@ namespace DeadCells.Core
             flask = Button("Flask", "<Keyboard>/r", "<Gamepad>/rightShoulder");
             map = Button("Map", "<Keyboard>/tab", "<Keyboard>/m", "<Gamepad>/select");
             pause = Button("Pause", "<Keyboard>/escape", "<Gamepad>/start");
+            backpack = Button("Backpack", "<Keyboard>/c", "<Gamepad>/rightStickPress");
         }
 
         static InputAction Button(string name, params string[] paths)
@@ -94,7 +96,7 @@ namespace DeadCells.Core
                 a.Dispose();
         }
 
-        InputAction[] All() => new[] { move, jump, primary, secondary, skill1, skill2, dodge, interact, flask, map, pause };
+        InputAction[] All() => new[] { move, jump, primary, secondary, skill1, skill2, dodge, interact, flask, map, pause, backpack };
 
         public InputFrame Read()
         {
@@ -119,6 +121,7 @@ namespace DeadCells.Core
                 flaskPressed = flask.WasPressedThisFrame(),
                 mapPressed = map.WasPressedThisFrame(),
                 pausePressed = pause.WasPressedThisFrame(),
+                backpackPressed = backpack.WasPressedThisFrame(),
             };
         }
     }

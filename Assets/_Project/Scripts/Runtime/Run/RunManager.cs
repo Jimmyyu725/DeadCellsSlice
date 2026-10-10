@@ -63,6 +63,17 @@ namespace DeadCells.Run
             return null;
         }
 
+        /// <summary>Hit taken by the player (after damage): a cursed run dies on any hit.</summary>
+        public void OnPlayerHurt()
+        {
+            if (Run.curse <= 0 || Cheats.GodMode || player == null || player.Health.IsDead)
+                return;
+            Run.curse = 0;
+            GameHUD.Instance?.Toast(Loc.Get("hud.curse_killed"), new Color(1f, 0.35f, 0.4f));
+            player.Health.InvulnerableUntil = 0f;
+            player.Health.TakeDamage(new DamageInfo { amount = 999999f, hitPoint = player.transform.position + Vector3.up, effect = -1 });
+        }
+
         /// <summary>One line that pins down a spot for a bug report.</summary>
         public string LocationReport(Vector2Int cell)
         {
@@ -114,8 +125,11 @@ namespace DeadCells.Run
                 skill2 = "",
             };
             d.run.flaskCharges = MaxFlaskCharges;
+            d.run.gold = d.meta.keptGold;
+            d.meta.keptGold = 0;
             d.stats.runs++;
             Cheats.ResetToggles();
+            Mutations.ResetRunState();
             SaveSystem.Save();
         }
 
@@ -211,6 +225,8 @@ namespace DeadCells.Run
                 if (p != null)
                     Destroy(p.gameObject);
             current = def;
+            if (def.isPassage)
+                Run.mutationPicked = false; // a fresh mutation choice in every passage
             int index = def.isPassage ? 100 + Run.biome : Run.biome;
             int seed = Run.seed + index * 7919;
             LevelSeed = seed;
@@ -380,7 +396,8 @@ namespace DeadCells.Run
 
         public void AddGold(int amount)
         {
-            amount = Mathf.RoundToInt(amount * Difficulty.RewardMultiplier);
+            amount = Mathf.RoundToInt(amount * Difficulty.RewardMultiplier * Mutations.GoldMultiplier
+                                      * (1f + 0.3f * ItemForge.AmuletCount(Affix.GoldFind)));
             Run.gold += amount;
             Run.goldEarned += amount;
             GameHUD.Instance?.PulseGold();
@@ -422,6 +439,14 @@ namespace DeadCells.Run
                 Loot.DropBlueprint(at);
             if (enemy.IsElite && Random.value < 0.5f)
                 Loot.DropRandomItem(at + Vector3.left, BiomeDepth + 1);
+            if (enemy.IsElite && Random.value < 0.12f)
+                Loot.DropAmulet(at + Vector3.left * 1.6f, BiomeDepth + 1);
+            if (Run.curse > 0)
+            {
+                Run.curse--;
+                GameHUD.Instance?.Toast(Run.curse > 0 ? Loc.Get("hud.curse_left", Run.curse) : Loc.Get("hud.curse_lifted"),
+                    Run.curse > 0 ? new Color(0.9f, 0.5f, 1f) : new Color(0.6f, 1f, 0.7f));
+            }
 
             if (enemy.IsBoss)
                 OnBossKilled(enemy);
@@ -447,6 +472,8 @@ namespace DeadCells.Run
             Achievements.Unlock("timekeeper");
             if (Run.bossCells >= 1) Achievements.Unlock("bc1");
             if (Run.bossCells >= 4) Achievements.Unlock("bc4");
+            if (Run.bossCells >= 1) Outfits.Grant("bc1");
+            if (Run.bossCells >= 3) Outfits.Grant("bc3");
             if (Run.difficulty == BaseDifficulty.Hard) Achievements.Unlock("hard_win");
             if (Run.time < 3600f) Achievements.Unlock("speedrun");
             // Beating the highest unlocked level unlocks the next Boss Cell.
@@ -485,6 +512,7 @@ namespace DeadCells.Run
             var difficulty = Run.difficulty;
             int bossCells = Run.bossCells;
             Run.active = false;
+            d.meta.keptGold = Mathf.RoundToInt(lostGold * 0.1f * d.meta.goldKeep);
             Achievements.CheckThresholds();
             SaveSystem.Save();
             StartCoroutine(DeathRoutine(lostCells, lostGold, summary.time, summary.kills, summary.biome, difficulty, bossCells));

@@ -237,9 +237,12 @@ namespace DeadCells.Player
             if (db == null)
                 return;
             string[] ids = { Run.primary, Run.secondary, Run.skill1, Run.skill2 };
+            string[] rolls = { Run.primaryRoll, Run.secondaryRoll, Run.skill1Roll, Run.skill2Roll };
+            amulet = ItemForge.Decode(db.Get(Run.amulet), Run.amuletRoll);
+            backpack = ItemForge.Decode(db.Get(Run.backpack), Run.backpackRoll);
             for (int i = 0; i < SlotCount; i++)
             {
-                var item = db.Get(ids[i]);
+                var item = ItemForge.Decode(db.Get(ids[i]), rolls[i]);
                 if (slots[i] != item)
                 {
                     Destroy(mainVisual[i]);
@@ -264,12 +267,60 @@ namespace DeadCells.Player
             Run.secondary = slots[1] != null ? slots[1].id : "";
             Run.skill1 = slots[2] != null ? slots[2].id : "";
             Run.skill2 = slots[3] != null ? slots[3].id : "";
+            Run.primaryRoll = ItemForge.Encode(slots[0]);
+            Run.secondaryRoll = ItemForge.Encode(slots[1]);
+            Run.skill1Roll = ItemForge.Encode(slots[2]);
+            Run.skill2Roll = ItemForge.Encode(slots[3]);
+            Run.amulet = amulet != null ? amulet.id : "";
+            Run.amuletRoll = ItemForge.Encode(amulet);
+            Run.backpack = backpack != null ? backpack.id : "";
+            Run.backpackRoll = ItemForge.Encode(backpack);
+        }
+
+        ItemDef amulet, backpack;
+
+        /// <summary>Passive amulet slot.</summary>
+        public ItemDef Amulet => amulet;
+
+        /// <summary>Weapon carried in the backpack (swap with the primary slot).</summary>
+        public ItemDef Backpack => backpack;
+
+        public ItemDef EquipAmulet(ItemDef item)
+        {
+            var old = amulet;
+            amulet = item;
+            WriteRun();
+            player.RecalculateStats(false);
+            SlotsChanged?.Invoke();
+            return old;
+        }
+
+        /// <summary>Swap the primary weapon with the backpack (backpack must be unlocked).</summary>
+        public bool SwapBackpack()
+        {
+            if (!SaveSystem.Data.meta.backpackUnlocked)
+            {
+                UI.GameHUD.Instance?.Toast(Loc.Get("hud.backpack_locked"), new Color(0.8f, 0.8f, 0.85f));
+                return false;
+            }
+            if (action != ActionKind.None || blocking)
+                return false;
+            var stored = backpack;
+            backpack = slots[0];
+            Equip(0, stored);
+            WriteRun();
+            Audio.Sfx.Play("weapon.equip");
+            if (backpack != null)
+                UI.GameHUD.Instance?.Toast(Loc.Get("hud.backpack_swap", ItemForge.FullName(backpack)), new Color(0.8f, 0.9f, 1f));
+            return true;
         }
 
         /// <summary>Which slot a picked-up item would replace (empty first, then same kind).</summary>
         public int SlotFor(ItemDef item)
         {
             if (item == null)
+                return -1;
+            if (item.kind == ItemKind.Amulet)
                 return -1;
             int a = item.IsWeapon ? 0 : 2, b = a + 1;
             if (slots[a] == null) return a;
@@ -573,7 +624,7 @@ namespace DeadCells.Player
             {
                 released = true;
                 Run.flaskCharges = Mathf.Max(0, Run.flaskCharges - 1);
-                float amount = health.maxHealth * flaskHealFraction;
+                float amount = health.maxHealth * flaskHealFraction * (1f + 0.3f * ItemForge.AmuletCount(Affix.FlaskPower));
                 health.Heal(amount);
                 var juice = JuiceEngine.Instance;
                 if (juice != null)
@@ -631,7 +682,26 @@ namespace DeadCells.Player
             return v;
         }
 
-        public float DamageMultiplier => (1f + 0.15f * Run.scrollsPower) * (Time.time < buffUntil ? 1f + buffAmount : 1f);
+        /// <summary>Generic damage multiplier (best colour stat) for sources without an item.</summary>
+        public float DamageMultiplier => DamageFor(null);
+
+        /// <summary>Scroll level an item scales with: the best of its colours (Dead Cells rule).</summary>
+        public static int ColorLevel(ItemDef item)
+        {
+            var r = Run;
+            if (item == null || item.colors == ItemColor.None)
+                return Mathf.Max(r.brutality, Mathf.Max(r.tactics, r.survival));
+            int best = 0;
+            if ((item.colors & ItemColor.Brutality) != 0) best = Mathf.Max(best, r.brutality);
+            if ((item.colors & ItemColor.Tactics) != 0) best = Mathf.Max(best, r.tactics);
+            if ((item.colors & ItemColor.Survival) != 0) best = Mathf.Max(best, r.survival);
+            return best;
+        }
+
+        /// <summary>Damage multiplier for hits made with `item` (colour scrolls, amulet, rage buff).</summary>
+        public float DamageFor(ItemDef item) =>
+            (1f + 0.15f * ColorLevel(item)) * (1f + 0.1f * ItemForge.AmuletCount(Affix.AllDamage)) *
+            (Time.time < buffUntil ? 1f + buffAmount : 1f);
 
         float buffUntil, buffAmount;
         int chainHits;
@@ -682,7 +752,11 @@ namespace DeadCells.Player
                     continue;
                 hitThisSwing.Add(target);
                 bool crit = IsCrit(item, step, target) || (target.GetComponent<StatusEffects>()?.Frozen ?? false);
-                float dmg = step.damage * DamageMultiplier * (crit ? item.critMultiplier : 1f) * Random.Range(0.92f, 1.08f);
+                var status = target.GetComponent<StatusEffects>();
+                float dmg = step.damage * DamageFor(item) * Mutations.Damage(item, target, player)
+                            * (crit ? item.critMultiplier + Mutations.CritBonus : 1f) * Random.Range(0.92f, 1.08f);
+                if (item.bonusVsAfflicted > 0f && status != null && status.Afflicted)
+                    dmg *= 1f + item.bonusVsAfflicted;
                 if (item.comboRamp > 0f)
                     dmg *= 1f + item.comboRamp * Mathf.Min(chainHits, 20);
                 var enemy = target.GetComponentInParent<Enemies.EnemyBase>();
@@ -716,9 +790,12 @@ namespace DeadCells.Player
                 {
                     chainHits++;
                     if (item.onHitChance > 0f && item.hasEffect && Random.value < item.onHitChance)
-                        target.GetComponent<StatusEffects>()?.Apply(item.effect, item.effectDuration);
-                    if (item.lifesteal > 0f)
-                        health.Heal(dmg * item.lifesteal);
+                        status?.Apply(item.effect, item.effectDuration * Mutations.StatusDuration(item.effect));
+                    if (item.hasAffixEffect && Random.value < item.affixEffectChance)
+                        status?.Apply(item.affixEffect, item.effectDuration * Mutations.StatusDuration(item.affixEffect));
+                    float steal = item.lifesteal + Mutations.MeleeLifesteal;
+                    if (steal > 0f)
+                        health.Heal(dmg * steal);
                 }
                 if (result != DamageResult.Ignored)
                     ReportHit(target, info, result);
@@ -733,7 +810,7 @@ namespace DeadCells.Player
             var p = go.GetComponent<Projectile>();
             p.velocity = new Vector2(facing * 15f, 0f);
             p.gravity = 0f;
-            p.damage = item.finisherWaveDamage * DamageMultiplier;
+            p.damage = item.finisherWaveDamage * DamageFor(item);
             p.fromPlayer = true;
             p.owner = gameObject;
             p.pierce = true;
@@ -750,8 +827,9 @@ namespace DeadCells.Player
         {
             if (!Cheats.NoCooldowns)
             {
-                cooldownUntil[slot] = Time.time + item.cooldown;
-                cooldownLength[slot] = item.cooldown;
+                float cd = item.cooldown * Mutations.CooldownMultiplier(item);
+                cooldownUntil[slot] = Time.time + cd;
+                cooldownLength[slot] = cd;
                 itemCooldowns[item.id] = cooldownUntil[slot];
             }
             string fire = !string.IsNullOrEmpty(item.fireSound) ? item.fireSound : item.kind == ItemKind.Bow ? "bow.shoot" : "grenade.throw";
@@ -807,7 +885,11 @@ namespace DeadCells.Player
             var p = go.GetComponent<Projectile>() ?? go.AddComponent<Projectile>();
             p.velocity = dir.normalized * item.projectileSpeed;
             p.gravity = item.projectileGravity;
-            p.damage = item.damage * DamageMultiplier * (Cheats.OneHitKills ? 9999f : 1f);
+            p.damage = item.damage * DamageFor(item) * Mutations.Damage(item, null, player) * (Cheats.OneHitKills ? 9999f : 1f);
+            p.bonusVsAfflicted = item.bonusVsAfflicted;
+            p.hasAffixEffect = item.hasAffixEffect;
+            p.affixEffect = item.affixEffect;
+            p.affixEffectChance = item.affixEffectChance;
             p.knockback = (item.kind == ItemKind.Bow ? 3f : 6f) * item.knockbackScale;
             p.fromPlayer = true;
             p.owner = gameObject;
@@ -819,7 +901,7 @@ namespace DeadCells.Player
             p.sparkColor = item.effectColor;
             p.weaponId = item.id;
             p.critAtLongRange = item.crit == CritRule.LongRange;
-            p.critMultiplier = item.critMultiplier;
+            p.critMultiplier = item.critMultiplier + Mutations.CritBonus;
             p.spin = item.spin;
             p.hitRadius = (item.kind == ItemKind.Bow ? 0.22f : 0.35f) * Mathf.Max(1f, item.projectileScale);
             p.homing = item.homing;
@@ -875,7 +957,7 @@ namespace DeadCells.Player
                         Vector2 away = ((Vector2)c.bounds.center - (Vector2)chest).normalized;
                         var info = new DamageInfo
                         {
-                            amount = item.damage * DamageMultiplier, knockback = away * 6f * item.power + Vector2.up * 2f,
+                            amount = item.damage * DamageFor(item), knockback = away * 6f * item.power + Vector2.up * 2f,
                             hitPoint = c.bounds.center, source = gameObject, stun = 0.4f, hitStop = 0.03f, shake = 0.1f,
                             sparkColor = item.effectColor, weaponId = item.id, projectile = true, effect = -1,
                         };
@@ -904,7 +986,7 @@ namespace DeadCells.Player
                             continue;
                         var info = new DamageInfo
                         {
-                            amount = item.damage * DamageMultiplier, knockback = new Vector2(facing * 3f, 3f), hitPoint = c.bounds.center,
+                            amount = item.damage * DamageFor(item), knockback = new Vector2(facing * 3f, 3f), hitPoint = c.bounds.center,
                             source = gameObject, stun = 0.3f, hitStop = 0.03f, shake = 0.12f, sparkColor = item.effectColor,
                             weaponId = item.id, projectile = true, effect = -1,
                         };
@@ -970,10 +1052,21 @@ namespace DeadCells.Player
         /// <summary>Shared impact feedback for any player-dealt damage.</summary>
         public void ReportHit(Health target, DamageInfo info, DamageResult result)
         {
+            bool kill = result == DamageResult.Killed;
+            if (result == DamageResult.Hit || kill)
+                player.Recover(info.amount);
+            if (kill)
+            {
+                Mutations.OnKill(player);
+                var src = SlotItem(info.weaponId);
+                if (src != null && src.healOnKill > 0f)
+                    health.Heal(health.maxHealth * src.healOnKill);
+                if (src != null && src.killBurst > 0f)
+                    KillBurst(target.transform.position + Vector3.up, info.amount * src.killBurst, src);
+            }
             var juice = JuiceEngine.Instance;
             if (juice == null)
                 return;
-            bool kill = result == DamageResult.Killed;
             if (info.hitStop > 0f)
                 juice.HitStop(kill ? info.hitStop + 0.02f : info.hitStop);
             if (info.shake > 0f)
@@ -995,6 +1088,33 @@ namespace DeadCells.Player
                 Audio.Sfx.Play("enemy.kill", p);
             if (!info.projectile)
                 player.squash.Add(new Vector2(0.06f, -0.05f));
+        }
+
+        ItemDef SlotItem(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+                return null;
+            foreach (var it in slots)
+                if (it != null && it.id == id)
+                    return it;
+            return null;
+        }
+
+        void KillBurst(Vector3 at, float damage, ItemDef src)
+        {
+            JuiceEngine.Instance?.SlamWave(at, 2f);
+            Audio.Sfx.Play("explode.fire", at, 0.5f, 1.2f);
+            foreach (var c in Physics2D.OverlapCircleAll(at, 2f, DCLayers.EnemyMask))
+            {
+                var h = c.GetComponentInParent<Health>();
+                if (h == null || h.IsDead)
+                    continue;
+                h.TakeDamage(new DamageInfo
+                {
+                    amount = Mathf.Max(5f, damage), knockback = ((Vector2)(c.bounds.center - at)).normalized * 5f, hitPoint = c.bounds.center,
+                    source = gameObject, stun = 0.2f, sparkColor = src.sparkColor, weaponId = "killburst", projectile = true, effect = -1,
+                });
+            }
         }
 
         // --------------------------------------------------------------- shield
@@ -1051,7 +1171,7 @@ namespace DeadCells.Player
 
             var juice = JuiceEngine.Instance;
             Vector3 contact = transform.position + new Vector3(player.Facing * 0.55f, 1.2f, 0f);
-            float window = shield != null ? shield.parryWindow : 0.18f;
+            float window = (shield != null ? shield.parryWindow : 0.18f) * Mutations.ParryWindowMultiplier;
             if (Time.time - blockStart <= window)
             {
                 if (shield != null && shield.parryRadius > 0f)
@@ -1074,7 +1194,7 @@ namespace DeadCells.Player
                     {
                         var counter = new DamageInfo
                         {
-                            amount = shield.parryDamage * DamageMultiplier * (Cheats.OneHitKills ? 9999f : 1f),
+                            amount = shield.parryDamage * DamageFor(shield) * Mutations.ParryDamageMultiplier * (Cheats.OneHitKills ? 9999f : 1f),
                             knockback = new Vector2(player.Facing * 5f, 1.5f),
                             hitPoint = contact,
                             source = gameObject,
@@ -1115,7 +1235,7 @@ namespace DeadCells.Player
                 {
                     var thorn = new DamageInfo
                     {
-                        amount = shield.thorns * DamageMultiplier, knockback = new Vector2(player.Facing * 4f, 1f), hitPoint = contact,
+                        amount = shield.thorns * DamageFor(shield), knockback = new Vector2(player.Facing * 4f, 1f), hitPoint = contact,
                         source = gameObject, sparkColor = shield.sparkColor, weaponId = shield.id, effect = -1, stun = 0.2f,
                     };
                     var r = attacker.TakeDamage(thorn);

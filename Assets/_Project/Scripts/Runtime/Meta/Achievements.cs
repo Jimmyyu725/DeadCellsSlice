@@ -16,6 +16,8 @@ namespace DeadCells.Meta
             "awaken", "first_blood", "parry_10", "slam_kill", "promenade", "ossuary", "stilt", "lung",
             "guardian", "timekeeper", "bc1", "bc4", "hard_win", "no_hit_biome", "speedrun", "collector",
             "big_spender", "lore_all", "teleport_10", "deaths_10", "arsenal",
+            "timed_door", "cursed_chest", "mutant", "legendary", "secret_room", "runes_all", "variant_route",
+            "bc5", "true_end", "daily", "boss_rush",
         };
 
         public static event Action<string> Unlocked;

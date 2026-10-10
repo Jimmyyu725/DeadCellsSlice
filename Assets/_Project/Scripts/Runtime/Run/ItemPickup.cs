@@ -73,8 +73,13 @@ namespace DeadCells.Run
                 Audio.Sfx.Play("shop.buy");
             }
             var combat = player.Combat;
-            int slot = combat.SlotFor(item);
-            var old = combat.Equip(slot, item);
+            if (item.quality >= ItemForge.Legendary)
+                Achievements.Unlock("legendary");
+            ItemDef old;
+            if (item.kind == ItemKind.Amulet)
+                old = combat.EquipAmulet(item);
+            else
+                old = combat.Equip(combat.SlotFor(item), item);
             Audio.Sfx.Play("pickup.item");
             JuiceEngine.Instance?.Embers(transform.position + Vector3.up * 1.1f, 16, item.arcColor);
             if (old != null)

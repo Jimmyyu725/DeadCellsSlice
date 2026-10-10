@@ -45,6 +45,11 @@ namespace DeadCells.Items
         [Tooltip("Skill whose burst behaviour (cluster / cloud / vortex) runs when this explodes.")]
         public ItemDef burstItem;
         public bool bomblet;
+        [Tooltip("Affix modifiers copied from the firing item.")]
+        public float bonusVsAfflicted;
+        public bool hasAffixEffect;
+        public SkillEffect affixEffect;
+        public float affixEffectChance;
 
         Vector2 origin;
         float age;
@@ -252,6 +257,9 @@ namespace DeadCells.Items
         DamageResult DealDamage(Health h, Vector2 point)
         {
             float amount = damage;
+            var targetStatus = h.GetComponent<StatusEffects>();
+            if (bonusVsAfflicted > 0f && targetStatus != null && targetStatus.Afflicted)
+                amount *= 1f + bonusVsAfflicted;
             bool crit = critAtLongRange && Vector2.Distance(origin, point) > 6f;
             if (crit)
                 amount *= critMultiplier;
@@ -276,7 +284,9 @@ namespace DeadCells.Items
             };
             var result = h.TakeDamage(info);
             if ((result == DamageResult.Hit || result == DamageResult.Killed) && hasEffect)
-                h.GetComponent<StatusEffects>()?.Apply(effect, effectDuration);
+                h.GetComponent<StatusEffects>()?.Apply(effect, effectDuration * (fromPlayer ? Meta.Mutations.StatusDuration(effect) : 1f));
+            if ((result == DamageResult.Hit || result == DamageResult.Killed) && hasAffixEffect && Random.value < affixEffectChance)
+                h.GetComponent<StatusEffects>()?.Apply(affixEffect, effectDuration);
             if ((result == DamageResult.Hit || result == DamageResult.Killed) && chain > 0)
                 ChainLightning(h, point, amount);
             if ((result == DamageResult.Hit || result == DamageResult.Killed) && explodeRadius <= 0f)

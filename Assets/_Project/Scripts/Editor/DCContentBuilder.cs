@@ -45,6 +45,7 @@ namespace DeadCells.EditorTools
             ReimportArt();
             BuildMaterials();
             BuildArmoryMaterials();
+            BuildSanctumMaterials();
             BuildControllers();
             BuildItemVisuals();
             BuildProjectiles();

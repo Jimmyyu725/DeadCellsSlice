@@ -49,6 +49,8 @@ namespace DeadCells.UI
             menu.Push(RootPage());
             MenuInput.ClearTyped();
             hero?.Restart("Idle", 0f);
+            if (hero != null)
+                Outfits.Apply(hero.gameObject);
 
             if (AutoplayDirector.Active)
                 StartCoroutine(Autoplay());
