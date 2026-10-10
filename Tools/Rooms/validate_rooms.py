@@ -252,12 +252,48 @@ def check(room):
     for (x, y), ch in g.c.items():
         if ch in INTERACT and not any((x + d, y) in seen for d in (-1, 0, 1)):
             errs.append(f"marker {ch} at {x},{y} unreachable")
-    # Coming back: from the exit you must be able to return to the entry (backtracking for side rooms).
-    if not left and not right and (ups or downs):
-        back = g.reach(start)
-        if start not in back:
-            errs.append("cannot return to the opening")
+    # No traps: from every reachable cell the way on (exit door, or the opening
+    # back out of a side room) must still be reachable.
+    goal = set()
+    if right:
+        goal.add((g.w - 1, min(right)))
+    for (x, y), ch in g.c.items():
+        if ch == "D":
+            goal.update((x + d, y) for d in (-1, 0, 1))
+    if not right and not any(ch == "D" for ch in g.c.values()):
+        for grp in ups:
+            goal.update((x, y) for x in range(grp[0] - 1, grp[-1] + 2) for y in range(g.h - 3, g.h - 1)
+                        if g.clear_column(x, y, g.h - 2))
+        for grp in downs:
+            goal.update((x, 1) for x in grp)
+    goal &= seen
+    traps = trap_cells(g, start, goal) if goal else set()
+    if traps:
+        errs.append(f"{len(traps)} trap cells, e.g. {sorted(traps)[:4]}")
     return errs
+
+
+def trap_cells(g, start, goal):
+    from collections import defaultdict
+    rev = defaultdict(list)
+    seen = {start}
+    q = deque([start])
+    while q:
+        p = q.popleft()
+        for n in g.neighbours(*p):
+            rev[n].append(p)
+            if n not in seen:
+                seen.add(n)
+                q.append(n)
+    back = set(goal)
+    q = deque(goal)
+    while q:
+        p = q.popleft()
+        for n in rev[p]:
+            if n not in back:
+                back.add(n)
+                q.append(n)
+    return seen - back
 
 
 def show(room):

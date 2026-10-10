@@ -173,6 +173,11 @@ namespace DeadCells.UI
             page.Add(MenuItem.Button(() => Loc.Get("menu.achievements"), () => menu.Push(MenuPages.Achievements(menu))));
             if (Cheats.Unlocked)
                 page.Add(MenuItem.Button(() => Loc.Get("menu.cheats"), () => menu.Push(MenuPages.Cheats(menu))));
+            page.Add(MenuItem.Button(() => Loc.Get("menu.unstuck"), () =>
+            {
+                menu.CloseAll();
+                RunManager.Instance.TeleportToNearest();
+            }, () => Loc.Get("menu.unstuck.desc")));
             page.Add(MenuItem.Button(() => Loc.Get("menu.main_menu"), () => RunManager.Instance.SaveAndQuit(), () => Loc.Get("hud.saved")));
             page.Add(MenuItem.Button(() => Loc.Get("menu.abandon"), () => menu.Confirm(() => Loc.Get("menu.abandon_confirm"), () => RunManager.Instance.AbandonRun())));
             page.onBack = menu.CloseAll;

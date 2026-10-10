@@ -285,6 +285,31 @@ namespace DeadCells.Run
 
         // ------------------------------------------------------------ teleport
 
+        /// <summary>Safety net: back to the nearest discovered teleporter (or the area entrance).</summary>
+        public void TeleportToNearest()
+        {
+            if (transitioning || level == null)
+                return;
+            Vector3 p = player.transform.position;
+            Teleporter best = null;
+            float bestD = float.MaxValue;
+            foreach (var t in level.teleporters)
+            {
+                if (t == null || !t.Discovered)
+                    continue;
+                float d = (t.transform.position - p).sqrMagnitude;
+                if (d < bestD)
+                {
+                    bestD = d;
+                    best = t;
+                }
+            }
+            if (best != null)
+                TeleportTo(best);
+            else
+                player.Teleport(level.playerStart + Vector3.up * 0.05f);
+        }
+
         public void TeleportTo(Teleporter target)
         {
             if (transitioning || target == null)

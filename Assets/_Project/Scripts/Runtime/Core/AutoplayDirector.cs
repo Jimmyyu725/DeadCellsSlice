@@ -249,8 +249,8 @@ namespace DeadCells.Core
             // Teleport: reveal the map, open the statue map at the first teleporter, jump to another.
             var rmTour = RunManager.Instance;
             rmTour.CheatRevealMap();
-            var teles = rmTour.Level.teleporters;
-            if (teles.Count > 1)
+            var teles = rmTour.Level.teleporters.FindAll(t => t != null);
+            if (teles.Count > 1 && !rmTour.Transitioning)
             {
                 var p0 = PlayerController.Main;
                 p0.Teleport(teles[0].transform.position + new Vector3(0.8f, 0.05f, -teles[0].transform.position.z));
@@ -261,10 +261,15 @@ namespace DeadCells.Core
                 yield return null;
                 yield return null;
                 ui.CloseAllForTest();
-                rmTour.TeleportTo(teles[teles.Count - 1]);
-                yield return new WaitForSecondsRealtime(1.5f);
-                Capture("ui_teleported");
-                log.WriteLine($"[{Elapsed:F1}] teleported to {PlayerController.Main.transform.position} (target {teles[teles.Count - 1].transform.position})");
+                var target = teles[teles.Count - 1];
+                if (target != null)
+                {
+                    rmTour.TeleportTo(target);
+                    yield return new WaitForSecondsRealtime(1.5f);
+                    Capture("ui_teleported");
+                    if (target != null)
+                        log.WriteLine($"[{Elapsed:F1}] teleported to {PlayerController.Main.transform.position} (target {target.transform.position})");
+                }
             }
             // Shop: stand at a priced pedestal with enough gold, buy it.
             ItemPickup pedestal = null;
@@ -274,13 +279,15 @@ namespace DeadCells.Core
                     pedestal = pick;
                     break;
                 }
-            if (pedestal != null)
+            if (pedestal != null && !rmTour.Transitioning)
             {
                 SaveSystem.Data.run.gold += pedestal.price;
                 var pp = PlayerController.Main;
                 pp.Teleport(new Vector3(pedestal.transform.position.x - 0.6f, pedestal.transform.position.y + 0.05f, 0f));
                 yield return new WaitForSecondsRealtime(0.8f);
                 Capture("ui_shop");
+                if (pedestal == null)
+                    yield break;
                 var before = pp.Combat.Slot(pp.Combat.SlotFor(pedestal.CardItem));
                 string bought = pedestal.CardItem != null ? pedestal.CardItem.id : "?";
                 pedestal.Interact(pp);
