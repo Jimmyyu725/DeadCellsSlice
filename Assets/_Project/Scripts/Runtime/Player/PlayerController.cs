@@ -191,18 +191,40 @@ namespace DeadCells.Player
                     UpdateLocomotion(input);
                     break;
                 case PlayerState.Attack:
+                {
                     if (TryDodge(input) || TryGroundPound(input))
                         break;
+                    // The shield comes up at any moment of an attack.
+                    int raised = combat.HeldShield(input);
+                    if (raised >= 0)
+                    {
+                        combat.CancelAttack();
+                        blockSlot = raised;
+                        EnterState(PlayerState.Block);
+                        break;
+                    }
                     if (combat.CanCancel && (Grounded || airJumpsLeft > 0) && Time.time - lastJumpPressedTime <= jumpBufferTime)
                     {
                         // Recovery frames can be cancelled into a jump.
-                        combat.CancelAttack();
+                        combat.EndEarly();
                         EnterState(PlayerState.Locomotion);
                         break;
                     }
+                    if (combat.TrySwitchAction())
+                        break;
                     if (combat.UpdateAttack(Time.deltaTime))
+                    {
                         EnterState(PlayerState.Locomotion);
+                        break;
+                    }
+                    // No recovery lock: walking away ends the swing.
+                    if (combat.CanCancel && input.moveX != 0f && !combat.AnyAttackBuffered)
+                    {
+                        combat.EndEarly();
+                        EnterState(PlayerState.Locomotion);
+                    }
                     break;
+                }
                 case PlayerState.Dodge:
                     UpdateDodge();
                     break;
@@ -219,7 +241,9 @@ namespace DeadCells.Player
                         EnterState(PlayerState.Locomotion);
                     break;
                 case PlayerState.Block:
-                    if (combat.HeldShield(input) < 0 || !Grounded)
+                    if (input.moveX != 0f)
+                        anim.SetFacing((int)input.moveX);
+                    if (combat.HeldShield(input) < 0)
                     {
                         combat.EndBlock();
                         EnterState(PlayerState.Locomotion);
@@ -253,7 +277,7 @@ namespace DeadCells.Player
             if (TryGroundPound(input) || TryDodge(input))
                 return;
             int shield = combat.HeldShield(input);
-            if (shield >= 0 && Grounded)
+            if (shield >= 0)
             {
                 blockSlot = shield;
                 EnterState(PlayerState.Block);

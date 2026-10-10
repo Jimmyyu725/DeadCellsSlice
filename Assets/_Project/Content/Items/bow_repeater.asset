@@ -1,0 +1,81 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb884fccea0f24f2fb6e3722d4c4348c, type: 3}
+  m_Name: bow_repeater
+  m_EditorClassIdentifier: DeadCells.Runtime::DeadCells.Items.ItemDef
+  id: bow_repeater
+  kind: 2
+  visual: {fileID: 280660177429557200, guid: 10e6bcdeb452647b7948a81cfced81ed, type: 3}
+  offhandVisual: {fileID: 0}
+  mount: 3
+  icon: {fileID: 21300000, guid: 579a4278bc98c4ded81ba1b7fa6aa57f, type: 3}
+  unlockCost: 0
+  basePrice: 160
+  tier: 1
+  crit: 0
+  critMultiplier: 1.5
+  animSpeed: 1
+  arcColor: {r: 1.2, g: 2.6, b: 3.2, a: 1}
+  arcCore: {r: 6, g: 6, b: 6, a: 1}
+  sparkColor: {r: 2.5, g: 2.2, b: 1.6, a: 1}
+  dualWield: 0
+  swingSound: swing.light
+  hitSound: hit.flesh
+  fireSound: crossbow.shoot
+  bladeLength: 0.78
+  combo: []
+  parryWindow: 0.18
+  blockReduction: 0.8
+  parryDamage: 18
+  projectile: {fileID: 3633580163804214785, guid: 91ff0aae03062494bae1db0f2473d406, type: 3}
+  projectileSpeed: 32
+  projectileGravity: 0
+  launchAngle: 0
+  damage: 9
+  cooldown: 0.75
+  hasEffect: 0
+  effect: 0
+  effectDuration: 3
+  radius: 0
+  pierce: 0
+  spin: 0
+  effectColor: {r: 2.4, g: 2.6, b: 2.8, a: 1}
+  onHitChance: 0
+  lifesteal: 0
+  pull: 0
+  comboRamp: 0
+  eliteBonus: 1
+  finisherWave: {fileID: 0}
+  finisherWaveDamage: 0
+  projectileCount: 1
+  spread: 0
+  burst: 3
+  burstInterval: 0.09
+  homing: 0
+  bounces: 0
+  boomerang: 0
+  chain: 0
+  pullOnHit: 0
+  knockbackScale: 1
+  projectileScale: 1
+  projectileLifetime: 3
+  parryRadius: 0
+  parryApplies: 0
+  thorns: 0
+  reflectMultiplier: 1.5
+  skillKind: 0
+  deployKind: 0
+  burstKind: 0
+  duration: 6
+  interval: 0.8
+  count: 4
+  power: 1

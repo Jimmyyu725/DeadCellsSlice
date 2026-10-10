@@ -61,8 +61,12 @@ namespace DeadCells.UI
         readonly List<MenuPage> stack = new List<MenuPage>();
         Canvas canvas;
         Image dim, column;
-        UILabel title, body, footer, hint, scrollUp, scrollDown, side;
+        UILabel title, body, footer, hint, scrollUp, scrollDown, side, sideUp, sideDown;
         Image sidePanel;
+        RectTransform sideView;
+        float sideScroll;
+        string sideText;
+        const float SideViewH = 700f;
         RectTransform rowsRoot;
         readonly List<(RectTransform rt, Image bar, UILabel label, UILabel value)> rows = new List<(RectTransform, Image, UILabel, UILabel)>();
         int scroll;
@@ -107,7 +111,13 @@ namespace DeadCells.UI
             footer = UIKit.Label("Footer", root, new Vector2(0f, 0f), new Vector2(120f, 120f), new Vector2(680f, 160f), TextAnchor.LowerLeft, UIKit.TextDim, UIKit.U, UILabel.Style.Body, 26);
             sidePanel = UIKit.Box("SidePanel", root, new Vector2(1f, 1f), new Vector2(-70f, -230f), new Vector2(960f, 790f), UIKit.Panel, new Vector2(1f, 1f));
             UIKit.Box("SideEdge", sidePanel.transform, new Vector2(0f, 0.5f), Vector2.zero, new Vector2(3f, 790f), new Color(0.35f, 0.22f, 0.55f, 0.8f), new Vector2(0f, 0.5f));
-            side = UIKit.Label("Side", sidePanel.transform, new Vector2(0f, 1f), new Vector2(50f, -40f), new Vector2(870f, 720f), TextAnchor.UpperLeft, UIKit.TextBright, UIKit.U, UILabel.Style.Body, 27, new Vector2(0f, 1f));
+            sideView = UIKit.Rect("SideView", sidePanel.transform, new Vector2(0f, 1f), new Vector2(50f, -40f), new Vector2(870f, SideViewH), new Vector2(0f, 1f));
+            sideView.gameObject.AddComponent<RectMask2D>();
+            side = UIKit.Label("Side", sideView, new Vector2(0f, 1f), Vector2.zero, new Vector2(860f, SideViewH), TextAnchor.UpperLeft, UIKit.TextBright, UIKit.U, UILabel.Style.Body, 27, new Vector2(0f, 1f));
+            sideUp = UIKit.Label("SideUp", sidePanel.transform, new Vector2(1f, 1f), new Vector2(-30f, -24f), new Vector2(40f, 30f), TextAnchor.MiddleCenter, UIKit.Gold, 3f);
+            sideUp.Text = "^";
+            sideDown = UIKit.Label("SideDown", sidePanel.transform, new Vector2(1f, 0f), new Vector2(-30f, 24f), new Vector2(40f, 30f), TextAnchor.MiddleCenter, UIKit.Gold, 3f);
+            sideDown.Text = "v";
             sidePanel.gameObject.SetActive(false);
             hint = UIKit.Label("Hint", root, new Vector2(0f, 0f), new Vector2(120f, 50f), new Vector2(700f, 30f), TextAnchor.MiddleLeft, new Color(0.5f, 0.55f, 0.62f), 2f);
         }
@@ -196,7 +206,14 @@ namespace DeadCells.UI
             if (live)
                 HandleInput(page);
             if (Top == page)
+            {
                 Refresh();
+                if (page.sideDescription && MenuInput.Scroll != 0f)
+                {
+                    sideScroll -= MenuInput.Scroll;
+                    ApplySideScroll();
+                }
+            }
         }
 
         void HandleInput(MenuPage page)
@@ -274,6 +291,15 @@ namespace DeadCells.UI
             }
         }
 
+        void ApplySideScroll()
+        {
+            float max = Mathf.Max(0f, side.RectTransform.sizeDelta.y - SideViewH);
+            sideScroll = Mathf.Clamp(sideScroll, 0f, max);
+            side.RectTransform.anchoredPosition = new Vector2(0f, sideScroll);
+            sideUp.gameObject.SetActive(sideScroll > 1f);
+            sideDown.gameObject.SetActive(sideScroll < max - 1f);
+        }
+
         void Refresh()
         {
             var page = Top;
@@ -330,8 +356,15 @@ namespace DeadCells.UI
             string desc = selItem?.description != null ? selItem.description() : "";
             sidePanel.gameObject.SetActive(page.sideDescription);
             footer.Text = page.sideDescription ? "" : desc;
-            if (page.sideDescription)
+            if (page.sideDescription && desc != sideText)
+            {
+                sideText = desc;
                 side.Text = desc;
+                sideScroll = 0f;
+                var rt = side.RectTransform;
+                rt.sizeDelta = new Vector2(rt.sizeDelta.x, Mathf.Max(SideViewH, side.PreferredHeight + 24f));
+                ApplySideScroll();
+            }
             hint.Text = Loc.Get("menu.nav_hint");
         }
     }

@@ -20,6 +20,9 @@ namespace DeadCells.Items
         LongRange,    // projectile travelled > 6 m
         AfterDodge,   // within 1.5 s of a dodge roll
         LowHealth,    // target below 35% health
+        Burning,      // target is on fire
+        Airborne,     // the player is in the air
+        Afflicted,    // target carries any status effect
     }
 
     public enum SkillEffect
@@ -27,7 +30,25 @@ namespace DeadCells.Items
         Fire,
         Ice,
         Lightning,
+        Poison,     // stacking damage over time
+        Slow,       // enemy time runs at 45%
     }
+
+    /// <summary>What a skill does when used.</summary>
+    public enum SkillKind
+    {
+        Throw,      // launch the projectile (grenades, discs, jars)
+        Rain,       // projectiles fall from the sky around the nearest enemy
+        Deploy,     // place a turret / totem / trap / healer on the floor
+        Nova,       // instant burst around the player
+        Dash,       // blink forward, hurting everything on the way
+        Buff,       // temporary boost to the player
+    }
+
+    public enum DeployKind { Turret, Totem, Trap, Healer }
+
+    /// <summary>Extra behaviour when a thrown skill bursts.</summary>
+    public enum BurstKind { None, Cluster, Cloud, Vortex }
 
     public enum MountPoint
     {
@@ -115,6 +136,61 @@ namespace DeadCells.Items
         public bool spin;
         [ColorUsage(true, true)] public Color effectColor = new Color(3f, 1.3f, 0.3f);
 
+        [Header("Melee extras")]
+        [Tooltip("Chance per hit to apply `effect` for `effectDuration` (melee).")]
+        [Range(0f, 1f)] public float onHitChance;
+        [Tooltip("Fraction of damage dealt returned as health.")]
+        public float lifesteal;
+        [Tooltip("Finisher drags the target toward the player instead of knocking it away.")]
+        public float pull;
+        [Tooltip("Extra damage per consecutive hit of a chain (0.08 = +8% each).")]
+        public float comboRamp;
+        [Tooltip("Damage multiplier against elites and bosses.")]
+        public float eliteBonus = 1f;
+        [Tooltip("Projectile launched forward when the finisher lands.")]
+        public GameObject finisherWave;
+        public float finisherWaveDamage;
+
+        [Header("Ranged extras")]
+        public int projectileCount = 1;
+        [Tooltip("Degrees between projectiles of one shot.")]
+        public float spread;
+        public int burst = 1;
+        public float burstInterval = 0.09f;
+        [Tooltip("Turn rate toward the nearest enemy (deg/s).")]
+        public float homing;
+        public int bounces;
+        public bool boomerang;
+        [Tooltip("Lightning hops to this many extra enemies on hit.")]
+        public int chain;
+        [Tooltip("Hit enemies are yanked toward the shooter.")]
+        public float pullOnHit;
+        public float knockbackScale = 1f;
+        public float projectileScale = 1f;
+        public float projectileLifetime = 3f;
+
+        [Header("Shield extras")]
+        [Tooltip("A parry also stuns every enemy within this radius.")]
+        public float parryRadius;
+        [Tooltip("A parry applies `effect` to the attacker (and parryRadius victims).")]
+        public bool parryApplies;
+        [Tooltip("Damage returned to melee attackers on every block.")]
+        public float thorns;
+        public float reflectMultiplier = 1.5f;
+
+        [Header("Skill behaviour")]
+        public SkillKind skillKind;
+        public DeployKind deployKind;
+        public BurstKind burstKind;
+        [Tooltip("Lifetime of deployables, clouds, vortices and buffs.")]
+        public float duration = 6f;
+        [Tooltip("Seconds between deployable actions / cloud ticks.")]
+        public float interval = 0.8f;
+        [Tooltip("Rain: projectiles; Cluster: bomblets.")]
+        public int count = 4;
+        [Tooltip("Vortex pull strength / dash distance / buff damage bonus.")]
+        public float power = 1f;
+
         public bool IsWeapon => kind != ItemKind.Skill;
 
         public string StatLine
@@ -131,7 +207,8 @@ namespace DeadCells.Items
                     case ItemKind.Shield:
                         return Loc.Get("hud.damage_label", Mathf.RoundToInt(parryDamage));
                     default:
-                        return Loc.Get("hud.damage_label", Mathf.RoundToInt(damage)) + "   " + Loc.Get("hud.dps_label", cooldown.ToString("0.#"));
+                        string cd = Loc.Get("hud.dps_label", cooldown.ToString("0.#"));
+                        return damage > 0f ? Loc.Get("hud.damage_label", Mathf.RoundToInt(damage)) + "   " + cd : cd;
                 }
             }
         }

@@ -32,10 +32,26 @@ namespace DeadCells.Items
         public bool critAtLongRange;
         public float critMultiplier = 1.75f;
         public bool spin;
+        [Header("Behaviours")]
+        [Tooltip("Turn rate toward the nearest enemy (deg/s).")]
+        public float homing;
+        public int bounces;
+        public bool boomerang;
+        public float boomerangTime = 0.42f;
+        [Tooltip("Lightning hops to this many extra enemies on hit.")]
+        public int chain;
+        [Tooltip("Hit targets are yanked toward the owner.")]
+        public float pull;
+        [Tooltip("Skill whose burst behaviour (cluster / cloud / vortex) runs when this explodes.")]
+        public ItemDef burstItem;
+        public bool bomblet;
 
         Vector2 origin;
         float age;
         bool dead;
+        bool returning;
+        Health homingTarget;
+        float retargetAt;
         readonly System.Collections.Generic.HashSet<Health> hits = new System.Collections.Generic.HashSet<Health>();
 
         public static System.Collections.Generic.List<Projectile> Live = new System.Collections.Generic.List<Projectile>();
@@ -73,11 +89,45 @@ namespace DeadCells.Items
                 return;
             }
             velocity.y -= gravity * dt;
+            if (homing > 0f)
+                Steer(dt);
+            if (boomerang && !returning && age > boomerangTime)
+            {
+                returning = true;
+                hits.Clear();
+                gravity = 0f;
+            }
+            if (returning)
+            {
+                if (owner == null)
+                {
+                    Finish(false);
+                    return;
+                }
+                Vector2 to = (Vector2)owner.transform.position + Vector2.up * 1.1f - (Vector2)transform.position;
+                if (to.magnitude < 0.9f)
+                {
+                    Destroy(gameObject); // caught
+                    dead = true;
+                    return;
+                }
+                velocity = Vector2.MoveTowards(velocity, to.normalized * Mathf.Max(velocity.magnitude, 16f), 140f * dt);
+            }
             Vector2 pos = transform.position;
             Vector2 step = velocity * dt;
-            var wall = Physics2D.Raycast(pos, step.normalized, step.magnitude + hitRadius * 0.5f, DCLayers.SolidMask);
+            var wall = boomerang ? default : Physics2D.Raycast(pos, step.normalized, step.magnitude + hitRadius * 0.5f, DCLayers.SolidMask);
             if (wall.collider != null)
             {
+                if (bounces > 0)
+                {
+                    bounces--;
+                    velocity = Vector2.Reflect(velocity, wall.normal) * 0.92f;
+                    transform.position = wall.point + wall.normal * 0.06f;
+                    hits.Clear();
+                    JuiceEngine.Instance?.HitSparks(wall.point, wall.normal, sparkColor, 0.25f);
+                    Audio.Sfx.Play("arrow.hit", wall.point, 0.4f, 1.3f);
+                    return;
+                }
                 transform.position = wall.point - step.normalized * 0.05f;
                 Finish(true);
                 return;
@@ -110,14 +160,92 @@ namespace DeadCells.Items
                 {
                     // Shields send projectiles back at their owner.
                     Reverse(h.gameObject);
-                    damage *= 1.5f;
+                    damage *= Player.PlayerCombat.Instance != null ? Player.PlayerCombat.Instance.ReflectMultiplier : 1.5f;
                     return;
                 }
-                if (!pierce || result == DamageResult.Blocked)
+                if (!pierce && !boomerang || result == DamageResult.Blocked)
                 {
                     Finish(true);
                     return;
                 }
+            }
+        }
+
+        void Steer(float dt)
+        {
+            if (Time.time >= retargetAt || homingTarget == null || homingTarget.IsDead)
+            {
+                retargetAt = Time.time + 0.12f;
+                homingTarget = null;
+                float best = float.MaxValue;
+                int mask = fromPlayer ? DCLayers.EnemyMask : (1 << DCLayers.Player);
+                foreach (var c in Physics2D.OverlapCircleAll(transform.position, 14f, mask))
+                {
+                    var h = c.GetComponentInParent<Health>();
+                    if (h == null || h.IsDead || hits.Contains(h))
+                        continue;
+                    Vector2 to = (Vector2)c.bounds.center - (Vector2)transform.position;
+                    if (Vector2.Angle(velocity, to) > 110f)
+                        continue;
+                    float score = to.magnitude;
+                    if (score < best)
+                    {
+                        best = score;
+                        homingTarget = h;
+                    }
+                }
+            }
+            if (homingTarget == null)
+                return;
+            var col = homingTarget.GetComponentInChildren<Collider2D>();
+            Vector2 aim = (col != null ? (Vector2)col.bounds.center : (Vector2)homingTarget.transform.position + Vector2.up) - (Vector2)transform.position;
+            float speed = velocity.magnitude;
+            float ang = Vector2.SignedAngle(velocity, aim);
+            float turn = Mathf.Clamp(ang, -homing * dt, homing * dt);
+            velocity = (Vector2)(Quaternion.Euler(0f, 0f, turn) * velocity).normalized * speed;
+        }
+
+        void ChainLightning(Health from, Vector2 point, float amount)
+        {
+            int mask = fromPlayer ? DCLayers.EnemyMask : (1 << DCLayers.Player);
+            Vector2 at = point;
+            for (int i = 0; i < chain; i++)
+            {
+                Health next = null;
+                float best = 5.5f;
+                foreach (var c in Physics2D.OverlapCircleAll(at, 5.5f, mask))
+                {
+                    var h = c.GetComponentInParent<Health>();
+                    if (h == null || h.IsDead || h == from || hits.Contains(h))
+                        continue;
+                    float d = Vector2.Distance(at, c.bounds.center);
+                    if (d < best)
+                    {
+                        best = d;
+                        next = h;
+                    }
+                }
+                if (next == null)
+                    return;
+                hits.Add(next);
+                Vector2 to = (Vector2)next.transform.position + Vector2.up;
+                var juice = JuiceEngine.Instance;
+                for (int k = 1; k <= 4; k++)
+                    juice?.HitSparks(Vector2.Lerp(at, to, k / 4f) + Random.insideUnitCircle * 0.2f, to - at, new Color(1.4f, 2.2f, 3.4f), 0.15f);
+                var info = new DamageInfo
+                {
+                    amount = amount * 0.6f, knockback = (to - at).normalized * 2f, hitPoint = to, source = owner != null ? owner : gameObject,
+                    stun = 0.2f, hitStop = 0.02f, shake = 0.06f, sparkColor = new Color(1.4f, 2.2f, 3.4f), weaponId = weaponId,
+                    projectile = true, effect = (int)SkillEffect.Lightning, effectDuration = 0.4f,
+                };
+                var result = next.TakeDamage(info);
+                if (result == DamageResult.Hit || result == DamageResult.Killed)
+                    next.GetComponent<StatusEffects>()?.Apply(SkillEffect.Lightning, 0.4f);
+                if (fromPlayer && result != DamageResult.Ignored)
+                    Player.PlayerCombat.Instance?.ReportHit(next, info, result);
+                Audio.Sfx.Play("lightning.zap", to, 0.7f);
+                from = next;
+                at = to;
             }
         }
 
@@ -127,10 +255,13 @@ namespace DeadCells.Items
             bool crit = critAtLongRange && Vector2.Distance(origin, point) > 6f;
             if (crit)
                 amount *= critMultiplier;
+            Vector2 push = velocity.normalized * knockback;
+            if (pull > 0f && owner != null)
+                push = ((Vector2)owner.transform.position - point).normalized * pull + Vector2.up * 2f;
             var info = new DamageInfo
             {
                 amount = amount,
-                knockback = velocity.normalized * knockback,
+                knockback = push,
                 hitPoint = point,
                 source = owner != null ? owner : gameObject,
                 critical = crit,
@@ -146,6 +277,8 @@ namespace DeadCells.Items
             var result = h.TakeDamage(info);
             if ((result == DamageResult.Hit || result == DamageResult.Killed) && hasEffect)
                 h.GetComponent<StatusEffects>()?.Apply(effect, effectDuration);
+            if ((result == DamageResult.Hit || result == DamageResult.Killed) && chain > 0)
+                ChainLightning(h, point, amount);
             if ((result == DamageResult.Hit || result == DamageResult.Killed) && explodeRadius <= 0f)
             {
                 if (hasEffect && effect == SkillEffect.Lightning)
@@ -172,7 +305,9 @@ namespace DeadCells.Items
                         continue;
                     DealDamage(h, h.transform.position + Vector3.up);
                 }
-                Audio.Sfx.Play(hasEffect && effect == SkillEffect.Ice ? "explode.ice" : "explode.fire", transform.position);
+                Audio.Sfx.Play(hasEffect && effect == SkillEffect.Ice ? "explode.ice" : "explode.fire", transform.position, bomblet ? 0.6f : 1f);
+                if (burstItem != null)
+                    Burst();
                 if (juice != null)
                 {
                     juice.SlamWave(transform.position, explodeRadius);
@@ -187,6 +322,48 @@ namespace DeadCells.Items
                     Audio.Sfx.Play("arrow.hit", transform.position, 0.6f);
             }
             Destroy(gameObject);
+        }
+
+        /// <summary>Cluster bomblets, a lingering poison cloud or a vortex.</summary>
+        void Burst()
+        {
+            var item = burstItem;
+            switch (item.burstKind)
+            {
+                case BurstKind.Cluster:
+                    if (bomblet || item.projectile == null)
+                        break;
+                    for (int i = 0; i < item.count; i++)
+                    {
+                        var go = Instantiate(item.projectile, transform.position + Vector3.up * 0.3f, Quaternion.identity);
+                        go.SetActive(true);
+                        go.transform.localScale *= 0.6f;
+                        var p = go.GetComponent<Projectile>();
+                        p.velocity = new Vector2(Random.Range(-7f, 7f), Random.Range(6f, 11f));
+                        p.gravity = 28f;
+                        p.damage = damage * 0.45f;
+                        p.explodeRadius = explodeRadius * 0.6f;
+                        p.fromPlayer = fromPlayer;
+                        p.owner = owner;
+                        p.hasEffect = hasEffect;
+                        p.effect = effect;
+                        p.effectDuration = effectDuration;
+                        p.sparkColor = sparkColor;
+                        p.weaponId = weaponId;
+                        p.spin = true;
+                        p.lifetime = 2f;
+                        p.burstItem = item;
+                        p.bomblet = true;
+                        p.hitRadius = hitRadius * 0.7f;
+                    }
+                    break;
+                case BurstKind.Cloud:
+                case BurstKind.Vortex:
+                    var zone = new GameObject(item.burstKind == BurstKind.Cloud ? "MiasmaCloud" : "Vortex").AddComponent<Run.LingeringZone>();
+                    zone.transform.position = transform.position;
+                    zone.Setup(item, owner, explodeRadius, damage * 0.25f, fromPlayer);
+                    break;
+            }
         }
     }
 }

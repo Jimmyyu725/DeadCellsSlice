@@ -511,6 +511,7 @@ namespace DeadCells.EditorTools
             d.crit = crit;
             d.critMultiplier = critMult;
             d.icon = null;
+            d.icon = visual != null ? AssetDatabase.LoadAssetAtPath<Sprite>($"{ArtDir}/Icons/{visual}.png") : null;
             d.swingSound = "swing.light";
             d.hitSound = "hit.flesh";
             d.fireSound = "";
@@ -747,6 +748,7 @@ namespace DeadCells.EditorTools
             harpoon.fireSound = "harpoon.throw";
             list.Add(harpoon);
 
+            BuildArmoryItems(list);
             foreach (var d in list)
                 EditorUtility.SetDirty(d);
             var db = Asset<ItemDatabase>($"{ResourcesDir}/ItemDatabase.asset");

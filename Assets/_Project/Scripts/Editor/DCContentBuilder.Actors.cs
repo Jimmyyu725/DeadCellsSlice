@@ -42,6 +42,7 @@ namespace DeadCells.EditorTools
             ItemVisual("GraveShovel", $"{ArmoryDir}/GraveShovel.fbx", armory, new Vector2(0f, 0.86f), new Vector2(0f, 1.2f));
             ItemVisual("Crossbow", $"{ArmoryDir}/Crossbow.fbx", armory);
             ItemVisual("Greatsword", $"{CharDir}/RoyalGuardian/Greatsword.fbx", LoadMat("M_Greatsword"));
+            BuildArmoryVisuals();
             ItemVisual("Shovel", $"{CharDir}/TimeKeeper/Shovel.fbx", LoadMat("M_Shovel"));
         }
 
@@ -249,6 +250,7 @@ namespace DeadCells.EditorTools
             PointLight(pillar.transform, new Vector3(0f, 1f, -0.5f), new Color(1f, 0.9f, 0.6f), 2.5f, 4f);
             SetLayer(pillar, DCLayers.Fx);
             Save(pillar, "Projectiles/StarPillar");
+            BuildArmoryProjectiles();
         }
 
         static GameObject ProjectilePrefab(string name) => LoadPrefab("Projectiles/" + name);

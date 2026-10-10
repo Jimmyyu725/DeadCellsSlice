@@ -28,7 +28,7 @@ namespace DeadCells.UI
         PlayerCombat combat;
         RectTransform root;
         RectTransform fill, trail;
-        UILabel hpText, goldText, cellsText, timerText, areaText, flaskText;
+        UILabel hpText, goldText, cellsText, timerText, areaText, flaskText, coordText;
         Image damageOverlay, fadeOverlay, goldIcon, cellIcon;
         readonly Image[] slotFrame = new Image[4];
         readonly Image[] slotIcon = new Image[4];
@@ -165,6 +165,8 @@ namespace DeadCells.UI
             minimapMarkers = UIKit.Rect("Markers", minimap.transform, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(90 * u, 54 * u));
             areaText = UIKit.Label("Area", root, tr, new Vector2(-12 * u, -71 * u), new Vector2(160 * u, 8 * u), TextAnchor.MiddleRight, new Color(0.8f, 0.85f, 0.95f), 2f, UILabel.Style.Pixel, 30, Vector2.one);
             timerText = UIKit.Label("Timer", root, tr, new Vector2(-12 * u, -80 * u), new Vector2(80 * u, 8 * u), TextAnchor.MiddleRight, new Color(0.7f, 0.75f, 0.8f, 0.85f), 2f, UILabel.Style.Pixel, 30, Vector2.one);
+            coordText = UIKit.Label("Coords", root, tr, new Vector2(-12 * u, -89 * u), new Vector2(300 * u, 16 * u), TextAnchor.UpperRight, new Color(0.55f, 1f, 0.75f), 2f, UILabel.Style.Pixel, 30, Vector2.one);
+            coordText.gameObject.SetActive(false);
 
             // Boss bar (top-centre).
             bossRoot = UIKit.Rect("Boss", root, new Vector2(0.5f, 1f), new Vector2(0f, -14 * u), new Vector2(220 * u, 16 * u), new Vector2(0.5f, 1f));
@@ -284,6 +286,27 @@ namespace DeadCells.UI
 
         // ------------------------------------------------------------- update
 
+        /// <summary>Coordinate readout (Options > Show coordinates); F8 copies a bug-report line.</summary>
+        void UpdateCoords()
+        {
+            var rm = Run.RunManager.Instance;
+            var p = Player.PlayerController.Main;
+            bool on = SaveSystem.Data.settings.showCoords && rm != null && rm.Level != null && p != null;
+            coordText.gameObject.SetActive(on);
+            if (!on)
+                return;
+            var cell = Run.RunManager.Cell(p.transform.position);
+            var room = rm.RoomAt(cell);
+            coordText.Text = $"X {cell.x}  Y {cell.y}\n{(room != null ? room.template : "-")}  #{rm.LevelSeed}";
+            var kb = UnityEngine.InputSystem.Keyboard.current;
+            if (kb != null && kb.f8Key.wasPressedThisFrame)
+            {
+                GUIUtility.systemCopyBuffer = rm.LocationReport(cell);
+                Toast(Loc.Get("hud.coords_copied"), new Color(0.55f, 1f, 0.75f));
+                Debug.Log("[DC] location " + rm.LocationReport(cell));
+            }
+        }
+
         void Update()
         {
             float dt = Time.unscaledDeltaTime;
@@ -293,6 +316,7 @@ namespace DeadCells.UI
             if (health == null)
                 return;
             var run = SaveSystem.Data.run;
+            UpdateCoords();
 
             float n = health.Normalized;
             float width = 130 * uiScale;

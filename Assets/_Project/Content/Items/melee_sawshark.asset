@@ -1,0 +1,123 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb884fccea0f24f2fb6e3722d4c4348c, type: 3}
+  m_Name: melee_sawshark
+  m_EditorClassIdentifier: DeadCells.Runtime::DeadCells.Items.ItemDef
+  id: melee_sawshark
+  kind: 0
+  visual: {fileID: 1030537991201194675, guid: 86c1e68ff32b2418d9dd3b61df5a910c, type: 3}
+  offhandVisual: {fileID: 0}
+  mount: 0
+  icon: {fileID: 21300000, guid: 312fb0212dad6477c8f8f532cd25e8a7, type: 3}
+  unlockCost: 35
+  basePrice: 190
+  tier: 2
+  crit: 9
+  critMultiplier: 1.9
+  animSpeed: 1
+  arcColor: {r: 2.4, g: 2.6, b: 2.8, a: 1}
+  arcCore: {r: 4.86, g: 4.94, b: 5.02, a: 1}
+  sparkColor: {r: 2.16, g: 2.34, b: 2.52, a: 0.9}
+  dualWield: 0
+  swingSound: swing.light
+  hitSound: hit.flesh
+  fireSound: 
+  bladeLength: 0.78
+  combo:
+  - clip: Slash_Combo_1
+    totalFrames: 18
+    activeFrames: {x: 4, y: 7}
+    cancelFrame: 8
+    lungeFrames: {x: 3, y: 6}
+    lungeSpeed: 4.5
+    damage: 13
+    hitboxOffset: {x: 1.4, y: 1.05}
+    hitboxSize: {x: 2.6, y: 1.9}
+    knockback: 4.5
+    stun: 0.15
+    hitStopWeight: 0.35
+    shake: 0.18
+    finisher: 0
+  - clip: Slash_Combo_2
+    totalFrames: 18
+    activeFrames: {x: 4, y: 7}
+    cancelFrame: 8
+    lungeFrames: {x: 3, y: 6}
+    lungeSpeed: 4.5
+    damage: 13
+    hitboxOffset: {x: 1.4, y: 1.05}
+    hitboxSize: {x: 2.6, y: 1.9}
+    knockback: 4.5
+    stun: 0.15
+    hitStopWeight: 0.35
+    shake: 0.18
+    finisher: 0
+  - clip: Slash_Combo_3
+    totalFrames: 24
+    activeFrames: {x: 5, y: 9}
+    cancelFrame: 13
+    lungeFrames: {x: 3, y: 6}
+    lungeSpeed: 4.5
+    damage: 24
+    hitboxOffset: {x: 1.5, y: 1.05}
+    hitboxSize: {x: 2.8, y: 1.9}
+    knockback: 9
+    stun: 0.4
+    hitStopWeight: 1
+    shake: 0.45
+    finisher: 1
+  parryWindow: 0.18
+  blockReduction: 0.8
+  parryDamage: 18
+  projectile: {fileID: 0}
+  projectileSpeed: 26
+  projectileGravity: 0
+  launchAngle: 0
+  damage: 14
+  cooldown: 0.45
+  hasEffect: 1
+  effect: 3
+  effectDuration: 4
+  radius: 0
+  pierce: 0
+  spin: 0
+  effectColor: {r: 3, g: 1.3, b: 0.3, a: 1}
+  onHitChance: 0.45
+  lifesteal: 0
+  pull: 0
+  comboRamp: 0
+  eliteBonus: 1
+  finisherWave: {fileID: 0}
+  finisherWaveDamage: 0
+  projectileCount: 1
+  spread: 0
+  burst: 1
+  burstInterval: 0.09
+  homing: 0
+  bounces: 0
+  boomerang: 0
+  chain: 0
+  pullOnHit: 0
+  knockbackScale: 1
+  projectileScale: 1
+  projectileLifetime: 3
+  parryRadius: 0
+  parryApplies: 0
+  thorns: 0
+  reflectMultiplier: 1.5
+  skillKind: 0
+  deployKind: 0
+  burstKind: 0
+  duration: 6
+  interval: 0.8
+  count: 4
+  power: 1

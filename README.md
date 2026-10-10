@@ -51,12 +51,17 @@ open "Builds/DeadCellsSlice.app"
 
 ### 装备
 
+共 76 件武器：最初的 10 件、0.3 版的 6 件，以及 0.5 版新增的 60 件。每件都有独立的 Blender 模型；新增 60 件的图标由模型直接渲染。
+
 | 类型 | 物品 |
 |---|---|
-| 近战 | 锈蚀的刽子手砍刀（初始）、生锈的剑、碎钟锤（钟鸣眩晕）、锁链流星（终结击飞）、掘墓铲（残血暴击）、阔剑、潮卫长矛、钟摆细剑（翻滚后暴击）、潮汐镰刀（超大范围）、双子蜱刺（背刺暴击） |
-| 盾 / 弓 | 前线盾牌、尖刺弓（远距离暴击，会被兰灯僧侣反弹）、鱼骨十字弩（慢速贯穿） |
-| 技能 | 硫磺手雷（燃烧）、水银冰霜手雷（冻结，冻住的敌人吃暴击）、结晶闪电鱼叉（贯穿 + 感电） |
+| 近战（30） | 锈蚀的刽子手砍刀（初始）、生锈的剑、阔剑、潮卫长矛、双子蜱刺、碎钟锤、钟摆细剑、潮汐镰刀、锁链流星、掘墓铲；余烬断齿（燃烧暴击）、月镰双刃、鲸肋大剑（终结冲击波）、钟摆战斧、薰衣草酒瓶棍（中毒）、溺亡之锚（终结拉拽）、蛛丝长鞭（超长距离）、齿轮链锯、烛台三叉戟、时针长枪、雷鳗鞭、骷髅权杖（吸血）、熔炉火钳、牧月钩杖、星砂太刀（空中暴击）、鲨齿锯刃、狱卒巨钥（克制精英与 Boss）、渡魂船桨、指挥家之棒（连击叠伤）、余烬拳套 |
+| 远程（22） | 尖刺弓、鱼骨十字弩；月牙长弓（贯穿）、三连弩（连射）、霰弹火铳（散射）、蜱刺吹箭（中毒）、冰霜投石索、回旋月轮（回旋）、飞刀扇、雷弦琴弓（闪电连锁）、钟声号角（声波击退）、墨鱼喷枪（减速）、骨笛（追踪）、星屑魔杖（反弹）、鱼叉枪（拉拽）、蒸汽钉枪（速射）、余烬臼炮、泡泡枪、时钟弩（冻结）、碎石弹弓、提灯光矛、六分仪狙击枪（远距离三倍暴击） |
+| 盾（7） | 前线盾牌；铜钟盾（范围眩晕）、镜月盾（三倍反弹）、尖刺壳盾（反伤）、钟面盾（宽判定冻结）、余烬圆盾（点燃）、鲸鳞塔盾（95% 减伤） |
+| 技能（17） | 硫磺手雷、水银冰霜手雷、结晶闪电鱼叉；星落、雷击图腾、齿轮哨兵、捕兽夹、瘴气罐（毒雾）、集束钟弹、磁石雷、冰霜新星、余烬冲刺、时停怀表（全屏减速）、狂怒之血、疗愈提灯、弹跳锯轮、深渊墨瓶（黑洞） |
 | 消耗 | 生命血瓶、力量 / 活力卷轴 |
+
+状态效果：燃烧、冰冻、感电、中毒（可叠加）、减速。
 
 ### 敌人
 
@@ -73,7 +78,7 @@ open "Builds/DeadCellsSlice.app"
 
 | 路径 | 内容 |
 |---|---|
-| `Tools/Blender/` | 资产生成脚本：角色 `build_beheaded.py`、`build_zombie.py`、`build_enemies.py`（哨兵、僧侣、渔民、两个 Boss、生物），武器 `build_weapons.py`、`build_arsenal.py`、`build_armory.py`，道具 `build_props.py`，环境 `build_environment.py`、`build_biome.py`（四个区域套件） |
+| `Tools/Blender/` | 资产生成脚本：角色 `build_beheaded.py`、`build_zombie.py`、`build_enemies.py`（哨兵、僧侣、渔民、两个 Boss、生物），武器 `build_weapons.py`、`build_arsenal.py`、`build_armory.py`、`armory_melee.py` / `armory_ranged.py` / `armory_other.py`（60 件扩展，公共部分在 `armory_kit.py`，可在打开的 Blender 里 `preview()` 实时预览），图标 `render_icons.py`，道具 `build_props.py`，环境 `build_environment.py`、`build_biome.py`（四个区域套件） |
 | `Tools/PIPELINE.md`、`Tools/BIOMES.md` | Blender → Unity 资产约定、区域套件约定 |
 | `Tools/Audio/` | 音频合成：`dsp.py` 信号处理，`sfx.py` 音效配方，`music.py` 作曲与环境声，`make_audio.py` 生成 WAV 和清单（用 Blender 自带的 Python 运行，它带 numpy） |
 | `Tools/Rooms/` | 房间模板（`make_rooms.py` 按坐标定义）和两个校验器：单房间（含镜像）可达性 `validate_rooms.py`，整关可达性 `validate_levels.py` |
@@ -115,6 +120,20 @@ zsh Tools/build_and_capture.sh check --seconds 120 -- -autoplayMenu -autoplayGod
 ```
 
 截图和日志在 `Captures/check/`。
+
+## 报告问题的位置
+
+在设置或暂停菜单里打开「显示坐标」。右上角会显示 X / Y 格子坐标、所在房间模板和关卡种子；打开地图后，鼠标悬停在任意位置也能读出坐标。按 F8 会复制一行位置信息，例如：
+
+```
+v0.5 | Promenade | seed 15838 | X 40 Y 20 | room cmb_hall_a~m (combat) @40,11
+```
+
+开发端用同样的种子把这一关原样重建，并在 `Tools/_out/levels/one.txt` 里用 `@` 标出该位置：
+
+```bash
+~/.unity/bin/unity run . --no-tail -l Logs/dump.log -- -executeMethod DeadCells.EditorTools.DCBatch.DumpOne -dcArea Promenade -dcSeed 15838 -dcX 40 -dcY 20
+```
 
 ## 自动验证参数
 

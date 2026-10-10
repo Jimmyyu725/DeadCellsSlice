@@ -37,6 +37,7 @@ namespace DeadCells.UI
         RawImage mapImage;
         RectTransform mapMarkers;
         UILabel mapTitle, mapHint, mapLegend;
+        string mapHintBase = "";
         readonly List<Image> mapMarkerPool = new List<Image>();
         bool mapOpen, teleportMode;
         List<Teleporter> teleportChoices = new List<Teleporter>();
@@ -83,7 +84,7 @@ namespace DeadCells.UI
             mapImage.raycastTarget = false;
             mapMarkers = UIKit.Rect("MapMarkers", mapImage.transform, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(1700f, 820f));
             mapTitle = UIKit.Label("MapTitle", mapRoot, new Vector2(0.5f, 1f), new Vector2(0f, -50f), new Vector2(1200f, 60f), TextAnchor.MiddleCenter, Color.white, 5f);
-            mapHint = UIKit.Label("MapHint", mapRoot, new Vector2(0.5f, 0f), new Vector2(0f, 40f), new Vector2(1600f, 40f), TextAnchor.MiddleCenter, UIKit.TextDim, 3f);
+            mapHint = UIKit.Label("MapHint", mapRoot, new Vector2(0.5f, 0f), new Vector2(0f, 40f), new Vector2(1600f, 90f), TextAnchor.MiddleCenter, UIKit.TextDim, 3f, UILabel.Style.Pixel, 30, new Vector2(0.5f, 0f));
             mapLegend = UIKit.Label("MapLegend", mapRoot, new Vector2(0f, 0f), new Vector2(60f, 90f), new Vector2(1200f, 30f), TextAnchor.MiddleLeft, UIKit.TextDim, 2f);
             mapLegend.gameObject.SetActive(false);
             string[] legendIcons = { "player", "teleporter", "door", "shop", "chest", "lore" };
@@ -173,6 +174,11 @@ namespace DeadCells.UI
             page.Add(MenuItem.Button(() => Loc.Get("menu.options"), () => menu.Push(MenuPages.Options(menu))));
             page.Add(MenuItem.Button(() => Loc.Get("menu.achievements"), () => menu.Push(MenuPages.Achievements(menu))));
             page.Add(MenuItem.Button(() => Loc.Get("menu.changelog"), () => menu.Push(MenuPages.Changelog(menu))));
+            page.Add(MenuItem.Option(() => Loc.Get("options.coords"), () => Loc.Get(SaveSystem.Data.settings.showCoords ? "options.on" : "options.off"), _ =>
+            {
+                SaveSystem.Data.settings.showCoords = !SaveSystem.Data.settings.showCoords;
+                SaveSystem.Save();
+            }, () => Loc.Get("options.coords.desc")));
             if (Cheats.Unlocked)
                 page.Add(MenuItem.Button(() => Loc.Get("menu.cheats"), () => menu.Push(MenuPages.Cheats(menu))));
             page.Add(MenuItem.Button(() => Loc.Get("menu.unstuck"), () =>
@@ -221,7 +227,8 @@ namespace DeadCells.UI
             mapMarkers.sizeDelta = size;
             CenterMap(player != null ? player.transform.position : new Vector3(map.Width * 0.5f, map.Height * 0.5f, 0f));
             mapTitle.Text = teleportMode ? Loc.Get("map.teleport_title") : rm.Current.DisplayName;
-            mapHint.Text = teleportMode ? Loc.Get("map.teleport_hint") : Loc.Get("map.hint");
+            mapHintBase = teleportMode ? Loc.Get("map.teleport_hint") : Loc.Get("map.hint");
+            mapHint.Text = mapHintBase;
             mapLegend.Text = Loc.Get("map.legend");
         }
 
@@ -255,6 +262,23 @@ namespace DeadCells.UI
                 CloseMap();
                 return;
             }
+            if (SaveSystem.Data.settings.showCoords)
+            {
+                // Tile under the mouse: the map texture is one pixel per tile, drawn at a fixed scale.
+                var rt = mapImage.rectTransform;
+                string cursor = "";
+                if (RectTransformUtility.ScreenPointToLocalPointInRectangle(rt, MenuInput.MousePosition, null, out var local) && rt.rect.Contains(local))
+                {
+                    int cx = Mathf.FloorToInt((local.x - rt.rect.xMin) / rt.rect.width * map.Width);
+                    int cy = Mathf.FloorToInt((local.y - rt.rect.yMin) / rt.rect.height * map.Height);
+                    var room = rm.RoomAt(new Vector2Int(cx, cy));
+                    cursor = Loc.Get("map.cursor", cx, cy) + (room != null ? "  " + room.template : "");
+                }
+                var me = RunManager.Cell(player != null ? player.transform.position : Vector3.zero);
+                mapHint.Text = mapHintBase + "\n" + Loc.Get("map.you", me.x, me.y) + (cursor.Length > 0 ? "    " + cursor : "");
+            }
+            else
+                mapHint.Text = mapHintBase;
             if (teleportMode)
             {
                 if (MenuInput.Left || MenuInput.Up) teleportIndex = (teleportIndex - 1 + teleportChoices.Count) % teleportChoices.Count;

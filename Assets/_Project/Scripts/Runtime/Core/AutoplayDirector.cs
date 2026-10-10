@@ -48,7 +48,10 @@ namespace DeadCells.Core
         public float dieAfter;
         public bool breakPost;
         public bool armoryTest;
+        public bool armoryFight;
+        public string armoryFilter = "";
         public bool jumpTest;
+        public bool cancelTest;
         InputFrame? overrideInput;
         bool holdAttack;
         bool standStill;
@@ -109,7 +112,10 @@ namespace DeadCells.Core
                     case "-autoplayDieAfter": float.TryParse(next, out d.dieAfter); break;
                     case "-autoplayBreakPost": d.breakPost = true; break;
                     case "-autoplayArmory": d.armoryTest = true; break;
+                    case "-autoplayArmoryFight": d.armoryTest = true; d.armoryFight = true; break;
+                    case "-autoplayArmoryFilter": d.armoryFilter = next ?? ""; break;
                     case "-autoplayJumpTest": d.jumpTest = true; break;
+                    case "-autoplayCancelTest": d.cancelTest = true; break;
                     case "-autoplayDifficulty":
                         d.difficulty = next == "easy" ? BaseDifficulty.Easy : next == "hard" ? BaseDifficulty.Hard : BaseDifficulty.Normal;
                         break;
@@ -203,13 +209,19 @@ namespace DeadCells.Core
                     Invoke(nameof(CaptureArea), 2.5f);
                     if (breakPost)
                         Invoke(nameof(BreakPost), 1.5f);
+                    if (cancelTest && rm.InPassage)
+                    {
+                        cancelTest = false;
+                        skipEvery = 0f;
+                        StartCoroutine(CancelTest());
+                    }
                     if (jumpTest && rm.InPassage)
                     {
                         jumpTest = false;
                         skipEvery = 0f;
                         StartCoroutine(JumpTest());
                     }
-                    if (armoryTest && rm.InPassage)
+                    if (armoryTest && rm.InPassage != armoryFight)
                     {
                         armoryTest = false;
                         skipEvery = 0f;
@@ -251,6 +263,61 @@ namespace DeadCells.Core
         }
 
         void CaptureArea() => Capture("area_" + lastArea.Replace('/', '_'));
+
+        /// <summary>Test hook: shield and turn responsiveness in the middle of a combo.</summary>
+        System.Collections.IEnumerator CancelTest()
+        {
+            yield return new WaitForSecondsRealtime(1.5f);
+            var p = PlayerController.Main;
+            var db = Items.ItemDatabase.Instance;
+            p.Combat.Equip(0, db.Get("melee_rusty"));
+            p.Combat.Equip(1, db.Get("shield_frontline"));
+            Cheats.SetGodMode(true);
+            // 1) Shield while a combo is swinging.
+            overrideInput = new InputFrame { primaryPressed = true, primaryHeld = true };
+            yield return null;
+            overrideInput = new InputFrame { primaryHeld = true };
+            yield return new WaitForSeconds(0.12f);
+            var stateBefore = p.State;
+            overrideInput = new InputFrame { primaryHeld = true, secondaryPressed = true, secondaryHeld = true };
+            int frames = 0;
+            while (p.State != PlayerState.Block && frames < 120)
+            {
+                frames++;
+                yield return null;
+                overrideInput = new InputFrame { primaryHeld = true, secondaryHeld = true };
+            }
+            log.WriteLine($"[{Elapsed:F1}] cancel test: shield raised {frames} frame(s) after the press (state before {stateBefore})");
+            Capture("cancel_shield");
+            overrideInput = new InputFrame();
+            yield return new WaitForSeconds(0.4f);
+            // 2) Turn around mid-swing.
+            int facing = p.Facing;
+            overrideInput = new InputFrame { primaryPressed = true, primaryHeld = true };
+            yield return null;
+            overrideInput = new InputFrame { primaryHeld = true };
+            yield return new WaitForSeconds(0.08f);
+            overrideInput = new InputFrame { primaryHeld = true, moveX = -facing };
+            frames = 0;
+            while (p.Facing == facing && frames < 120)
+            {
+                frames++;
+                yield return null;
+            }
+            log.WriteLine($"[{Elapsed:F1}] cancel test: turned around {frames} frame(s) after reversing (state {p.State})");
+            // 3) Hold attack for 2 s and count swings.
+            overrideInput = new InputFrame { primaryHeld = true };
+            int startHits = p.Combat.ActionsStarted;
+            yield return new WaitForSeconds(2f);
+            log.WriteLine($"[{Elapsed:F1}] cancel test: {p.Combat.ActionsStarted - startHits} swings in 2 s while held");
+            overrideInput = null;
+            // Coordinate readout for bug reports.
+            SaveSystem.Data.settings.showCoords = true;
+            yield return new WaitForSecondsRealtime(0.3f);
+            var rmc = RunManager.Instance;
+            log.WriteLine($"[{Elapsed:F1}] coords: {rmc.LocationReport(RunManager.Cell(p.transform.position))}");
+            Capture("coords_hud");
+        }
 
         /// <summary>Test hook: measure single and double jump heights from flat floor.</summary>
         System.Collections.IEnumerator JumpTest()
@@ -309,6 +376,7 @@ namespace DeadCells.Core
                 composer.CameraDistance = 8f;
             var p = PlayerController.Main;
             // Stand in the open: the widest stretch of clear floor in the room.
+            // (In fight mode stay at the entrance so enemies come to us.)
             var tiles = rm.Level.data.tiles;
             int bestX = -1, bestRun = 0;
             int floorY = Mathf.FloorToInt(rm.Level.playerStart.y) - 1;
@@ -326,9 +394,26 @@ namespace DeadCells.Core
             }
             foreach (var item in Items.ItemDatabase.Instance.items)
             {
-                if (item.kind == Items.ItemKind.Skill)
+                if (!string.IsNullOrEmpty(armoryFilter) && !item.id.StartsWith(armoryFilter))
                     continue;
-                if (bestX > 0)
+                if (item.kind == Items.ItemKind.Skill)
+                {
+                    p.Combat.Equip(2, item);
+                    yield return new WaitForSecondsRealtime(0.3f);
+                    int before = p.Combat.ActionsStarted;
+                    overrideInput = new InputFrame { skill1Pressed = true };
+                    yield return null;
+                    overrideInput = new InputFrame();
+                    yield return new WaitForSeconds(0.45f);
+                    Capture($"armory_{item.id}_a_{ScreenTag(p)}");
+                    yield return new WaitForSeconds(1.1f);
+                    Capture($"armory_{item.id}_b_{ScreenTag(p)}");
+                    overrideInput = null;
+                    log.WriteLine($"[{Elapsed:F1}] armory {item.id}: skill used={p.Combat.ActionsStarted - before}");
+                    yield return new WaitForSecondsRealtime(0.8f);
+                    continue;
+                }
+                if (bestX > 0 && !armoryFight)
                 {
                     p.Teleport(new Vector3(bestX + 0.5f, floorY + 1.05f, 0f));
                     p.anim.SetFacing(1);

@@ -157,11 +157,15 @@ namespace DeadCells.Enemies
 
         // --------------------------------------------------------------- loop
 
+        /// <summary>This enemy's own time multiplier (slow effects).</summary>
+        protected float TimeFactor => status != null ? status.TimeFactor : 1f;
+
         protected virtual void Update()
         {
-            float dt = Time.deltaTime;
+            float dt = Time.deltaTime * TimeFactor;
             if (dt <= 0f || IsDead || anim == null)
                 return;
+            anim.TimeScale = TimeFactor;
             if (status != null && status.Frozen)
             {
                 anim.SetSpeed(0f);
@@ -194,7 +198,12 @@ namespace DeadCells.Enemies
                 body.linearVelocity = new Vector2(knock.x, flying ? knock.y : v.y);
                 return;
             }
-            Move(dt);
+            Move(dt * TimeFactor);
+            if (TimeFactor < 1f)
+            {
+                var sv = body.linearVelocity;
+                body.linearVelocity = new Vector2(sv.x * TimeFactor, flying || sv.y > 0f ? sv.y * TimeFactor : sv.y);
+            }
         }
 
         protected abstract void Think(float dt);

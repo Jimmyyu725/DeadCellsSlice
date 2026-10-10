@@ -46,6 +46,30 @@ namespace DeadCells.Run
         bool ended;
 
         public BuiltLevel Level => level;
+
+        /// <summary>Seed of the current level: LevelGenerator.Generate(Current, LevelSeed) rebuilds it exactly.</summary>
+        public int LevelSeed { get; private set; }
+
+        /// <summary>Tile cell of a world position (x right, y up; the level grid / map coordinates).</summary>
+        public static Vector2Int Cell(Vector3 world) => new Vector2Int(Mathf.FloorToInt(world.x), Mathf.FloorToInt(world.y + 0.05f));
+
+        public RoomInfo RoomAt(Vector2Int cell)
+        {
+            if (level == null)
+                return null;
+            foreach (var r in level.data.rooms)
+                if (r.rect.Contains(cell))
+                    return r;
+            return null;
+        }
+
+        /// <summary>One line that pins down a spot for a bug report.</summary>
+        public string LocationReport(Vector2Int cell)
+        {
+            var room = RoomAt(cell);
+            string roomText = room != null ? $"{room.template} ({room.kind}) @{room.rect.xMin},{room.rect.yMin}" : "-";
+            return $"v{Meta.Changelog.Latest} | {(current != null ? current.id : "?")} | seed {LevelSeed} | X {cell.x} Y {cell.y} | room {roomText}";
+        }
         public BiomeDef Current => current;
         public bool InPassage => Run.inPassage;
         public Transform EntityParent => level != null ? level.root.transform.Find("Entities") : null;
@@ -189,6 +213,7 @@ namespace DeadCells.Run
             current = def;
             int index = def.isPassage ? 100 + Run.biome : Run.biome;
             int seed = Run.seed + index * 7919;
+            LevelSeed = seed;
             var data = LevelGenerator.Generate(def, seed);
             level = LevelBuilder.Build(data, def, levelRoot, seed);
             ApplyAtmosphere(def);

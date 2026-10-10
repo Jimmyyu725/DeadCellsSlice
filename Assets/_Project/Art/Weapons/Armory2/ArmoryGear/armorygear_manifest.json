@@ -1,0 +1,387 @@
+{
+  "generator": "Tools/Blender/Blender",
+  "unity_axes": "Unity (x,y,z) = Blender (x,z,y)",
+  "atlases": {
+    "ArmoryGear": {
+      "albedo": "Assets/_Project/Art/Weapons/Armory2/ArmoryGear/Textures/ArmoryGear_Albedo.png",
+      "normal": "Assets/_Project/Art/Weapons/Armory2/ArmoryGear/Textures/ArmoryGear_Normal.png",
+      "orm": "Assets/_Project/Art/Weapons/Armory2/ArmoryGear/Textures/ArmoryGear_ORM.png",
+      "emission": "Assets/_Project/Art/Weapons/Armory2/ArmoryGear/Textures/ArmoryGear_Emission.png"
+    }
+  },
+  "materials": {
+    "ArmoryGear": "M_ArmoryGear"
+  },
+  "emission_colors": {
+    "glow_fire": "#FF7A22",
+    "glow_ice": "#7FE8FF",
+    "glow_bolt": "#8FB4FF",
+    "glow_poison": "#8CFF4A",
+    "glow_moon": "#E6EEFF",
+    "glow_violet": "#B57CFF",
+    "glow_gold": "#FFCF6A",
+    "glow_red": "#FF3048"
+  },
+  "modules": [
+    {
+      "name": "BellShield",
+      "fbx": "Assets/_Project/Art/Weapons/Armory2/ArmoryGear/BellShield.fbx",
+      "atlas": "ArmoryGear",
+      "unity_bounds_min": [
+        -0.302,
+        -0.0534,
+        -0.302
+      ],
+      "unity_bounds_max": [
+        0.302,
+        0.15,
+        0.302
+      ],
+      "sockets": {},
+      "tris": 1376,
+      "usage": "Shield made from a bronze bell mouth; face +Z, clapper boss."
+    },
+    {
+      "name": "MirrorMoon",
+      "fbx": "Assets/_Project/Art/Weapons/Armory2/ArmoryGear/MirrorMoon.fbx",
+      "atlas": "ArmoryGear",
+      "unity_bounds_min": [
+        -0.28,
+        -0.0534,
+        -0.28
+      ],
+      "unity_bounds_max": [
+        0.28,
+        0.0368,
+        0.28
+      ],
+      "sockets": {},
+      "tris": 1120,
+      "usage": "Round silver shield with a moonstone mirror face and a crescent emblem."
+    },
+    {
+      "name": "SpikedShell",
+      "fbx": "Assets/_Project/Art/Weapons/Armory2/ArmoryGear/SpikedShell.fbx",
+      "atlas": "ArmoryGear",
+      "unity_bounds_min": [
+        -0.319,
+        -0.0534,
+        -0.359
+      ],
+      "unity_bounds_max": [
+        0.319,
+        0.24,
+        0.359
+      ],
+      "sockets": {},
+      "tris": 898,
+      "usage": "Turtle-shell shield of chitin plates with iron spikes."
+    },
+    {
+      "name": "ClockfaceBuckler",
+      "fbx": "Assets/_Project/Art/Weapons/Armory2/ArmoryGear/ClockfaceBuckler.fbx",
+      "atlas": "ArmoryGear",
+      "unity_bounds_min": [
+        -0.24,
+        -0.0534,
+        -0.24
+      ],
+      "unity_bounds_max": [
+        0.24,
+        0.0516,
+        0.24
+      ],
+      "sockets": {},
+      "tris": 1292,
+      "usage": "Buckler made from a clock face: brass rim, numerals, hands, glass."
+    },
+    {
+      "name": "EmberTarge",
+      "fbx": "Assets/_Project/Art/Weapons/Armory2/ArmoryGear/EmberTarge.fbx",
+      "atlas": "ArmoryGear",
+      "unity_bounds_min": [
+        -0.279,
+        -0.0534,
+        -0.279
+      ],
+      "unity_bounds_max": [
+        0.279,
+        0.1,
+        0.279
+      ],
+      "sockets": {},
+      "tris": 1090,
+      "usage": "Obsidian targe with glowing cracks, iron rim and boss."
+    },
+    {
+      "name": "WhalescaleTower",
+      "fbx": "Assets/_Project/Art/Weapons/Armory2/ArmoryGear/WhalescaleTower.fbx",
+      "atlas": "ArmoryGear",
+      "unity_bounds_min": [
+        -0.229,
+        -0.0534,
+        -0.444
+      ],
+      "unity_bounds_max": [
+        0.229,
+        0.099,
+        0.444
+      ],
+      "sockets": {},
+      "tris": 3096,
+      "usage": "Tall tower shield clad in overlapping whale scales, bone rim."
+    },
+    {
+      "name": "Starfall",
+      "fbx": "Assets/_Project/Art/Weapons/Armory2/ArmoryGear/Starfall.fbx",
+      "atlas": "ArmoryGear",
+      "unity_bounds_min": [
+        -0.128,
+        -0.1273,
+        -0.0465
+      ],
+      "unity_bounds_max": [
+        0.128,
+        0.154,
+        0.0295
+      ],
+      "sockets": {},
+      "tris": 744,
+      "usage": "Brass astrolabe disc set with star gems (calls down falling stars)."
+    },
+    {
+      "name": "ThunderTotem",
+      "fbx": "Assets/_Project/Art/Weapons/Armory2/ArmoryGear/ThunderTotem.fbx",
+      "atlas": "ArmoryGear",
+      "unity_bounds_min": [
+        -0.07,
+        0.0,
+        -0.069
+      ],
+      "unity_bounds_max": [
+        0.07,
+        0.637,
+        0.063
+      ],
+      "sockets": {},
+      "tris": 940,
+      "usage": "Deployable carved totem with copper lightning rods and glowing eyes; stands on z=0."
+    },
+    {
+      "name": "GearSentry",
+      "fbx": "Assets/_Project/Art/Weapons/Armory2/ArmoryGear/GearSentry.fbx",
+      "atlas": "ArmoryGear",
+      "unity_bounds_min": [
+        -0.1667,
+        -0.01,
+        -0.1949
+      ],
+      "unity_bounds_max": [
+        0.171,
+        0.41,
+        0.1087
+      ],
+      "sockets": {},
+      "tris": 1092,
+      "usage": "Deployable tripod sentry: brass gear body, small crossbow head; stands on z=0."
+    },
+    {
+      "name": "BearTrap",
+      "fbx": "Assets/_Project/Art/Weapons/Armory2/ArmoryGear/BearTrap.fbx",
+      "atlas": "ArmoryGear",
+      "unity_bounds_min": [
+        -0.18,
+        -0.0071,
+        -0.1688
+      ],
+      "unity_bounds_max": [
+        0.358,
+        0.1733,
+        0.1689
+      ],
+      "sockets": {},
+      "tris": 1208,
+      "usage": "Deployable jaw trap lying open on the floor (z=0)."
+    },
+    {
+      "name": "MiasmaJar",
+      "fbx": "Assets/_Project/Art/Weapons/Armory2/ArmoryGear/MiasmaJar.fbx",
+      "atlas": "ArmoryGear",
+      "unity_bounds_min": [
+        -0.079,
+        -0.08,
+        -0.07
+      ],
+      "unity_bounds_max": [
+        0.079,
+        0.105,
+        0.07
+      ],
+      "sockets": {},
+      "tris": 504,
+      "usage": "Glass jar of glowing poison miasma with a clamped lid."
+    },
+    {
+      "name": "ClusterBellBomb",
+      "fbx": "Assets/_Project/Art/Weapons/Armory2/ArmoryGear/ClusterBellBomb.fbx",
+      "atlas": "ArmoryGear",
+      "unity_bounds_min": [
+        -0.0898,
+        -0.0898,
+        -0.0409
+      ],
+      "unity_bounds_max": [
+        0.0898,
+        0.157,
+        0.0409
+      ],
+      "sockets": {},
+      "tris": 808,
+      "usage": "Four small bronze bells bundled with rope around a lit fuse."
+    },
+    {
+      "name": "LodestoneMine",
+      "fbx": "Assets/_Project/Art/Weapons/Armory2/ArmoryGear/LodestoneMine.fbx",
+      "atlas": "ArmoryGear",
+      "unity_bounds_min": [
+        -0.1085,
+        -0.034,
+        -0.0496
+      ],
+      "unity_bounds_max": [
+        0.1085,
+        0.106,
+        0.0471
+      ],
+      "sockets": {},
+      "tris": 484,
+      "usage": "Horseshoe magnet clamped around a dark lodestone with red and blue poles."
+    },
+    {
+      "name": "FrostNova",
+      "fbx": "Assets/_Project/Art/Weapons/Armory2/ArmoryGear/FrostNova.fbx",
+      "atlas": "ArmoryGear",
+      "unity_bounds_min": [
+        -0.06,
+        -0.052,
+        -0.05
+      ],
+      "unity_bounds_max": [
+        0.0712,
+        0.185,
+        0.05
+      ],
+      "sockets": {},
+      "tris": 424,
+      "usage": "Cluster of ice crystals growing from a brass base."
+    },
+    {
+      "name": "EmberDash",
+      "fbx": "Assets/_Project/Art/Weapons/Armory2/ArmoryGear/EmberDash.fbx",
+      "atlas": "ArmoryGear",
+      "unity_bounds_min": [
+        -0.0736,
+        -0.1203,
+        -0.0103
+      ],
+      "unity_bounds_max": [
+        0.1117,
+        0.237,
+        0.0103
+      ],
+      "sockets": {},
+      "tris": 430,
+      "usage": "A burning obsidian feather (dash skill)."
+    },
+    {
+      "name": "Stopwatch",
+      "fbx": "Assets/_Project/Art/Weapons/Armory2/ArmoryGear/Stopwatch.fbx",
+      "atlas": "ArmoryGear",
+      "unity_bounds_min": [
+        -0.07,
+        -0.07,
+        -0.032
+      ],
+      "unity_bounds_max": [
+        0.0874,
+        0.2074,
+        0.0181
+      ],
+      "sockets": {},
+      "tris": 1186,
+      "usage": "Brass pocket watch with a chain (stops time)."
+    },
+    {
+      "name": "RageVial",
+      "fbx": "Assets/_Project/Art/Weapons/Armory2/ArmoryGear/RageVial.fbx",
+      "atlas": "ArmoryGear",
+      "unity_bounds_min": [
+        -0.04,
+        -0.09,
+        -0.039
+      ],
+      "unity_bounds_max": [
+        0.04,
+        0.128,
+        0.039
+      ],
+      "sockets": {},
+      "tris": 568,
+      "usage": "Vial of glowing red blood with a skull stopper (rage buff)."
+    },
+    {
+      "name": "MendingLantern",
+      "fbx": "Assets/_Project/Art/Weapons/Armory2/ArmoryGear/MendingLantern.fbx",
+      "atlas": "ArmoryGear",
+      "unity_bounds_min": [
+        -0.07,
+        0.0,
+        -0.07
+      ],
+      "unity_bounds_max": [
+        0.07,
+        0.33,
+        0.07
+      ],
+      "sockets": {},
+      "tris": 646,
+      "usage": "Deployable lantern with a green healing flame; stands on z=0."
+    },
+    {
+      "name": "BouncingSawdisc",
+      "fbx": "Assets/_Project/Art/Weapons/Armory2/ArmoryGear/BouncingSawdisc.fbx",
+      "atlas": "ArmoryGear",
+      "unity_bounds_min": [
+        -0.138,
+        -0.138,
+        -0.0276
+      ],
+      "unity_bounds_max": [
+        0.138,
+        0.138,
+        0.012
+      ],
+      "sockets": {},
+      "tris": 556,
+      "usage": "Circular saw blade with hooked teeth (bouncing throw)."
+    },
+    {
+      "name": "AbyssInkwell",
+      "fbx": "Assets/_Project/Art/Weapons/Armory2/ArmoryGear/AbyssInkwell.fbx",
+      "atlas": "ArmoryGear",
+      "unity_bounds_min": [
+        -0.081,
+        -0.06,
+        -0.0798
+      ],
+      "unity_bounds_max": [
+        0.1197,
+        0.2743,
+        0.0798
+      ],
+      "sockets": {},
+      "tris": 744,
+      "usage": "Ornate inkwell with a swirling violet vortex (black hole)."
+    }
+  ]
+}

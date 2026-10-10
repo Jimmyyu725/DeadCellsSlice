@@ -84,6 +84,64 @@ namespace DeadCells.EditorTools
         }
 
         /// <summary>Dump generated levels (many seeds) as text for Tools/Rooms/validate_levels.py.</summary>
+        /// <summary>
+        /// Rebuild one reported level and print it with coordinate rulers:
+        ///   -executeMethod DeadCells.EditorTools.DCBatch.DumpOne -dcArea Oubliette -dcSeed 12345 [-dcX 120 -dcY 33]
+        /// Writes Tools/_out/levels/one.txt (map, '@' at X/Y) and one.rooms.
+        /// </summary>
+        public static void DumpOne()
+        {
+            var args = System.Environment.GetCommandLineArgs();
+            string Arg(string name, string fallback)
+            {
+                int i = System.Array.IndexOf(args, name);
+                return i >= 0 && i + 1 < args.Length ? args[i + 1] : fallback;
+            }
+            string id = Arg("-dcArea", "Oubliette");
+            int seed = int.Parse(Arg("-dcSeed", "7919"));
+            int mx = int.Parse(Arg("-dcX", "-1")), my = int.Parse(Arg("-dcY", "-1"));
+            var biome = AssetDatabase.LoadAssetAtPath<DeadCells.Run.BiomeDef>($"{DCContentBuilder.ContentDir}/Biomes/{id}.asset");
+            var d = DeadCells.Run.LevelGenerator.Generate(biome, seed);
+            var sb = new System.Text.StringBuilder();
+            sb.Append($"{id} seed {seed}  {d.width}x{d.height}  (x right, y up; '@' = {mx},{my})\n      ");
+            for (int x = 0; x < d.width; x++)
+                sb.Append(x % 10 == 0 ? (char)('0' + (x / 10) % 10) : ' ');
+            sb.Append("\n      ");
+            for (int x = 0; x < d.width; x++)
+                sb.Append((char)('0' + x % 10));
+            sb.Append('\n');
+            for (int y = d.height - 1; y >= 0; y--)
+            {
+                sb.Append($"{y,4}  ");
+                for (int x = 0; x < d.width; x++)
+                {
+                    char c = d.tiles[x, y] switch
+                    {
+                        DeadCells.Run.Tile.Solid => '#',
+                        DeadCells.Run.Tile.OneWay => '=',
+                        DeadCells.Run.Tile.Liquid => '~',
+                        DeadCells.Run.Tile.Spikes => 'X',
+                        _ => '.',
+                    };
+                    foreach (var sp in d.spawns)
+                        if (sp.cell.x == x && sp.cell.y == y && "PTDKMp".IndexOf(sp.code) >= 0)
+                            c = sp.code;
+                    if (x == mx && y == my)
+                        c = '@';
+                    sb.Append(c);
+                }
+                sb.Append('\n');
+            }
+            System.IO.Directory.CreateDirectory("Tools/_out/levels");
+            System.IO.File.WriteAllText("Tools/_out/levels/one.txt", sb.ToString());
+            var rooms = new System.Text.StringBuilder();
+            foreach (var r in d.rooms)
+                rooms.AppendLine($"{r.template} {r.kind} x {r.rect.xMin}..{r.rect.xMax - 1} y {r.rect.yMin}..{r.rect.yMax - 1}" +
+                                 (r.rect.Contains(new Vector2Int(mx, my)) ? "   <== @" : ""));
+            System.IO.File.WriteAllText("Tools/_out/levels/one.rooms", rooms.ToString());
+            Debug.Log($"[DC] dumped {id} seed {seed}");
+        }
+
         public static void DumpLevels()
         {
             string dir = "Tools/_out/levels";

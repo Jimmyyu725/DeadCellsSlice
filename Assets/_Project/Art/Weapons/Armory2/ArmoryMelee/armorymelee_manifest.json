@@ -1,0 +1,387 @@
+{
+  "generator": "Tools/Blender/Blender",
+  "unity_axes": "Unity (x,y,z) = Blender (x,z,y)",
+  "atlases": {
+    "ArmoryMelee": {
+      "albedo": "Assets/_Project/Art/Weapons/Armory2/ArmoryMelee/Textures/ArmoryMelee_Albedo.png",
+      "normal": "Assets/_Project/Art/Weapons/Armory2/ArmoryMelee/Textures/ArmoryMelee_Normal.png",
+      "orm": "Assets/_Project/Art/Weapons/Armory2/ArmoryMelee/Textures/ArmoryMelee_ORM.png",
+      "emission": "Assets/_Project/Art/Weapons/Armory2/ArmoryMelee/Textures/ArmoryMelee_Emission.png"
+    }
+  },
+  "materials": {
+    "ArmoryMelee": "M_ArmoryMelee"
+  },
+  "emission_colors": {
+    "glow_fire": "#FF7A22",
+    "glow_ice": "#7FE8FF",
+    "glow_bolt": "#8FB4FF",
+    "glow_poison": "#8CFF4A",
+    "glow_moon": "#E6EEFF",
+    "glow_violet": "#B57CFF",
+    "glow_gold": "#FFCF6A",
+    "glow_red": "#FF3048"
+  },
+  "modules": [
+    {
+      "name": "EmberFang",
+      "fbx": "Assets/_Project/Art/Weapons/Armory2/ArmoryMelee/EmberFang.fbx",
+      "atlas": "ArmoryMelee",
+      "unity_bounds_min": [
+        -0.0908,
+        -0.1702,
+        -0.0409
+      ],
+      "unity_bounds_max": [
+        0.1752,
+        0.7458,
+        0.0409
+      ],
+      "sockets": {},
+      "tris": 604,
+      "usage": "The time god's broken tooth as a dagger: obsidian fang with glowing cracks."
+    },
+    {
+      "name": "Moonsickle",
+      "fbx": "Assets/_Project/Art/Weapons/Armory2/ArmoryMelee/Moonsickle.fbx",
+      "atlas": "ArmoryMelee",
+      "unity_bounds_min": [
+        -0.02,
+        -0.135,
+        -0.02
+      ],
+      "unity_bounds_max": [
+        0.474,
+        0.4446,
+        0.02
+      ],
+      "sockets": {},
+      "tris": 624,
+      "usage": "One of the Moonsickle Twins (dual wield): moon-shard crescent curling forward."
+    },
+    {
+      "name": "LeviathanRib",
+      "fbx": "Assets/_Project/Art/Weapons/Armory2/ArmoryMelee/LeviathanRib.fbx",
+      "atlas": "ArmoryMelee",
+      "unity_bounds_min": [
+        -0.1572,
+        -0.36,
+        -0.048
+      ],
+      "unity_bounds_max": [
+        0.2677,
+        1.5759,
+        0.048
+      ],
+      "sockets": {},
+      "tris": 1520,
+      "usage": "Greatsword cut from a petrified leviathan rib, barnacled, two-handed grip."
+    },
+    {
+      "name": "PendulumAxe",
+      "fbx": "Assets/_Project/Art/Weapons/Armory2/ArmoryMelee/PendulumAxe.fbx",
+      "atlas": "ArmoryMelee",
+      "unity_bounds_min": [
+        -0.198,
+        -0.44,
+        -0.0286
+      ],
+      "unity_bounds_max": [
+        0.37,
+        1.08,
+        0.0286
+      ],
+      "sockets": {},
+      "tris": 1914,
+      "usage": "War axe whose head is a clock pendulum disc with a gear hub; spike toward -X."
+    },
+    {
+      "name": "LavenderBottle",
+      "fbx": "Assets/_Project/Art/Weapons/Armory2/ArmoryMelee/LavenderBottle.fbx",
+      "atlas": "ArmoryMelee",
+      "unity_bounds_min": [
+        -0.097,
+        -0.21,
+        -0.0955
+      ],
+      "unity_bounds_max": [
+        0.097,
+        0.825,
+        0.0955
+      ],
+      "sockets": {},
+      "tris": 1426,
+      "usage": "Club with a bottle of boiling lavender wine lashed to the head."
+    },
+    {
+      "name": "DrownedAnchor",
+      "fbx": "Assets/_Project/Art/Weapons/Armory2/ArmoryMelee/DrownedAnchor.fbx",
+      "atlas": "ArmoryMelee",
+      "unity_bounds_min": [
+        -0.36,
+        -0.3129,
+        -0.039
+      ],
+      "unity_bounds_max": [
+        0.36,
+        1.3,
+        0.0571
+      ],
+      "sockets": {},
+      "tris": 2568,
+      "usage": "Rusted ship anchor held by the shank; flukes at the top, chain and kelp."
+    },
+    {
+      "name": "MoonsilkWhip",
+      "fbx": "Assets/_Project/Art/Weapons/Armory2/ArmoryMelee/MoonsilkWhip.fbx",
+      "atlas": "ArmoryMelee",
+      "unity_bounds_min": [
+        -0.0433,
+        -0.1926,
+        -0.0234
+      ],
+      "unity_bounds_max": [
+        0.9778,
+        0.938,
+        0.0234
+      ],
+      "sockets": {},
+      "tris": 940,
+      "usage": "Chitin handle and a long stiffened moon-silk lash ending in a moonstone weight."
+    },
+    {
+      "name": "Gearsaw",
+      "fbx": "Assets/_Project/Art/Weapons/Armory2/ArmoryMelee/Gearsaw.fbx",
+      "atlas": "ArmoryMelee",
+      "unity_bounds_min": [
+        -0.1004,
+        -0.18,
+        -0.04
+      ],
+      "unity_bounds_max": [
+        0.087,
+        0.85,
+        0.04
+      ],
+      "sockets": {},
+      "tris": 1518,
+      "usage": "Clockwork saw: steel bar with gear teeth, brass motor housing with a glowing window."
+    },
+    {
+      "name": "CandelabraTrident",
+      "fbx": "Assets/_Project/Art/Weapons/Armory2/ArmoryMelee/CandelabraTrident.fbx",
+      "atlas": "ArmoryMelee",
+      "unity_bounds_min": [
+        -0.202,
+        -0.59,
+        -0.04
+      ],
+      "unity_bounds_max": [
+        0.202,
+        1.615,
+        0.04
+      ],
+      "sockets": {},
+      "tris": 1652,
+      "usage": "Brass trident whose three prongs end in lit candles."
+    },
+    {
+      "name": "ClockhandLance",
+      "fbx": "Assets/_Project/Art/Weapons/Armory2/ArmoryMelee/ClockhandLance.fbx",
+      "atlas": "ArmoryMelee",
+      "unity_bounds_min": [
+        -0.104,
+        -0.583,
+        -0.039
+      ],
+      "unity_bounds_max": [
+        0.104,
+        1.55,
+        0.039
+      ],
+      "sockets": {},
+      "tris": 1916,
+      "usage": "A giant clock hand: blued steel spade tip with an open ring, gold trims."
+    },
+    {
+      "name": "Eelwhip",
+      "fbx": "Assets/_Project/Art/Weapons/Armory2/ArmoryMelee/Eelwhip.fbx",
+      "atlas": "ArmoryMelee",
+      "unity_bounds_min": [
+        -0.0256,
+        -0.16,
+        -0.024
+      ],
+      "unity_bounds_max": [
+        0.9505,
+        0.8137,
+        0.024
+      ],
+      "sockets": {},
+      "tris": 1658,
+      "usage": "A dried electric eel as a whip, glowing bolt spots along its body."
+    },
+    {
+      "name": "OssuaryScepter",
+      "fbx": "Assets/_Project/Art/Weapons/Armory2/ArmoryMelee/OssuaryScepter.fbx",
+      "atlas": "ArmoryMelee",
+      "unity_bounds_min": [
+        -0.0901,
+        -0.19,
+        -0.0788
+      ],
+      "unity_bounds_max": [
+        0.0901,
+        0.797,
+        0.0788
+      ],
+      "sockets": {},
+      "tris": 1974,
+      "usage": "Mace: stacked vertebra shaft, a skull head with red eyes and an iron crown."
+    },
+    {
+      "name": "FurnaceTongs",
+      "fbx": "Assets/_Project/Art/Weapons/Armory2/ArmoryMelee/FurnaceTongs.fbx",
+      "atlas": "ArmoryMelee",
+      "unity_bounds_min": [
+        -0.0779,
+        -0.1803,
+        -0.0594
+      ],
+      "unity_bounds_max": [
+        0.0838,
+        0.8754,
+        0.0718
+      ],
+      "sockets": {},
+      "tris": 952,
+      "usage": "Smith's tongs gripping a glowing coal; leather-wrapped handles."
+    },
+    {
+      "name": "MoonherdCrook",
+      "fbx": "Assets/_Project/Art/Weapons/Armory2/ArmoryMelee/MoonherdCrook.fbx",
+      "atlas": "ArmoryMelee",
+      "unity_bounds_min": [
+        -0.032,
+        -0.64,
+        -0.034
+      ],
+      "unity_bounds_max": [
+        0.244,
+        1.3326,
+        0.034
+      ],
+      "sockets": {},
+      "tris": 1398,
+      "usage": "Shepherd's crook with a hanging moonstone lantern."
+    },
+    {
+      "name": "StarsandKatana",
+      "fbx": "Assets/_Project/Art/Weapons/Armory2/ArmoryMelee/StarsandKatana.fbx",
+      "atlas": "ArmoryMelee",
+      "unity_bounds_min": [
+        -0.05,
+        -0.275,
+        -0.05
+      ],
+      "unity_bounds_max": [
+        0.1243,
+        1.022,
+        0.05
+      ],
+      "sockets": {},
+      "tris": 1360,
+      "usage": "Curved blued blade dusted with glowing star specks; round gold tsuba."
+    },
+    {
+      "name": "SawsharkBlade",
+      "fbx": "Assets/_Project/Art/Weapons/Armory2/ArmoryMelee/SawsharkBlade.fbx",
+      "atlas": "ArmoryMelee",
+      "unity_bounds_min": [
+        -0.0754,
+        -0.2004,
+        -0.0303
+      ],
+      "unity_bounds_max": [
+        0.0754,
+        1.08,
+        0.0305
+      ],
+      "sockets": {},
+      "tris": 834,
+      "usage": "A sawfish rostrum: flat grey blade with teeth on both edges."
+    },
+    {
+      "name": "WardensKey",
+      "fbx": "Assets/_Project/Art/Weapons/Armory2/ArmoryMelee/WardensKey.fbx",
+      "atlas": "ArmoryMelee",
+      "unity_bounds_min": [
+        -0.106,
+        -0.2749,
+        -0.0338
+      ],
+      "unity_bounds_max": [
+        0.15,
+        0.99,
+        0.0338
+      ],
+      "sockets": {},
+      "tris": 1156,
+      "usage": "Giant dungeon key: filigree bow at the bottom, toothed bit at the top."
+    },
+    {
+      "name": "FerrymansOar",
+      "fbx": "Assets/_Project/Art/Weapons/Armory2/ArmoryMelee/FerrymansOar.fbx",
+      "atlas": "ArmoryMelee",
+      "unity_bounds_min": [
+        -0.1,
+        -0.5821,
+        -0.022
+      ],
+      "unity_bounds_max": [
+        0.1,
+        1.53,
+        0.022
+      ],
+      "sockets": {},
+      "tris": 1048,
+      "usage": "Long oar with a painted soul-eye on the wide blade."
+    },
+    {
+      "name": "MaestrosBaton",
+      "fbx": "Assets/_Project/Art/Weapons/Armory2/ArmoryMelee/MaestrosBaton.fbx",
+      "atlas": "ArmoryMelee",
+      "unity_bounds_min": [
+        -0.02,
+        -0.11,
+        -0.019
+      ],
+      "unity_bounds_max": [
+        0.1519,
+        0.61,
+        0.019
+      ],
+      "sockets": {},
+      "tris": 500,
+      "usage": "A conductor's baton: ivory taper, cork grip, glowing gold tip."
+    },
+    {
+      "name": "EmberKnuckles",
+      "fbx": "Assets/_Project/Art/Weapons/Armory2/ArmoryMelee/EmberKnuckles.fbx",
+      "atlas": "ArmoryMelee",
+      "unity_bounds_min": [
+        -0.0756,
+        -0.27,
+        -0.0737
+      ],
+      "unity_bounds_max": [
+        0.0877,
+        0.1552,
+        0.0737
+      ],
+      "sockets": {},
+      "tris": 612,
+      "usage": "Iron gauntlet (dual wield) with cracked obsidian knuckle plates; fist centred on the grip."
+    }
+  ]
+}

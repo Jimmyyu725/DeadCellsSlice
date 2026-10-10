@@ -12,6 +12,7 @@ namespace DeadCells.Core
     {
         static int frame = -1;
         static bool up, down, left, right, confirm, cancel, map, anyKey;
+        static float scroll;
         static Vector2Int heldDir;
         static float repeatAt;
         static string typed = "";
@@ -24,6 +25,8 @@ namespace DeadCells.Core
         public static bool Cancel { get { Poll(); return cancel; } }
         public static bool Map { get { Poll(); return map; } }
         public static bool AnyKey { get { Poll(); return anyKey; } }
+        /// <summary>Scroll this frame in UI pixels (positive = toward the top): wheel / trackpad, PgUp / PgDn, right stick.</summary>
+        public static float Scroll { get { Poll(); return scroll; } }
         public static Vector2 MousePosition => Mouse.current != null ? Mouse.current.position.ReadValue() : new Vector2(-1f, -1f);
         public static bool MouseClicked => Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame;
         public static bool MouseMoved => Mouse.current != null && Mouse.current.delta.ReadValue().sqrMagnitude > 0.5f;
@@ -40,6 +43,20 @@ namespace DeadCells.Core
             frame = Time.frameCount;
             var kb = Keyboard.current;
             var pad = Gamepad.current;
+
+            scroll = 0f;
+            if (Mouse.current != null)
+            {
+                float w = Mouse.current.scroll.ReadValue().y;
+                scroll += Mathf.Abs(w) >= 20f ? w / 120f * 70f : w * 14f; // notched wheels report 120 per notch
+            }
+            if (kb != null)
+            {
+                if (kb.pageUpKey.wasPressedThisFrame) scroll += 320f;
+                if (kb.pageDownKey.wasPressedThisFrame) scroll -= 320f;
+            }
+            if (pad != null)
+                scroll += pad.rightStick.ReadValue().y * 900f * Time.unscaledDeltaTime;
 
             Vector2Int dir = Vector2Int.zero;
             if (kb != null)

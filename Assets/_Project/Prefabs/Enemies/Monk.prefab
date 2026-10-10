@@ -264,6 +264,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: DeadCells.Runtime::DeadCells.Combat.StatusEffects
   burnDps: 6
+  poisonDpsPerStack: 3
 --- !u!114 &7587522292522042062
 MonoBehaviour:
   m_ObjectHideFlags: 0

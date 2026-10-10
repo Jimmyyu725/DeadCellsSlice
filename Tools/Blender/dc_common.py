@@ -86,6 +86,8 @@ def setup_cycles(samples=8, use_gpu=True):
     scene.render.engine = "CYCLES"
     scene.cycles.samples = samples
     scene.cycles.use_denoising = False
+    if os.environ.get("DC_CYCLES_CPU"):
+        use_gpu = False  # e.g. when another Blender already holds the GPU memory
     if use_gpu:
         prefs = bpy.context.preferences.addons["cycles"].preferences
         try:

@@ -48,6 +48,11 @@ namespace DeadCells.UI
                 ApplyDisplay();
                 SaveSystem.Save();
             }));
+            page.Add(MenuItem.Option(() => Loc.Get("options.coords"), () => Loc.Get(S.showCoords ? "options.on" : "options.off"), _ =>
+            {
+                S.showCoords = !S.showCoords;
+                SaveSystem.Save();
+            }, () => Loc.Get("options.coords.desc")));
             page.Add(MenuItem.Option(() => Loc.Get("options.skip_intro"), () => Loc.Get(S.skipIntro ? "options.on" : "options.off"), _ =>
             {
                 S.skipIntro = !S.skipIntro;

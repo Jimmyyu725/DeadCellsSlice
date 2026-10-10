@@ -1,0 +1,387 @@
+{
+  "generator": "Tools/Blender/Blender",
+  "unity_axes": "Unity (x,y,z) = Blender (x,z,y)",
+  "atlases": {
+    "ArmoryRanged": {
+      "albedo": "Assets/_Project/Art/Weapons/Armory2/ArmoryRanged/Textures/ArmoryRanged_Albedo.png",
+      "normal": "Assets/_Project/Art/Weapons/Armory2/ArmoryRanged/Textures/ArmoryRanged_Normal.png",
+      "orm": "Assets/_Project/Art/Weapons/Armory2/ArmoryRanged/Textures/ArmoryRanged_ORM.png",
+      "emission": "Assets/_Project/Art/Weapons/Armory2/ArmoryRanged/Textures/ArmoryRanged_Emission.png"
+    }
+  },
+  "materials": {
+    "ArmoryRanged": "M_ArmoryRanged"
+  },
+  "emission_colors": {
+    "glow_fire": "#FF7A22",
+    "glow_ice": "#7FE8FF",
+    "glow_bolt": "#8FB4FF",
+    "glow_poison": "#8CFF4A",
+    "glow_moon": "#E6EEFF",
+    "glow_violet": "#B57CFF",
+    "glow_gold": "#FFCF6A",
+    "glow_red": "#FF3048"
+  },
+  "modules": [
+    {
+      "name": "CrescentLongbow",
+      "fbx": "Assets/_Project/Art/Weapons/Armory2/ArmoryRanged/CrescentLongbow.fbx",
+      "atlas": "ArmoryRanged",
+      "unity_bounds_min": [
+        -0.029,
+        -0.736,
+        -0.056
+      ],
+      "unity_bounds_max": [
+        0.029,
+        0.736,
+        0.2024
+      ],
+      "sockets": {},
+      "tris": 796,
+      "usage": "Tall bow of two moonstone crescents; string on +Y."
+    },
+    {
+      "name": "TripleRepeater",
+      "fbx": "Assets/_Project/Art/Weapons/Armory2/ArmoryRanged/TripleRepeater.fbx",
+      "atlas": "ArmoryRanged",
+      "unity_bounds_min": [
+        -0.025,
+        -0.2086,
+        -0.4248
+      ],
+      "unity_bounds_max": [
+        0.025,
+        0.3966,
+        0.3561
+      ],
+      "sockets": {},
+      "tris": 1086,
+      "usage": "Repeating crossbow with a three-bolt magazine on the stock."
+    },
+    {
+      "name": "Blunderbuss",
+      "fbx": "Assets/_Project/Art/Weapons/Armory2/ArmoryRanged/Blunderbuss.fbx",
+      "atlas": "ArmoryRanged",
+      "unity_bounds_min": [
+        -0.075,
+        -0.077,
+        -0.401
+      ],
+      "unity_bounds_max": [
+        0.075,
+        0.205,
+        0.3161
+      ],
+      "sockets": {},
+      "tris": 1016,
+      "usage": "Flintlock blunderbuss: flared brass bell at -Y, wooden stock."
+    },
+    {
+      "name": "TickBlowpipe",
+      "fbx": "Assets/_Project/Art/Weapons/Armory2/ArmoryRanged/TickBlowpipe.fbx",
+      "atlas": "ArmoryRanged",
+      "unity_bounds_min": [
+        -0.0308,
+        -0.0611,
+        -0.5737
+      ],
+      "unity_bounds_max": [
+        0.0215,
+        0.0868,
+        0.34
+      ],
+      "sockets": {},
+      "tris": 1000,
+      "usage": "Long chitin blowpipe with a tick-mandible muzzle and feather tufts."
+    },
+    {
+      "name": "Frostsling",
+      "fbx": "Assets/_Project/Art/Weapons/Armory2/ArmoryRanged/Frostsling.fbx",
+      "atlas": "ArmoryRanged",
+      "unity_bounds_min": [
+        -0.04,
+        -0.472,
+        -0.0643
+      ],
+      "unity_bounds_max": [
+        0.04,
+        0.1218,
+        0.0643
+      ],
+      "sockets": {},
+      "tris": 452,
+      "usage": "Sling: leather cords hanging from the hand, pouch holding an ice orb."
+    },
+    {
+      "name": "MoonChakram",
+      "fbx": "Assets/_Project/Art/Weapons/Armory2/ArmoryRanged/MoonChakram.fbx",
+      "atlas": "ArmoryRanged",
+      "unity_bounds_min": [
+        -0.026,
+        -0.225,
+        -0.395
+      ],
+      "unity_bounds_max": [
+        0.026,
+        0.225,
+        0.055
+      ],
+      "sockets": {},
+      "tris": 752,
+      "usage": "Returning ring blade (in the Y-Z plane), wrapped grip on the inner edge."
+    },
+    {
+      "name": "KnifeFan",
+      "fbx": "Assets/_Project/Art/Weapons/Armory2/ArmoryRanged/KnifeFan.fbx",
+      "atlas": "ArmoryRanged",
+      "unity_bounds_min": [
+        -0.0105,
+        -0.012,
+        -0.1928
+      ],
+      "unity_bounds_max": [
+        0.0105,
+        0.3,
+        0.1928
+      ],
+      "sockets": {},
+      "tris": 706,
+      "usage": "Five throwing knives held fanned out like cards."
+    },
+    {
+      "name": "ThunderstringHarp",
+      "fbx": "Assets/_Project/Art/Weapons/Armory2/ArmoryRanged/ThunderstringHarp.fbx",
+      "atlas": "ArmoryRanged",
+      "unity_bounds_min": [
+        -0.022,
+        -0.416,
+        -0.0663
+      ],
+      "unity_bounds_max": [
+        0.022,
+        0.416,
+        0.138
+      ],
+      "sockets": {},
+      "tris": 674,
+      "usage": "Copper lyre-bow with five glowing lightning strings."
+    },
+    {
+      "name": "BellHorn",
+      "fbx": "Assets/_Project/Art/Weapons/Armory2/ArmoryRanged/BellHorn.fbx",
+      "atlas": "ArmoryRanged",
+      "unity_bounds_min": [
+        -0.12,
+        -0.0767,
+        -0.425
+      ],
+      "unity_bounds_max": [
+        0.12,
+        0.22,
+        0.27
+      ],
+      "sockets": {},
+      "tris": 834,
+      "usage": "Brass horn with a bell mouth toward -Y and one coil."
+    },
+    {
+      "name": "InkSquirter",
+      "fbx": "Assets/_Project/Art/Weapons/Armory2/ArmoryRanged/InkSquirter.fbx",
+      "atlas": "ArmoryRanged",
+      "unity_bounds_min": [
+        -0.065,
+        -0.0767,
+        -0.31
+      ],
+      "unity_bounds_max": [
+        0.065,
+        0.1763,
+        0.3314
+      ],
+      "sockets": {},
+      "tris": 840,
+      "usage": "Squid-shaped pump gun: glassy ink mantle, tentacles trailing back, nozzle forward."
+    },
+    {
+      "name": "BoneFlute",
+      "fbx": "Assets/_Project/Art/Weapons/Armory2/ArmoryRanged/BoneFlute.fbx",
+      "atlas": "ArmoryRanged",
+      "unity_bounds_min": [
+        -0.0417,
+        -0.1508,
+        -0.4739
+      ],
+      "unity_bounds_max": [
+        0.0417,
+        0.085,
+        0.2
+      ],
+      "sockets": {},
+      "tris": 724,
+      "usage": "Long bone flute with finger holes and a small skull at the far end."
+    },
+    {
+      "name": "StardustWand",
+      "fbx": "Assets/_Project/Art/Weapons/Armory2/ArmoryRanged/StardustWand.fbx",
+      "atlas": "ArmoryRanged",
+      "unity_bounds_min": [
+        -0.018,
+        -0.046,
+        -0.4466
+      ],
+      "unity_bounds_max": [
+        0.018,
+        0.126,
+        0.08
+      ],
+      "sockets": {},
+      "tris": 412,
+      "usage": "Wand pointing -Y with a five-point star gem at the tip."
+    },
+    {
+      "name": "HarpoonGun",
+      "fbx": "Assets/_Project/Art/Weapons/Armory2/ArmoryRanged/HarpoonGun.fbx",
+      "atlas": "ArmoryRanged",
+      "unity_bounds_min": [
+        -0.043,
+        -0.0767,
+        -0.59
+      ],
+      "unity_bounds_max": [
+        0.043,
+        0.1579,
+        0.3861
+      ],
+      "sockets": {},
+      "tris": 1178,
+      "usage": "Launcher tube with a loaded barbed harpoon and a rope drum underneath."
+    },
+    {
+      "name": "SteamNailer",
+      "fbx": "Assets/_Project/Art/Weapons/Armory2/ArmoryRanged/SteamNailer.fbx",
+      "atlas": "ArmoryRanged",
+      "unity_bounds_min": [
+        -0.04,
+        -0.0767,
+        -0.32
+      ],
+      "unity_bounds_max": [
+        0.045,
+        0.2256,
+        0.1051
+      ],
+      "sockets": {},
+      "tris": 890,
+      "usage": "Steam nail gun: brass tank on top, nail magazine, pressure gauge."
+    },
+    {
+      "name": "EmberMortar",
+      "fbx": "Assets/_Project/Art/Weapons/Armory2/ArmoryRanged/EmberMortar.fbx",
+      "atlas": "ArmoryRanged",
+      "unity_bounds_min": [
+        -0.075,
+        -0.0771,
+        -0.22
+      ],
+      "unity_bounds_max": [
+        0.075,
+        0.285,
+        0.1439
+      ],
+      "sockets": {},
+      "tris": 1020,
+      "usage": "Short fat bronze hand cannon, embers glowing in the muzzle."
+    },
+    {
+      "name": "BubbleGun",
+      "fbx": "Assets/_Project/Art/Weapons/Armory2/ArmoryRanged/BubbleGun.fbx",
+      "atlas": "ArmoryRanged",
+      "unity_bounds_min": [
+        -0.067,
+        -0.0766,
+        -0.267
+      ],
+      "unity_bounds_max": [
+        0.067,
+        0.21,
+        0.08
+      ],
+      "sockets": {},
+      "tris": 1156,
+      "usage": "Glass bubble tank, a hoop wand at the front, brass trigger body."
+    },
+    {
+      "name": "ChronoCrossbow",
+      "fbx": "Assets/_Project/Art/Weapons/Armory2/ArmoryRanged/ChronoCrossbow.fbx",
+      "atlas": "ArmoryRanged",
+      "unity_bounds_min": [
+        -0.026,
+        -0.2014,
+        -0.44
+      ],
+      "unity_bounds_max": [
+        0.0355,
+        0.3916,
+        0.3561
+      ],
+      "sockets": {},
+      "tris": 1340,
+      "usage": "Crossbow with spring-coil prod and a clock dial on the stock."
+    },
+    {
+      "name": "GravelSlingshot",
+      "fbx": "Assets/_Project/Art/Weapons/Armory2/ArmoryRanged/GravelSlingshot.fbx",
+      "atlas": "ArmoryRanged",
+      "unity_bounds_min": [
+        -0.02,
+        -0.1,
+        -0.0852
+      ],
+      "unity_bounds_max": [
+        0.02,
+        0.2239,
+        0.1011
+      ],
+      "sockets": {},
+      "tris": 628,
+      "usage": "Forked wooden slingshot with rubber band and a stone in the pouch."
+    },
+    {
+      "name": "LanternBeam",
+      "fbx": "Assets/_Project/Art/Weapons/Armory2/ArmoryRanged/LanternBeam.fbx",
+      "atlas": "ArmoryRanged",
+      "unity_bounds_min": [
+        -0.0507,
+        -0.08,
+        -0.118
+      ],
+      "unity_bounds_max": [
+        0.0507,
+        0.396,
+        0.051
+      ],
+      "sockets": {},
+      "tris": 652,
+      "usage": "Lantern on a short pole with a focusing lens toward -Y."
+    },
+    {
+      "name": "SextantSniper",
+      "fbx": "Assets/_Project/Art/Weapons/Armory2/ArmoryRanged/SextantSniper.fbx",
+      "atlas": "ArmoryRanged",
+      "unity_bounds_min": [
+        -0.0225,
+        -0.0767,
+        -0.75
+      ],
+      "unity_bounds_max": [
+        0.0225,
+        0.265,
+        0.2961
+      ],
+      "sockets": {},
+      "tris": 1054,
+      "usage": "Long rifle with a brass sextant arc mounted on top."
+    }
+  ]
+}

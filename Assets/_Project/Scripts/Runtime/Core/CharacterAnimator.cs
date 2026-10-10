@@ -76,11 +76,27 @@ namespace DeadCells.Core
             animator.Update(0f);
         }
 
+        /// <summary>Extra multiplier on top of SetSpeed (slow effects).</summary>
+        public float TimeScale
+        {
+            get => timeScale;
+            set
+            {
+                if (Mathf.Approximately(timeScale, value))
+                    return;
+                timeScale = value;
+                if (animator != null)
+                    animator.speed = speed * timeScale;
+            }
+        }
+
+        float timeScale = 1f;
+
         public void SetSpeed(float s)
         {
             speed = s;
             if (animator != null)
-                animator.speed = s;
+                animator.speed = s * timeScale;
         }
 
         public float Speed => speed;

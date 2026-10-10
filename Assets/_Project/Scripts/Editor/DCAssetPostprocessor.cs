@@ -28,6 +28,18 @@ namespace DeadCells.EditorTools
                 return;
             var ti = (TextureImporter)assetImporter;
             string file = System.IO.Path.GetFileNameWithoutExtension(assetPath);
+            if (assetPath.Contains("/Icons/"))
+            {
+                // Inventory icons rendered by Tools/Blender/render_icons.py: crisp pixel sprites.
+                ti.textureType = TextureImporterType.Sprite;
+                ti.spriteImportMode = SpriteImportMode.Single;
+                ti.alphaIsTransparency = true;
+                ti.mipmapEnabled = false;
+                ti.filterMode = FilterMode.Point;
+                ti.textureCompression = TextureImporterCompression.Uncompressed;
+                ti.spritePixelsPerUnit = 64;
+                return;
+            }
             ti.textureType = file.EndsWith("_Normal") ? TextureImporterType.NormalMap : TextureImporterType.Default;
             ti.sRGBTexture = !(file.EndsWith("_Normal") || file.EndsWith("_ORM"));
             ti.mipmapEnabled = true;

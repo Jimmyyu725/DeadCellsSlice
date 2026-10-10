@@ -253,3 +253,11 @@ MonoBehaviour:
   critAtLongRange: 0
   critMultiplier: 1.75
   spin: 0
+  homing: 0
+  bounces: 0
+  boomerang: 0
+  boomerangTime: 0.42
+  chain: 0
+  pull: 0
+  burstItem: {fileID: 0}
+  bomblet: 0

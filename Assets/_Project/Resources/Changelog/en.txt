@@ -1,3 +1,17 @@
+# 0.5 | 2026-10-10 | Sixty new weapons
+- 20 melee: Ember Fang, Moonsickle Twins, Leviathan Rib, Pendulum Axe, Lavender Bottle, Drowned Anchor, Moonsilk Whip, Gearsaw, Candelabra Trident, Clock-Hand Lance, Eelwhip, Ossuary Scepter, Furnace Tongs, Moonherd Crook, Starsand Katana, Sawshark Blade, Warden's Key, Ferryman's Oar, Maestro's Baton, Ember Knuckles
+- 20 ranged: Crescent Longbow, Triple Repeater, Blunderbuss, Tick Blowpipe, Frostsling, Moon Chakram, Knife Fan, Thunderstring Harp, Bell Horn, Ink Squirter, Bone Flute, Stardust Wand, Harpoon Gun, Steam Nailer, Ember Mortar, Bubble Gun, Chrono Crossbow, Gravel Slingshot, Lantern Beam, Sextant Rifle
+- 6 new shields with their own counters: Bell Shield, Mirror Moon, Spiked Shell, Clockface Buckler, Ember Targe, Whalescale Tower
+- 14 new skills: Starfall, Thunder Totem, Gear Sentry, Bear Trap, Miasma Jar, Cluster Bell Bomb, Lodestone Mine, Frost Nova, Ember Dash, Stopwatch, Rage Vial, Mending Lantern, Bouncing Sawdisc, Abyss Inkwell
+- New statuses: Poison (stacking) and Slow (enemies act and move slower)
+- New mechanics: lifesteal, finisher pulls, damage that builds with the combo, bonus against elites, finisher shockwaves, spread shots, bursts, homing, ricochets, boomerangs, chain lightning, pulling hits, poison clouds, black holes, deployable sentries / totems / traps / healing lanterns
+- New crit conditions: burning targets, attacking in mid-air, targets with any status effect
+- Every weapon has its own model and an icon rendered from it
+- Feel: attack wind-ups are a third as long and recovery is gone; once a hit's frames end you can attack, jump, roll or walk away at once
+- Raise the shield at any moment of an attack, even in mid-air; turn around freely while attacking or blocking, and before a shot or throw leaves your hand
+- The update log's details scroll with the mouse wheel or PgUp / PgDn; Chinese text no longer breaks after bullets and numbers
+- Coordinates: turn on "Show coordinates" in Options or the pause menu to see X / Y, room and level seed; hover the map to read any spot; F8 copies the location for a bug report
+
 # 0.4.1 | 2026-10-10 | Update log
 - New "Update log" entry in the main menu and the pause menu, listing every version's changes
 - The current version is shown in the bottom-right corner of the main menu

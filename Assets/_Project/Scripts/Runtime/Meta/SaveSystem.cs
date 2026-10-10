@@ -23,6 +23,8 @@ namespace DeadCells.Meta
         public bool skipIntro;
         [Range(0f, 1f)] public float musicVolume = 0.7f;
         [Range(0f, 1f)] public float sfxVolume = 0.85f;
+        [Tooltip("Show area / seed / room / tile X-Y on the HUD and under the map cursor (bug reports).")]
+        public bool showCoords;
     }
 
     /// <summary>Survives death: unlocks bought from the Collector and boss-cell progress.</summary>

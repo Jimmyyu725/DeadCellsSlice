@@ -44,6 +44,7 @@ namespace DeadCells.EditorTools
             AssetDatabase.Refresh();
             ReimportArt();
             BuildMaterials();
+            BuildArmoryMaterials();
             BuildControllers();
             BuildItemVisuals();
             BuildProjectiles();

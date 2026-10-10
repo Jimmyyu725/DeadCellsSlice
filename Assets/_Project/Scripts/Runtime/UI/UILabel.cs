@@ -152,7 +152,9 @@ namespace DeadCells.UI
                 body.horizontalOverflow = wrap || style == Style.Body ? HorizontalWrapMode.Wrap : HorizontalWrapMode.Overflow;
                 body.lineSpacing = chinese ? 1.25f : 1.1f;
                 body.color = color;
-                body.text = value;
+                // Unity's Text only breaks lines at spaces, so a CJK run is one long "word"
+                // that jumps to the next line whole. Non-breaking spaces make it wrap by character.
+                body.text = chinese && style == Style.Body ? value.Replace(' ', '\u00A0') : value;
                 pixel.Text = "";
             }
             else

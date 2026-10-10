@@ -61,6 +61,7 @@ namespace DeadCells.Player
         readonly GameObject[] mainVisual = new GameObject[SlotCount];
         readonly GameObject[] offVisual = new GameObject[SlotCount];
         readonly float[] cooldownUntil = new float[SlotCount];
+        readonly Dictionary<string, float> itemCooldowns = new Dictionary<string, float>();
         readonly float[] cooldownLength = new float[SlotCount];
         readonly int[] comboIndex = new int[SlotCount];
         readonly float[] lastComboEnd = { -10f, -10f, -10f, -10f };
@@ -85,7 +86,8 @@ namespace DeadCells.Player
         public bool Drinking => action == ActionKind.Drink;
         public bool CanCancel => action switch
         {
-            ActionKind.Melee => step != null && Frame >= step.cancelFrame,
+            // No recovery lock: once the hit frames are over anything may cancel.
+            ActionKind.Melee => step != null && Frame > step.activeFrames.y,
             ActionKind.Shoot or ActionKind.Throw => released,
             _ => false,
         };
@@ -138,8 +140,10 @@ namespace DeadCells.Player
             mainVisual[slot] = offVisual[slot] = null;
             slots[slot] = item;
             comboIndex[slot] = 0;
-            if (item == null || item.kind != ItemKind.Skill)
-                cooldownUntil[slot] = 0f; // a fresh weapon is ready at once (skills keep theirs: no swap exploit)
+            // Cooldowns belong to the item: a new pick-up is ready at once, and dropping and
+            // re-taking an item does not reset its cooldown.
+            cooldownUntil[slot] = item != null && itemCooldowns.TryGetValue(item.id, out float until) ? until : 0f;
+            cooldownLength[slot] = item != null ? item.cooldown : 0f;
             if (item != null)
             {
                 mainVisual[slot] = Spawn(item.visual, item.mount);
@@ -306,6 +310,50 @@ namespace DeadCells.Player
             return -1;
         }
 
+        const float StartupBoost = 3f;
+
+        /// <summary>
+        /// During a cancellable recovery, start another slot's action (the same
+        /// slot keeps chaining its own combo in UpdateMelee).
+        /// </summary>
+        public bool TrySwitchAction()
+        {
+            if (!CanCancel)
+                return false;
+            for (int i = 0; i < SlotCount; i++)
+            {
+                if (i == actionSlot || !Buffered(i) || slots[i] == null || slots[i].kind == ItemKind.Shield || CooldownRemaining(i) > 0f)
+                    continue;
+                EndEarly();
+                return TryStartAction();
+            }
+            return false;
+        }
+
+        /// <summary>Ends the current action as if it had played out (keeps combo progress).</summary>
+        public void EndEarly()
+        {
+            if (action == ActionKind.Melee && actionSlot >= 0 && slots[actionSlot] != null)
+            {
+                lastComboEnd[actionSlot] = Time.time;
+                comboIndex[actionSlot] = (comboIndex[actionSlot] + 1) % Mathf.Max(1, slots[actionSlot].combo.Length);
+            }
+            slashArc?.End();
+            FinishAction();
+        }
+
+        /// <summary>True while some attack button is pressed or buffered.</summary>
+        public bool AnyAttackBuffered
+        {
+            get
+            {
+                for (int i = 0; i < SlotCount; i++)
+                    if (Buffered(i) && slots[i] != null && slots[i].kind != ItemKind.Shield)
+                        return true;
+                return false;
+            }
+        }
+
         public bool TryStartAction()
         {
             for (int i = 0; i < SlotCount; i++)
@@ -381,6 +429,9 @@ namespace DeadCells.Player
             actionSlot = slot;
             comboIndex[slot] = Mathf.Clamp(index, 0, item.combo.Length - 1);
             step = item.combo[comboIndex[slot]];
+            if (comboIndex[slot] == 0)
+                chainHits = 0;
+            waveFired = false;
             clock = 0f;
             hitThisSwing.Clear();
             arcStarted = arcEnded = false;
@@ -428,9 +479,9 @@ namespace DeadCells.Player
                 case ActionKind.Melee:
                     return UpdateMelee(dt);
                 case ActionKind.Shoot:
-                    return UpdateRanged(dt, 9, 20);
+                    return UpdateRanged(dt, 5, 14);
                 case ActionKind.Throw:
-                    return UpdateRanged(dt, 6, 18);
+                    return UpdateRanged(dt, 4, 12);
                 case ActionKind.Drink:
                     return UpdateDrink(dt);
                 default:
@@ -446,10 +497,14 @@ namespace DeadCells.Player
                 FinishAction();
                 return true;
             }
-            clock += dt * item.animSpeed;
+            // Wind-up frames play three times faster so the hit comes out at once.
+            float boost = Frame < step.activeFrames.x ? StartupBoost : 1f;
+            clock += dt * item.animSpeed * boost;
+            player.anim.SetSpeed(item.animSpeed * (Frame < step.activeFrames.x ? StartupBoost : 1f));
             float f = Frame;
 
-            if (f < 2f && player.Input.moveX != 0f)
+            // Turning is never locked.
+            if (player.Input.moveX != 0f && (int)Mathf.Sign(player.Input.moveX) != player.Facing)
                 player.anim.SetFacing((int)player.Input.moveX);
 
             if (!arcStarted && f >= step.activeFrames.x - 1)
@@ -466,8 +521,13 @@ namespace DeadCells.Player
 
             if (f >= step.activeFrames.x && f < step.activeFrames.y + 1f)
                 DoHits(item);
+            if (step.finisher && !waveFired && item.finisherWave != null && f >= step.activeFrames.x)
+            {
+                waveFired = true;
+                LaunchWave(item);
+            }
 
-            if (f >= step.cancelFrame && Buffered(actionSlot) && comboIndex[actionSlot] + 1 < item.combo.Length)
+            if (f > step.activeFrames.y && Buffered(actionSlot) && comboIndex[actionSlot] + 1 < item.combo.Length)
             {
                 lastPressed[actionSlot] = -10f;
                 slashArc?.End();
@@ -489,6 +549,8 @@ namespace DeadCells.Player
         {
             var item = slots[actionSlot];
             clock += dt;
+            if (!released && player.Input.moveX != 0f)
+                player.anim.SetFacing((int)player.Input.moveX);
             if (!released && Frame >= releaseFrame)
             {
                 released = true;
@@ -569,7 +631,14 @@ namespace DeadCells.Player
             return v;
         }
 
-        public float DamageMultiplier => 1f + 0.15f * Run.scrollsPower;
+        public float DamageMultiplier => (1f + 0.15f * Run.scrollsPower) * (Time.time < buffUntil ? 1f + buffAmount : 1f);
+
+        float buffUntil, buffAmount;
+        int chainHits;
+        bool waveFired;
+
+        /// <summary>Reflected projectiles gain this multiplier (the raised shield's).</summary>
+        public float ReflectMultiplier => blocking && blockSlot >= 0 && slots[blockSlot] != null ? slots[blockSlot].reflectMultiplier : 1.5f;
 
         bool IsCrit(ItemDef item, AttackStep s, Health target)
         {
@@ -589,6 +658,12 @@ namespace DeadCells.Player
                     return Time.time - player.LastDodgeTime <= 1.5f;
                 case CritRule.LowHealth:
                     return target.Current <= target.maxHealth * 0.35f;
+                case CritRule.Burning:
+                    return target.GetComponent<StatusEffects>()?.Burning ?? false;
+                case CritRule.Airborne:
+                    return !player.Grounded;
+                case CritRule.Afflicted:
+                    return target.GetComponent<StatusEffects>()?.Afflicted ?? false;
                 default:
                     return false;
             }
@@ -608,9 +683,16 @@ namespace DeadCells.Player
                 hitThisSwing.Add(target);
                 bool crit = IsCrit(item, step, target) || (target.GetComponent<StatusEffects>()?.Frozen ?? false);
                 float dmg = step.damage * DamageMultiplier * (crit ? item.critMultiplier : 1f) * Random.Range(0.92f, 1.08f);
+                if (item.comboRamp > 0f)
+                    dmg *= 1f + item.comboRamp * Mathf.Min(chainHits, 20);
+                var enemy = target.GetComponentInParent<Enemies.EnemyBase>();
+                if (item.eliteBonus != 1f && enemy != null && (enemy.IsElite || enemy.IsBoss))
+                    dmg *= item.eliteBonus;
                 if (Cheats.OneHitKills)
                     dmg = 99999f;
                 Vector2 dir = new Vector2(facing, 0.3f).normalized;
+                if (item.pull > 0f && step.finisher)
+                    dir = new Vector2(-facing * item.pull / Mathf.Max(1f, step.knockback), 0.35f);
                 Vector2 hitPoint = col.ClosestPoint(new Vector2(origin.x, center.y));
                 hitPoint = Vector2.Lerp(hitPoint, (Vector2)col.bounds.center, 0.35f);
                 var info = new DamageInfo
@@ -630,9 +712,36 @@ namespace DeadCells.Player
                 // Hitting a frozen enemy shatters the ice.
                 target.GetComponent<StatusEffects>()?.BreakFreeze();
                 var result = target.TakeDamage(info);
+                if (result == DamageResult.Hit || result == DamageResult.Killed)
+                {
+                    chainHits++;
+                    if (item.onHitChance > 0f && item.hasEffect && Random.value < item.onHitChance)
+                        target.GetComponent<StatusEffects>()?.Apply(item.effect, item.effectDuration);
+                    if (item.lifesteal > 0f)
+                        health.Heal(dmg * item.lifesteal);
+                }
                 if (result != DamageResult.Ignored)
                     ReportHit(target, info, result);
             }
+        }
+
+        void LaunchWave(ItemDef item)
+        {
+            int facing = player.Facing;
+            var go = Instantiate(item.finisherWave, transform.position + new Vector3(facing * 1.0f, 0.6f, 0f), Quaternion.identity);
+            go.SetActive(true);
+            var p = go.GetComponent<Projectile>();
+            p.velocity = new Vector2(facing * 15f, 0f);
+            p.gravity = 0f;
+            p.damage = item.finisherWaveDamage * DamageMultiplier;
+            p.fromPlayer = true;
+            p.owner = gameObject;
+            p.pierce = true;
+            p.lifetime = 0.7f;
+            p.knockback = 6f;
+            p.weaponId = item.id;
+            p.sparkColor = item.sparkColor;
+            Audio.Sfx.Play("boss.shockwave", transform.position, 0.6f, 1.3f);
         }
 
         // ------------------------------------------------------------ ranged
@@ -643,9 +752,37 @@ namespace DeadCells.Player
             {
                 cooldownUntil[slot] = Time.time + item.cooldown;
                 cooldownLength[slot] = item.cooldown;
+                itemCooldowns[item.id] = cooldownUntil[slot];
+            }
+            string fire = !string.IsNullOrEmpty(item.fireSound) ? item.fireSound : item.kind == ItemKind.Bow ? "bow.shoot" : "grenade.throw";
+            Audio.Sfx.Play(fire, transform.position + Vector3.up * 1.3f);
+            if (item.kind == ItemKind.Skill && item.skillKind != SkillKind.Throw)
+            {
+                UseSkill(item);
+                return;
             }
             if (item.projectile == null)
                 return;
+            Volley(item);
+            for (int b = 1; b < Mathf.Max(1, item.burst); b++)
+                StartCoroutine(DelayedVolley(item, b * item.burstInterval));
+            player.squash.Add(new Vector2(0.04f, -0.03f));
+            if (item.kind == ItemKind.Bow)
+                JuiceEngine.Instance?.Shake(new Vector2(-player.Facing, 0f), 0.06f);
+        }
+
+        System.Collections.IEnumerator DelayedVolley(ItemDef item, float delay)
+        {
+            yield return new WaitForSeconds(delay);
+            if (player.State != PlayerState.Dead)
+            {
+                Volley(item);
+                Audio.Sfx.Play(!string.IsNullOrEmpty(item.fireSound) ? item.fireSound : "bow.shoot", transform.position + Vector3.up * 1.3f, 0.7f, 1.1f);
+            }
+        }
+
+        void Volley(ItemDef item)
+        {
             int facing = player.Facing;
             Vector3 spawn = item.kind == ItemKind.Bow && bowMount.socket != null
                 ? new Vector3(transform.position.x + facing * 0.6f, bowMount.socket.position.y, 0f)
@@ -653,13 +790,25 @@ namespace DeadCells.Player
             Vector2 dir = Quaternion.Euler(0f, 0f, item.launchAngle * facing) * new Vector2(facing, 0f);
             if (item.kind == ItemKind.Bow || item.projectileGravity <= 0f)
                 dir = AutoAim(spawn, dir, facing);
+            int n = Mathf.Max(1, item.projectileCount);
+            for (int i = 0; i < n; i++)
+            {
+                float a = (i - (n - 1) * 0.5f) * item.spread;
+                SpawnProjectile(item, spawn, Quaternion.Euler(0f, 0f, a) * dir);
+            }
+        }
+
+        Projectile SpawnProjectile(ItemDef item, Vector3 spawn, Vector2 dir)
+        {
             var go = Instantiate(item.projectile, spawn, Quaternion.identity);
             go.SetActive(true);
+            if (item.projectileScale != 1f)
+                go.transform.localScale *= item.projectileScale;
             var p = go.GetComponent<Projectile>() ?? go.AddComponent<Projectile>();
-            p.velocity = dir * item.projectileSpeed;
+            p.velocity = dir.normalized * item.projectileSpeed;
             p.gravity = item.projectileGravity;
             p.damage = item.damage * DamageMultiplier * (Cheats.OneHitKills ? 9999f : 1f);
-            p.knockback = item.kind == ItemKind.Bow ? 3f : 6f;
+            p.knockback = (item.kind == ItemKind.Bow ? 3f : 6f) * item.knockbackScale;
             p.fromPlayer = true;
             p.owner = gameObject;
             p.explodeRadius = item.radius;
@@ -672,12 +821,123 @@ namespace DeadCells.Player
             p.critAtLongRange = item.crit == CritRule.LongRange;
             p.critMultiplier = item.critMultiplier;
             p.spin = item.spin;
-            p.hitRadius = item.kind == ItemKind.Bow ? 0.22f : 0.35f;
-            player.squash.Add(new Vector2(0.04f, -0.03f));
-            string fire = !string.IsNullOrEmpty(item.fireSound) ? item.fireSound : item.kind == ItemKind.Bow ? "bow.shoot" : "grenade.throw";
-            Audio.Sfx.Play(fire, spawn);
-            if (item.kind == ItemKind.Bow)
-                JuiceEngine.Instance?.Shake(new Vector2(-facing, 0f), 0.06f);
+            p.hitRadius = (item.kind == ItemKind.Bow ? 0.22f : 0.35f) * Mathf.Max(1f, item.projectileScale);
+            p.homing = item.homing;
+            p.bounces = item.bounces;
+            p.boomerang = item.boomerang;
+            p.chain = item.chain;
+            p.pull = item.pullOnHit;
+            p.lifetime = item.boomerang ? 3f : item.projectileLifetime;
+            p.burstItem = item.burstKind != BurstKind.None ? item : null;
+            return p;
+        }
+
+        // -------------------------------------------------------------- skills
+
+        void UseSkill(ItemDef item)
+        {
+            int facing = player.Facing;
+            var juice = JuiceEngine.Instance;
+            Vector3 chest = transform.position + Vector3.up * 1.1f;
+            switch (item.skillKind)
+            {
+                case SkillKind.Rain:
+                {
+                    Vector3 target = transform.position + new Vector3(facing * 5f, 0f, 0f);
+                    float best = 14f;
+                    foreach (var c in Physics2D.OverlapCircleAll(chest, 14f, DCLayers.EnemyMask))
+                    {
+                        var h = c.GetComponentInParent<Health>();
+                        float d = Vector2.Distance(chest, c.bounds.center);
+                        if (h != null && !h.IsDead && d < best)
+                        {
+                            best = d;
+                            target = c.bounds.center;
+                        }
+                    }
+                    for (int i = 0; i < item.count; i++)
+                        StartCoroutine(RainDrop(item, target + new Vector3(Random.Range(-2.6f, 2.6f), 9f + Random.Range(0f, 2f), 0f), i * 0.12f));
+                    break;
+                }
+                case SkillKind.Deploy:
+                    DeadCells.Run.Deployable.Spawn(item, transform.position + new Vector3(facing * 0.9f, 0f, 0f), gameObject);
+                    break;
+                case SkillKind.Nova:
+                {
+                    juice?.SlamWave(chest, item.radius);
+                    juice?.Embers(chest, 30, item.effectColor);
+                    juice?.Shake(Vector2.up, 0.3f);
+                    foreach (var c in Physics2D.OverlapCircleAll(chest, item.radius, DCLayers.EnemyMask))
+                    {
+                        var h = c.GetComponentInParent<Health>();
+                        if (h == null || h.IsDead)
+                            continue;
+                        Vector2 away = ((Vector2)c.bounds.center - (Vector2)chest).normalized;
+                        var info = new DamageInfo
+                        {
+                            amount = item.damage * DamageMultiplier, knockback = away * 6f * item.power + Vector2.up * 2f,
+                            hitPoint = c.bounds.center, source = gameObject, stun = 0.4f, hitStop = 0.03f, shake = 0.1f,
+                            sparkColor = item.effectColor, weaponId = item.id, projectile = true, effect = -1,
+                        };
+                        var result = item.damage > 0f ? h.TakeDamage(info) : DamageResult.Hit;
+                        if (item.hasEffect && (result == DamageResult.Hit || result == DamageResult.Killed))
+                            h.GetComponent<StatusEffects>()?.Apply(item.effect, item.effectDuration);
+                        if (item.damage > 0f && result != DamageResult.Ignored)
+                            ReportHit(h, info, result);
+                    }
+                    break;
+                }
+                case SkillKind.Dash:
+                {
+                    Vector2 dir = new Vector2(facing, 0f);
+                    float dist = item.power;
+                    var wall = Physics2D.Raycast(chest, dir, dist, DCLayers.SolidMask);
+                    if (wall.collider != null)
+                        dist = Mathf.Max(0f, wall.distance - 0.5f);
+                    Vector3 start = transform.position;
+                    Vector3 end = start + new Vector3(facing * dist, 0f, 0f);
+                    Vector2 mid = (Vector2)(start + end) * 0.5f + Vector2.up * 1f;
+                    foreach (var c in Physics2D.OverlapBoxAll(mid, new Vector2(dist + 1f, 1.8f), 0f, DCLayers.EnemyMask))
+                    {
+                        var h = c.GetComponentInParent<Health>();
+                        if (h == null || h.IsDead)
+                            continue;
+                        var info = new DamageInfo
+                        {
+                            amount = item.damage * DamageMultiplier, knockback = new Vector2(facing * 3f, 3f), hitPoint = c.bounds.center,
+                            source = gameObject, stun = 0.3f, hitStop = 0.03f, shake = 0.12f, sparkColor = item.effectColor,
+                            weaponId = item.id, projectile = true, effect = -1,
+                        };
+                        var result = h.TakeDamage(info);
+                        if (item.hasEffect && (result == DamageResult.Hit || result == DamageResult.Killed))
+                            h.GetComponent<StatusEffects>()?.Apply(item.effect, item.effectDuration);
+                        if (result != DamageResult.Ignored)
+                            ReportHit(h, info, result);
+                    }
+                    for (int k = 0; k <= 8; k++)
+                        juice?.Embers(Vector3.Lerp(start, end, k / 8f) + Vector3.up, 4, item.effectColor);
+                    health.InvulnerableUntil = Mathf.Max(health.InvulnerableUntil, Time.time + 0.35f);
+                    player.Teleport(end + Vector3.up * 0.05f);
+                    break;
+                }
+                case SkillKind.Buff:
+                    buffUntil = Time.time + item.duration;
+                    buffAmount = item.power;
+                    player.hitFlash?.Flash(new Color(3f, 0.6f, 0.5f), 0.9f);
+                    juice?.Embers(chest, 24, item.effectColor);
+                    juice?.Popup(transform.position + Vector3.up * 2.4f, "+" + Mathf.RoundToInt(item.power * 100f) + "%", new Color(1f, 0.4f, 0.35f), true);
+                    break;
+            }
+        }
+
+        System.Collections.IEnumerator RainDrop(ItemDef item, Vector3 from, float delay)
+        {
+            yield return new WaitForSeconds(delay);
+            if (item.projectile == null)
+                yield break;
+            var p = SpawnProjectile(item, from, new Vector2(Random.Range(-0.15f, 0.15f), -1f));
+            p.gravity = 12f;
+            p.lifetime = 2.5f;
         }
 
         Vector2 AutoAim(Vector3 from, Vector2 dir, int facing)
@@ -794,9 +1054,21 @@ namespace DeadCells.Player
             float window = shield != null ? shield.parryWindow : 0.18f;
             if (Time.time - blockStart <= window)
             {
+                if (shield != null && shield.parryRadius > 0f)
+                {
+                    foreach (var c in Physics2D.OverlapCircleAll(contact, shield.parryRadius, DCLayers.EnemyMask))
+                    {
+                        c.GetComponentInParent<IStunnable>()?.Stun(1.4f, new Vector2(Mathf.Sign(c.bounds.center.x - contact.x) * 5f, 2f));
+                        if (shield.parryApplies && shield.hasEffect)
+                            c.GetComponentInParent<StatusEffects>()?.Apply(shield.effect, shield.effectDuration);
+                    }
+                    juice?.SlamWave(contact, shield.parryRadius);
+                }
                 if (!info.projectile && info.source != null)
                 {
                     info.source.GetComponentInParent<IStunnable>()?.Stun(1.6f, new Vector2(player.Facing * 7f, 2f));
+                    if (shield != null && shield.parryApplies && shield.hasEffect)
+                        info.source.GetComponentInParent<StatusEffects>()?.Apply(shield.effect, shield.effectDuration);
                     var attacker = info.source.GetComponentInParent<Health>();
                     if (attacker != null && !attacker.IsDead && shield != null)
                     {
@@ -836,6 +1108,21 @@ namespace DeadCells.Player
             }
             player.Body.linearVelocity = new Vector2(-player.Facing * 4.5f, player.Body.linearVelocity.y);
             Audio.Sfx.Play("shield.block", contact);
+            if (shield != null && shield.thorns > 0f && !info.projectile && info.source != null)
+            {
+                var attacker = info.source.GetComponentInParent<Health>();
+                if (attacker != null && !attacker.IsDead)
+                {
+                    var thorn = new DamageInfo
+                    {
+                        amount = shield.thorns * DamageMultiplier, knockback = new Vector2(player.Facing * 4f, 1f), hitPoint = contact,
+                        source = gameObject, sparkColor = shield.sparkColor, weaponId = shield.id, effect = -1, stun = 0.2f,
+                    };
+                    var r = attacker.TakeDamage(thorn);
+                    if (r != DamageResult.Ignored)
+                        ReportHit(attacker, thorn, r);
+                }
+            }
             return DamageResult.Blocked;
         }
 
