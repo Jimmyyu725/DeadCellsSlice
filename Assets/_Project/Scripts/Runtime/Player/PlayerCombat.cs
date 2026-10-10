@@ -1081,6 +1081,14 @@ namespace DeadCells.Player
             juice.HitSparks(p, info.knockback, info.sparkColor, weight);
             juice.Ichor(p, info.knockback + Vector2.up, ichorColor, kill ? 18 : 8);
             juice.DamagePopup(target.transform.position + Vector3.up * 2.0f, info.amount, info.critical);
+            // Big hits read big: speed lines on crits, a ring and lines on kills.
+            if (info.critical)
+                juice.ImpactStreaks(p, Color.Lerp(info.sparkColor, Color.white, 0.4f), 12);
+            if (kill)
+            {
+                juice.ImpactStreaks(p, new Color(2.4f, 2.4f, 2.6f), 8);
+                juice.Ring(p, Color.Lerp(info.sparkColor, Color.white, 0.5f) * 0.8f, 2.2f);
+            }
             if (!info.projectile)
             {
                 var item = slots[Mathf.Clamp(actionSlot, 0, SlotCount - 1)];
@@ -1217,6 +1225,8 @@ namespace DeadCells.Player
                     juice.HitStop(0.05f);
                     juice.Shake(new Vector2(player.Facing, 0.2f), 0.6f);
                     juice.HitSparks(contact, new Vector2(-player.Facing, 0.4f), new Color(3f, 2.3f, 0.6f), 1f);
+                    juice.Ring(contact, new Color(3f, 2.4f, 0.9f), 3.5f);
+                    juice.ImpactStreaks(contact, new Color(3f, 2.4f, 0.9f), 14);
                     juice.Popup(transform.position + Vector3.up * 2.4f, "PARRY!", new Color(1f, 0.85f, 0.25f), true);
                 }
                 player.hitFlash?.Flash(new Color(2.4f, 2.0f, 0.8f), 0.8f);

@@ -44,12 +44,31 @@ namespace DeadCells.Run
                 };
                 visual.SetActive(true);
             }
+            // The glow takes the quality colour: white, blue (+), violet (++), gold (legendary).
+            var glow = GetComponentInChildren<Light>();
+            if (glow != null && def != null && def.quality > 0)
+            {
+                glow.color = ItemForge.QualityColor(def.quality);
+                glow.intensity *= def.quality >= ItemForge.Legendary ? 2f : 1.4f;
+            }
         }
+
+        float glintAt;
 
         void Update()
         {
             if (display == null)
                 return;
+            if (item != null && Time.time >= glintAt)
+            {
+                bool legendary = item.quality >= ItemForge.Legendary;
+                glintAt = Time.time + (legendary ? 0.1f : item.quality > 0 ? 0.3f : 0.7f) * Random.Range(0.7f, 1.3f);
+                var juice = JuiceEngine.Instance;
+                Color c = ItemForge.QualityColor(item.quality);
+                juice?.Glints(display.position, 1, c * (item.quality > 0 ? 3f : 1.6f));
+                if (legendary)
+                    juice?.Embers(display.position + Vector3.down * 0.9f + (Vector3)Random.insideUnitCircle * 0.4f, 1, new Color(3.4f, 2.6f, 0.8f));
+            }
             spin += Time.deltaTime;
             display.localPosition = new Vector3(0f, 1.15f + Mathf.Sin(spin * 2.2f) * 0.08f, 0f);
             display.localRotation = Quaternion.Euler(0f, Mathf.Sin(spin * 0.9f) * 35f, 0f);

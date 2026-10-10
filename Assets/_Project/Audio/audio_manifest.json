@@ -41,55 +41,55 @@
   "music.boss": {
    "file": "Assets/_Project/Audio/Music/music.boss.wav",
    "loop": true,
-   "seconds": 54.86,
+   "seconds": 50.53,
    "volume": 0.9
   },
   "music.death": {
    "file": "Assets/_Project/Audio/Music/music.death.wav",
    "loop": false,
-   "seconds": 5.0,
+   "seconds": 6.0,
    "volume": 0.8
   },
   "music.lung": {
    "file": "Assets/_Project/Audio/Music/music.lung.wav",
    "loop": true,
-   "seconds": 66.21,
+   "seconds": 68.57,
    "volume": 0.75
   },
   "music.menu": {
    "file": "Assets/_Project/Audio/Music/music.menu.wav",
    "loop": true,
-   "seconds": 80.0,
+   "seconds": 77.84,
    "volume": 0.75
   },
   "music.ossuary": {
    "file": "Assets/_Project/Audio/Music/music.ossuary.wav",
    "loop": true,
-   "seconds": 73.85,
+   "seconds": 85.33,
    "volume": 0.75
   },
   "music.oubliette": {
    "file": "Assets/_Project/Audio/Music/music.oubliette.wav",
    "loop": true,
-   "seconds": 83.48,
+   "seconds": 92.31,
    "volume": 0.75
   },
   "music.passage": {
    "file": "Assets/_Project/Audio/Music/music.passage.wav",
    "loop": true,
-   "seconds": 60.0,
+   "seconds": 45.71,
    "volume": 0.75
   },
   "music.promenade": {
    "file": "Assets/_Project/Audio/Music/music.promenade.wav",
    "loop": true,
-   "seconds": 76.8,
+   "seconds": 60.95,
    "volume": 0.75
   },
   "music.stilt": {
    "file": "Assets/_Project/Audio/Music/music.stilt.wav",
    "loop": true,
-   "seconds": 73.85,
+   "seconds": 43.64,
    "volume": 0.75
   }
  },
@@ -218,7 +218,8 @@
    "cooldown": 0.03,
    "files": [
     "Assets/_Project/Audio/Sfx/bow.shoot__1.wav",
-    "Assets/_Project/Audio/Sfx/bow.shoot__2.wav"
+    "Assets/_Project/Audio/Sfx/bow.shoot__2.wav",
+    "Assets/_Project/Audio/Sfx/bow.shoot__3.wav"
    ],
    "pitch": [
     0.95,
@@ -255,6 +256,19 @@
    "voices": 4,
    "volume": 0.75
   },
+  "curse": {
+   "cooldown": 0.03,
+   "files": [
+    "Assets/_Project/Audio/Sfx/curse__1.wav"
+   ],
+   "pitch": [
+    1.0,
+    1.0
+   ],
+   "spatial": false,
+   "voices": 1,
+   "volume": 0.85
+  },
   "door.open": {
    "cooldown": 0.03,
    "files": [
@@ -271,7 +285,8 @@
   "enemy.alert": {
    "cooldown": 0.06,
    "files": [
-    "Assets/_Project/Audio/Sfx/enemy.alert__1.wav"
+    "Assets/_Project/Audio/Sfx/enemy.alert__1.wav",
+    "Assets/_Project/Audio/Sfx/enemy.alert__2.wav"
    ],
    "pitch": [
     0.98,
@@ -285,7 +300,8 @@
    "cooldown": 0.04,
    "files": [
     "Assets/_Project/Audio/Sfx/enemy.attack__1.wav",
-    "Assets/_Project/Audio/Sfx/enemy.attack__2.wav"
+    "Assets/_Project/Audio/Sfx/enemy.attack__2.wav",
+    "Assets/_Project/Audio/Sfx/enemy.attack__3.wav"
    ],
    "pitch": [
     0.9,
@@ -312,7 +328,8 @@
    "cooldown": 0.04,
    "files": [
     "Assets/_Project/Audio/Sfx/enemy.death__1.wav",
-    "Assets/_Project/Audio/Sfx/enemy.death__2.wav"
+    "Assets/_Project/Audio/Sfx/enemy.death__2.wav",
+    "Assets/_Project/Audio/Sfx/enemy.death__3.wav"
    ],
    "pitch": [
     0.9,
@@ -514,7 +531,8 @@
    "cooldown": 0.03,
    "files": [
     "Assets/_Project/Audio/Sfx/hit.crit__1.wav",
-    "Assets/_Project/Audio/Sfx/hit.crit__2.wav"
+    "Assets/_Project/Audio/Sfx/hit.crit__2.wav",
+    "Assets/_Project/Audio/Sfx/hit.crit__3.wav"
    ],
    "pitch": [
     0.95,
@@ -530,7 +548,8 @@
     "Assets/_Project/Audio/Sfx/hit.flesh__1.wav",
     "Assets/_Project/Audio/Sfx/hit.flesh__2.wav",
     "Assets/_Project/Audio/Sfx/hit.flesh__3.wav",
-    "Assets/_Project/Audio/Sfx/hit.flesh__4.wav"
+    "Assets/_Project/Audio/Sfx/hit.flesh__4.wav",
+    "Assets/_Project/Audio/Sfx/hit.flesh__5.wav"
    ],
    "pitch": [
     0.9,
@@ -544,7 +563,8 @@
    "cooldown": 0.03,
    "files": [
     "Assets/_Project/Audio/Sfx/hit.heavy__1.wav",
-    "Assets/_Project/Audio/Sfx/hit.heavy__2.wav"
+    "Assets/_Project/Audio/Sfx/hit.heavy__2.wav",
+    "Assets/_Project/Audio/Sfx/hit.heavy__3.wav"
    ],
    "pitch": [
     0.92,
@@ -582,6 +602,32 @@
    "voices": 1,
    "volume": 0.7
   },
+  "malaise.up": {
+   "cooldown": 0.03,
+   "files": [
+    "Assets/_Project/Audio/Sfx/malaise.up__1.wav"
+   ],
+   "pitch": [
+    1.0,
+    1.0
+   ],
+   "spatial": false,
+   "voices": 1,
+   "volume": 0.6
+  },
+  "mutation": {
+   "cooldown": 0.03,
+   "files": [
+    "Assets/_Project/Audio/Sfx/mutation__1.wav"
+   ],
+   "pitch": [
+    1.0,
+    1.0
+   ],
+   "spatial": false,
+   "voices": 1,
+   "volume": 0.75
+  },
   "npc.talk": {
    "cooldown": 0.03,
    "files": [
@@ -613,7 +659,8 @@
    "cooldown": 0.03,
    "files": [
     "Assets/_Project/Audio/Sfx/pickup.cell__1.wav",
-    "Assets/_Project/Audio/Sfx/pickup.cell__2.wav"
+    "Assets/_Project/Audio/Sfx/pickup.cell__2.wav",
+    "Assets/_Project/Audio/Sfx/pickup.cell__3.wav"
    ],
    "pitch": [
     0.95,
@@ -628,7 +675,8 @@
    "files": [
     "Assets/_Project/Audio/Sfx/pickup.gold__1.wav",
     "Assets/_Project/Audio/Sfx/pickup.gold__2.wav",
-    "Assets/_Project/Audio/Sfx/pickup.gold__3.wav"
+    "Assets/_Project/Audio/Sfx/pickup.gold__3.wav",
+    "Assets/_Project/Audio/Sfx/pickup.gold__4.wav"
    ],
    "pitch": [
     0.95,
@@ -737,7 +785,8 @@
    "cooldown": 0.05,
    "files": [
     "Assets/_Project/Audio/Sfx/player.jump__1.wav",
-    "Assets/_Project/Audio/Sfx/player.jump__2.wav"
+    "Assets/_Project/Audio/Sfx/player.jump__2.wav",
+    "Assets/_Project/Audio/Sfx/player.jump__3.wav"
    ],
    "pitch": [
     0.95,
@@ -751,7 +800,8 @@
    "cooldown": 0.08,
    "files": [
     "Assets/_Project/Audio/Sfx/player.land__1.wav",
-    "Assets/_Project/Audio/Sfx/player.land__2.wav"
+    "Assets/_Project/Audio/Sfx/player.land__2.wav",
+    "Assets/_Project/Audio/Sfx/player.land__3.wav"
    ],
    "pitch": [
     0.9,
@@ -846,11 +896,39 @@
    "voices": 2,
    "volume": 0.7
   },
+  "rune.pickup": {
+   "cooldown": 0.03,
+   "files": [
+    "Assets/_Project/Audio/Sfx/rune.pickup__1.wav"
+   ],
+   "pitch": [
+    1.0,
+    1.0
+   ],
+   "spatial": false,
+   "voices": 1,
+   "volume": 0.85
+  },
+  "secret.break": {
+   "cooldown": 0.1,
+   "files": [
+    "Assets/_Project/Audio/Sfx/secret.break__1.wav",
+    "Assets/_Project/Audio/Sfx/secret.break__2.wav"
+   ],
+   "pitch": [
+    0.95,
+    1.05
+   ],
+   "spatial": true,
+   "voices": 2,
+   "volume": 0.9
+  },
   "shield.block": {
    "cooldown": 0.03,
    "files": [
     "Assets/_Project/Audio/Sfx/shield.block__1.wav",
-    "Assets/_Project/Audio/Sfx/shield.block__2.wav"
+    "Assets/_Project/Audio/Sfx/shield.block__2.wav",
+    "Assets/_Project/Audio/Sfx/shield.block__3.wav"
    ],
    "pitch": [
     0.95,
@@ -900,6 +978,62 @@
    "voices": 1,
    "volume": 0.7
   },
+  "status.bleed": {
+   "cooldown": 0.12,
+   "files": [
+    "Assets/_Project/Audio/Sfx/status.bleed__1.wav",
+    "Assets/_Project/Audio/Sfx/status.bleed__2.wav"
+   ],
+   "pitch": [
+    0.9,
+    1.1
+   ],
+   "spatial": true,
+   "voices": 3,
+   "volume": 0.45
+  },
+  "status.fire": {
+   "cooldown": 0.12,
+   "files": [
+    "Assets/_Project/Audio/Sfx/status.fire__1.wav",
+    "Assets/_Project/Audio/Sfx/status.fire__2.wav"
+   ],
+   "pitch": [
+    0.9,
+    1.1
+   ],
+   "spatial": true,
+   "voices": 3,
+   "volume": 0.5
+  },
+  "status.ice": {
+   "cooldown": 0.12,
+   "files": [
+    "Assets/_Project/Audio/Sfx/status.ice__1.wav",
+    "Assets/_Project/Audio/Sfx/status.ice__2.wav"
+   ],
+   "pitch": [
+    0.95,
+    1.08
+   ],
+   "spatial": true,
+   "voices": 3,
+   "volume": 0.5
+  },
+  "status.poison": {
+   "cooldown": 0.12,
+   "files": [
+    "Assets/_Project/Audio/Sfx/status.poison__1.wav",
+    "Assets/_Project/Audio/Sfx/status.poison__2.wav"
+   ],
+   "pitch": [
+    0.9,
+    1.15
+   ],
+   "spatial": true,
+   "voices": 3,
+   "volume": 0.45
+  },
   "swing.flail": {
    "cooldown": 0.02,
    "files": [
@@ -918,7 +1052,8 @@
    "cooldown": 0.02,
    "files": [
     "Assets/_Project/Audio/Sfx/swing.heavy__1.wav",
-    "Assets/_Project/Audio/Sfx/swing.heavy__2.wav"
+    "Assets/_Project/Audio/Sfx/swing.heavy__2.wav",
+    "Assets/_Project/Audio/Sfx/swing.heavy__3.wav"
    ],
    "pitch": [
     0.92,
@@ -933,7 +1068,8 @@
    "files": [
     "Assets/_Project/Audio/Sfx/swing.light__1.wav",
     "Assets/_Project/Audio/Sfx/swing.light__2.wav",
-    "Assets/_Project/Audio/Sfx/swing.light__3.wav"
+    "Assets/_Project/Audio/Sfx/swing.light__3.wav",
+    "Assets/_Project/Audio/Sfx/swing.light__4.wav"
    ],
    "pitch": [
     0.92,
@@ -983,6 +1119,19 @@
    "spatial": false,
    "voices": 1,
    "volume": 0.75
+  },
+  "timed.open": {
+   "cooldown": 0.03,
+   "files": [
+    "Assets/_Project/Audio/Sfx/timed.open__1.wav"
+   ],
+   "pitch": [
+    1.0,
+    1.0
+   ],
+   "spatial": true,
+   "voices": 1,
+   "volume": 0.85
   },
   "tk.pillar": {
    "cooldown": 0.03,
@@ -1167,6 +1316,19 @@
    "spatial": true,
    "voices": 3,
    "volume": 0.5
+  },
+  "vine.grow": {
+   "cooldown": 0.03,
+   "files": [
+    "Assets/_Project/Audio/Sfx/vine.grow__1.wav"
+   ],
+   "pitch": [
+    0.95,
+    1.05
+   ],
+   "spatial": true,
+   "voices": 1,
+   "volume": 0.75
   },
   "weapon.equip": {
    "cooldown": 0.03,

@@ -23,7 +23,11 @@ sys.path.insert(0, str(HERE))
 
 import dsp  # noqa: E402
 import music  # noqa: E402
+import music_dc  # noqa: E402
 import sfx  # noqa: E402
+import sfx_dc  # noqa: E402
+
+sfx_dc.apply()
 
 ROOT = HERE.parent.parent
 OUT = ROOT / "Assets" / "_Project" / "Audio"
@@ -64,7 +68,7 @@ def main():
     if "--music" in groups:
         d = OUT / "Music"
         d.mkdir(parents=True, exist_ok=True)
-        for mid, fn in music.TRACKS.items():
+        for mid, fn in music_dc.TRACKS.items():
             if not wanted(mid):
                 continue
             ts = time.time()

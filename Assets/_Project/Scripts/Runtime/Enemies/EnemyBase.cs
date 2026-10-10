@@ -390,6 +390,8 @@ namespace DeadCells.Enemies
             {
                 juice.CellBurst(c, isBoss ? 30 : 6);
                 juice.Ichor(c, Vector2.up, ichorColor, isBoss ? 60 : 22);
+                juice.Smoke(c, isBoss ? 14 : 4, new Color(ichorColor.r * 0.5f, ichorColor.g * 0.5f, ichorColor.b * 0.5f, 0.6f));
+                juice.Ring(c, burstColor * 0.6f, isBoss ? 7f : 2.6f);
                 juice.Embers(c, isBoss ? 60 : 18, burstColor);
                 juice.Dust(transform.position, Vector2.up, 10, new Color(0.35f, 0.45f, 0.3f, 0.6f));
                 juice.Shake(Vector2.up, isBoss ? 0.8f : 0.15f);

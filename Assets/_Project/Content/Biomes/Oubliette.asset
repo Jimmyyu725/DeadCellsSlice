@@ -324,6 +324,7 @@ MonoBehaviour:
   embersA: {r: 3, g: 1.1, b: 0.3, a: 1}
   embersB: {r: 3.5, g: 1.8, b: 0.5, a: 1}
   rainUp: 0
+  ambientSpecial: 5
   lightShafts: 3
   shaftColor: {r: 0.55, g: 0.95, b: 1, a: 1}
   liquid: 1

@@ -102,6 +102,7 @@ namespace DeadCells.Run
         public Color embersB = new Color(3.5f, 1.8f, 0.5f, 1f);
         [Tooltip("Upward rain (Stilt Village).")]
         public bool rainUp;
+        public Environment.AmbientParticles.Special ambientSpecial;
         [Tooltip("God-ray shafts from ceilings per 100 m.")]
         public float lightShafts = 3f;
         public Color shaftColor = new Color(0.55f, 0.95f, 1f);

@@ -92,7 +92,7 @@ namespace DeadCells.Run
                     }
             }
             Achievements.Unlock("secret_room");
-            Audio.Sfx.Play("door.open", transform.position, 0.9f, 0.7f);
+            Audio.Sfx.Play("secret.break", transform.position);
             JuiceEngine.Instance?.Shake(Vector2.down, 0.35f);
         }
 
@@ -101,8 +101,9 @@ namespace DeadCells.Run
             var juice = JuiceEngine.Instance;
             Vector3 c = transform.position + Vector3.up * 0.5f;
             juice?.Dust(c, Vector2.up, 10);
+            juice?.Debris(c, Vector2.up, 8, ram ? new Color(0.32f, 0.3f, 0.34f) : new Color(0.38f, 0.4f, 0.46f));
+            juice?.Smoke(c, 2, new Color(0.35f, 0.34f, 0.38f, 0.5f));
             juice?.Embers(c, 14, ram ? new Color(3.4f, 1.4f, 0.3f) : new Color(1.4f, 1.3f, 1.2f));
-            Audio.Sfx.Play("hazard.spikes", c, 0.5f, 0.6f);
             Destroy(gameObject);
         }
 

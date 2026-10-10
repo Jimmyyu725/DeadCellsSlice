@@ -334,6 +334,9 @@ namespace DeadCells.Items
                 {
                     juice.SlamWave(transform.position, explodeRadius);
                     juice.Embers(transform.position, 24, sparkColor);
+                    juice.Ring(transform.position, sparkColor * 0.7f, explodeRadius * 2f);
+                    juice.Smoke(transform.position, bomblet ? 2 : 6, new Color(0.25f, 0.22f, 0.22f, 0.6f));
+                    juice.Debris(transform.position, Vector2.up, bomblet ? 3 : 8, new Color(0.3f, 0.28f, 0.27f));
                     juice.Shake(Vector2.up, 0.35f);
                 }
             }

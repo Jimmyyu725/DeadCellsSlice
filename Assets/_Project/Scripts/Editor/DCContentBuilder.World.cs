@@ -960,6 +960,14 @@ namespace DeadCells.EditorTools
             passage.liquidMaterial = LoadMat("M_Liquid_Wine");
             EditorUtility.SetDirty(passage);
 
+            // ---- Biome-specific ambient particles.
+            oub.ambientSpecial = Environment.AmbientParticles.Special.Drips;
+            prom.ambientSpecial = Environment.AmbientParticles.Special.Fireflies;
+            oss.ambientSpecial = Environment.AmbientParticles.Special.Spores;
+            stilt.ambientSpecial = Environment.AmbientParticles.Special.Fireflies;
+            lung.ambientSpecial = Environment.AmbientParticles.Special.Ash;
+            passage.ambientSpecial = Environment.AmbientParticles.Special.Drips;
+
             // ---- Rune guardians: the Promenade carries the Vine rune, the Ossuary the
             // Spider rune, the Stilt Village the Ram rune.
             oub.rune = "";
@@ -996,6 +1004,7 @@ namespace DeadCells.EditorTools
             sewers.turrets = new List<BiomeDef.EnemyEntry> { E("Obelisk", 0.5f) };
             sewers.hazardPrefab = LoadPrefab("World/SorrowCloud");
             sewers.hazardDensity = 2.5f;
+            sewers.ambientSpecial = Environment.AmbientParticles.Special.Spores;
             EditorUtility.SetDirty(sewers);
 
             // Ramparts (instead of the Stilt Village, Spider rune): the Promenade's towers at sunset.
@@ -1022,6 +1031,7 @@ namespace DeadCells.EditorTools
             ramparts.turrets = new List<BiomeDef.EnemyEntry> { E("Obelisk", 2f) };
             ramparts.hazardPrefab = null;
             ramparts.hazardDensity = 0f;
+            ramparts.ambientSpecial = Environment.AmbientParticles.Special.Ash;
             EditorUtility.SetDirty(ramparts);
 
             // ---- The Observatory (2+ Boss Cells, past the Time Keeper): the Clock Lung's
@@ -1049,6 +1059,7 @@ namespace DeadCells.EditorTools
             obs.liquidMaterial = LoadMat("M_Liquid_Void");
             obs.hazardPrefab = null;
             obs.hazardDensity = 0f;
+            obs.ambientSpecial = Environment.AmbientParticles.Special.Stars;
             obs.ground = new List<BiomeDef.EnemyEntry> { E("Sentinel", 2f), E("Monk", 2f), E("Fisher", 1f) };
             obs.flying = new List<BiomeDef.EnemyEntry> { E("Tick", 2f) };
             obs.turrets = new List<BiomeDef.EnemyEntry> { E("Obelisk", 2f) };

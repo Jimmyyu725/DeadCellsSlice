@@ -60,6 +60,7 @@ namespace DeadCells.Run
         {
             var juice = JuiceEngine.Instance;
             Audio.Sfx.Play("door.open", transform.position);
+            Audio.Sfx.Play("timed.open", transform.position);
             juice?.Shake(Vector2.up, 0.3f);
             float t = 0f;
             while (t < 0.8f)

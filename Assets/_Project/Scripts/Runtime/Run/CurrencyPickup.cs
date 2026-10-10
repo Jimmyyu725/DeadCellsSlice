@@ -45,6 +45,9 @@ namespace DeadCells.Run
             float speed = Mathf.Lerp(6f, 26f, Mathf.Clamp01((age - 0.45f) * 1.5f));
             if (to.magnitude > 9f && age < 3f)
                 return; // only magnetize when reasonably close
+            // A short glittering trail while it flies to the player.
+            if (Random.value < 0.6f)
+                FX.JuiceEngine.Instance?.Glints(transform.position, 1, kind == Kind.Gold ? new Color(3f, 2.3f, 0.7f) : new Color(0.8f, 2.2f, 3.4f));
             if (body != null)
             {
                 body.gravityScale = 0f;
@@ -66,6 +69,7 @@ namespace DeadCells.Run
                 else
                     rm.AddCells(amount);
                 Audio.Sfx.Play(kind == Kind.Gold ? "pickup.gold" : "pickup.cell");
+                FX.JuiceEngine.Instance?.Glints(transform.position, 3, kind == Kind.Gold ? new Color(3f, 2.3f, 0.7f) : new Color(0.8f, 2.2f, 3.4f));
             }
             Destroy(gameObject);
         }

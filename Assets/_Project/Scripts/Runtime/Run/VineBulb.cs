@@ -53,7 +53,7 @@ namespace DeadCells.Run
             Vector2 baseP = transform.position;
             var hit = Physics2D.Raycast(baseP + Vector2.up * 0.6f, Vector2.up, maxHeight, DCLayers.SolidMask);
             int height = Mathf.Clamp(Mathf.FloorToInt((hit.collider != null ? hit.distance + 0.6f : maxHeight) - 1.5f), 3, maxHeight);
-            Audio.Sfx.Play("tk.summon", transform.position, 0.8f, 0.8f);
+            Audio.Sfx.Play("vine.grow", transform.position);
             var juice = JuiceEngine.Instance;
             int side = 1;
             for (int k = 0; k < height; k++)

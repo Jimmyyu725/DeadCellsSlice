@@ -56,11 +56,14 @@ namespace DeadCells.Combat
                         OilBlaze();
                         duration *= 2f;
                     }
+                    if (!Burning)
+                        Audio.Sfx.Play("status.fire", transform.position + Vector3.up);
                     burnUntil = Mathf.Max(burnUntil, Time.time + duration);
                     break;
                 case SkillEffect.Bleed:
                     if (!Bleeding)
                         bleedStacks = 0;
+                    Audio.Sfx.Play("status.bleed", transform.position + Vector3.up);
                     bleedStacks = Mathf.Min(MaxBleedStacks, bleedStacks + 1);
                     bleedUntil = Mathf.Max(bleedUntil, Time.time + duration);
                     break;
@@ -71,6 +74,8 @@ namespace DeadCells.Combat
                     rootUntil = Mathf.Max(rootUntil, Time.time + duration);
                     break;
                 case SkillEffect.Ice:
+                    if (!Frozen)
+                        Audio.Sfx.Play("status.ice", transform.position + Vector3.up);
                     freezeUntil = Mathf.Max(freezeUntil, Time.time + duration);
                     break;
                 case SkillEffect.Lightning:
@@ -79,6 +84,7 @@ namespace DeadCells.Combat
                 case SkillEffect.Poison:
                     if (!Poisoned)
                         poisonStacks = 0;
+                    Audio.Sfx.Play("status.poison", transform.position + Vector3.up);
                     poisonStacks = Mathf.Min(MaxPoisonStacks, poisonStacks + 1);
                     poisonUntil = Mathf.Max(poisonUntil, Time.time + duration);
                     break;
@@ -110,10 +116,46 @@ namespace DeadCells.Combat
             }
         }
 
+        float fxTimer;
+        Collider2D body;
+
+        /// <summary>Continuous particles that make each status readable at a glance.</summary>
+        void StatusParticles()
+        {
+            fxTimer -= Time.deltaTime;
+            if (fxTimer > 0f)
+                return;
+            fxTimer = 0.09f;
+            var juice = JuiceEngine.Instance;
+            if (juice == null)
+                return;
+            if (body == null)
+                body = GetComponentInChildren<Collider2D>();
+            Vector3 c = body != null ? body.bounds.center : transform.position + Vector3.up;
+            float h = body != null ? body.bounds.extents.y : 0.8f;
+            if (Burning)
+            {
+                juice.Flames(c + Vector3.down * h * 0.4f, 3);
+                if (Random.value < 0.25f)
+                    juice.Smoke(c + Vector3.up * h, 1, new Color(0.15f, 0.12f, 0.12f, 0.55f));
+            }
+            if (Poisoned && Random.value < 0.4f + 0.1f * poisonStacks)
+                juice.Bubbles(c + Vector3.down * h * 0.3f, 1, new Color(0.45f, 1f, 0.3f, 0.9f));
+            if (Bleeding && Random.value < 0.25f + 0.08f * bleedStacks)
+                juice.Drips(c, 1, new Color(0.55f, 0.03f, 0.05f, 1f));
+            if (Oiled && Random.value < 0.3f)
+                juice.Drips(c, 1, new Color(0.06f, 0.05f, 0.04f, 1f));
+            if (Frozen)
+                juice.Frost(c, 2);
+            if (Shocked && Random.value < 0.5f)
+                juice.HitSparks(c + (Vector3)Random.insideUnitCircle * h * 0.6f, Random.insideUnitCircle, new Color(1.6f, 2.4f, 3.4f), 0.1f);
+        }
+
         void Update()
         {
             if (health.IsDead)
                 return;
+            StatusParticles();
             if (Burning)
             {
                 tickTimer -= Time.deltaTime;

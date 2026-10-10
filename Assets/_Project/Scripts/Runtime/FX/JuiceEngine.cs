@@ -41,6 +41,7 @@ namespace DeadCells.FX
         public Material textMaterial;       // DeadCells/PixelSprite
 
         ParticleSystem sparks, flash, droplets, dust, embers, cells;
+        ParticleSystem streaks, ring, smoke, flames, bubbles, drips, frost, debris, glints;
         readonly List<DamageNumber> numbers = new List<DamageNumber>();
         float stopUntil;
         Coroutine stopRoutine;
@@ -62,6 +63,15 @@ namespace DeadCells.FX
             dust = FxLibrary.Create("FX_Dust", transform, dustMaterial, FxLibrary.Dust);
             embers = FxLibrary.Create("FX_Embers", transform, additiveMaterial, FxLibrary.Embers);
             cells = FxLibrary.Create("FX_Cells", transform, flashMaterial, FxLibrary.Cells);
+            streaks = FxLibrary.Create("FX_Streaks", transform, additiveMaterial, FxLibrary.Streaks);
+            ring = FxLibrary.Create("FX_Ring", transform, flashMaterial, FxLibrary.Ring);
+            smoke = FxLibrary.Create("FX_Smoke", transform, dustMaterial, FxLibrary.Smoke);
+            flames = FxLibrary.Create("FX_Flames", transform, additiveMaterial, FxLibrary.Flames);
+            bubbles = FxLibrary.Create("FX_Bubbles", transform, alphaMaterial, FxLibrary.Bubbles);
+            drips = FxLibrary.Create("FX_Drips", transform, alphaMaterial, FxLibrary.Drips);
+            frost = FxLibrary.Create("FX_Frost", transform, additiveMaterial, FxLibrary.Frost);
+            debris = FxLibrary.Create("FX_Debris", transform, alphaMaterial, FxLibrary.Debris);
+            glints = FxLibrary.Create("FX_Glints", transform, flashMaterial, FxLibrary.Glints);
             if (textMaterial != null)
                 textMaterial.mainTexture = UI.PixelFont.Atlas;
         }
@@ -166,6 +176,34 @@ namespace DeadCells.FX
         {
             Emit(cells, position, Vector2.up, count, new Color(0.45f, 1.6f, 2.6f, 1f));
         }
+
+        /// <summary>Speed lines radiating from a big hit (crits, kills, parries).</summary>
+        public void ImpactStreaks(Vector3 position, Color color, int count = 10) => Emit(streaks, position, Vector2.up, count, color);
+
+        /// <summary>An expanding ring of light: `size` is its final diameter in metres.</summary>
+        public void Ring(Vector3 position, Color color, float size = 3f)
+        {
+            if (ring == null)
+                return;
+            ring.transform.position = position + Vector3.back * 0.2f;
+            ring.Emit(new ParticleSystem.EmitParams { startColor = color, startSize = size * 0.25f, position = position + Vector3.back * 0.2f,
+                applyShapeToPosition = false }, 1);
+        }
+
+        public void Smoke(Vector3 position, int count, Color? color = null) =>
+            Emit(smoke, position, Vector2.up, count, color ?? new Color(0.22f, 0.2f, 0.24f, 0.7f));
+
+        public void Flames(Vector3 position, int count) => Emit(flames, position, Vector2.up, count, new Color(4f, 2.2f, 0.7f, 1f));
+
+        public void Bubbles(Vector3 position, int count, Color color) => Emit(bubbles, position, Vector2.up, count, color);
+
+        public void Drips(Vector3 position, int count, Color color) => Emit(drips, position, Vector2.down, count, color);
+
+        public void Frost(Vector3 position, int count) => Emit(frost, position, Vector2.up, count, new Color(1.4f, 2.2f, 3.2f, 1f));
+
+        public void Debris(Vector3 position, Vector2 direction, int count, Color color) => Emit(debris, position, direction, count, color);
+
+        public void Glints(Vector3 position, int count, Color color) => Emit(glints, position, Vector2.up, count, color);
 
         /// <summary>Ground-slam shockwave: dust both ways along the floor plus sparks upward.</summary>
         public void SlamWave(Vector3 position, float radius)

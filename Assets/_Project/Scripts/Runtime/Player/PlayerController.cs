@@ -527,6 +527,7 @@ namespace DeadCells.Player
                 squash.Punch(new Vector2(0.85f, 1.2f));
                 squash.Spin(-360f, 0.32f); // inside the mirrored facing pivot: always a forward flip
                 JuiceEngine.Instance?.Embers(FeetPosition + Vector3.up * 0.2f, 10, new Color(1.6f, 2.6f, 3.2f));
+                JuiceEngine.Instance?.Ring(FeetPosition + Vector3.up * 0.2f, new Color(1f, 1.8f, 2.4f) * 0.7f, 1.6f);
                 JuiceEngine.Instance?.Dust(FeetPosition, Vector2.down, 3);
                 anim.Restart("Jump_Rise", 0.02f);
                 Audio.Sfx.Play("player.double_jump", FeetPosition);
@@ -789,6 +790,8 @@ namespace DeadCells.Player
             if (juice != null)
             {
                 juice.SlamWave(FeetPosition, poundRadius);
+                juice.Ring(FeetPosition + Vector3.up * 0.3f, new Color(1.6f, 1.4f, 1.1f), poundRadius * 2.2f);
+                juice.Debris(FeetPosition, Vector2.up, 10, new Color(0.35f, 0.36f, 0.4f));
                 juice.Shake(Vector2.down, 0.9f);
                 juice.HitStop(0.07f);
             }
@@ -842,6 +845,7 @@ namespace DeadCells.Player
                 // No hit-stop when hurt: freezing the whole frame reads as a dropped frame.
                 juice.Shake(info.knockback, 0.55f);
                 juice.HitSparks(transform.position + Vector3.up * 1.1f, info.knockback, new Color(2.2f, 0.4f, 0.4f), 0.6f);
+                juice.ImpactStreaks(transform.position + Vector3.up * 1.1f, new Color(2.6f, 0.4f, 0.35f), 7);
                 juice.DamagePopup(transform.position + Vector3.up * 2.1f, info.amount, false, new Color(1f, 0.35f, 0.3f));
             }
             if (result != DamageResult.Killed)

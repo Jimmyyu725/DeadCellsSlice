@@ -30,7 +30,7 @@ namespace DeadCells.Run
         public override void Interact(PlayerController player)
         {
             Runes.Grant(rune);
-            Audio.Sfx.Play("pickup.blueprint");
+            Audio.Sfx.Play("rune.pickup");
             JuiceEngine.Instance?.Embers(transform.position + Vector3.up * 1.2f, 50, Runes.ColorOf(rune));
             GameHUD.Instance?.ShowTitle(Loc.Get($"rune.{rune}.name"), Loc.Get($"rune.{rune}.desc"), Runes.ColorOf(rune) / 3f);
             Destroy(gameObject);

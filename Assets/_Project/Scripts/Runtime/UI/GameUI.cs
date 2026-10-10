@@ -538,7 +538,7 @@ namespace DeadCells.UI
                         if (run.mutations.Count < Mutations.Slots)
                         {
                             Mutations.Take(mu.id);
-                            Audio.Sfx.Play("pickup.blueprint");
+                            Audio.Sfx.Play("mutation");
                             menu.CloseAll();
                             return;
                         }
@@ -549,7 +549,7 @@ namespace DeadCells.UI
                             replace.Add(MenuItem.Button(() => Loc.Get($"mutation.{c}.name"), () =>
                             {
                                 Mutations.Take(mu.id, c);
-                                Audio.Sfx.Play("pickup.blueprint");
+                                Audio.Sfx.Play("mutation");
                                 menu.CloseAll();
                             }, () => Loc.Get($"mutation.{c}.desc")));
                         }

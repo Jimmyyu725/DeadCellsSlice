@@ -279,6 +279,7 @@ namespace DeadCells.Run
             if (after > before)
             {
                 GameHUD.Instance?.Toast(Loc.Get(after >= Difficulty.MalaiseMax ? "hud.malaise_full" : "hud.malaise_up", after), new Color(0.75f, 1f, 0.4f));
+                Audio.Sfx.Play("malaise.up");
                 FX.JuiceEngine.Instance?.Embers(player.transform.position + Vector3.up, 16, new Color(1.2f, 2.6f, 0.4f));
             }
             if (Run.malaise >= Difficulty.MalaiseMax && !Cheats.GodMode)
@@ -423,6 +424,7 @@ namespace DeadCells.Run
                 rimLight.intensity = def.rimIntensity;
             }
             ambient?.Apply(def.motesA, def.motesB, def.embersA, def.embersB, def.rainUp);
+            ambient?.ApplySpecial(def.ambientSpecial);
         }
 
         /// <summary>Exit door used (`variant`: the passage's branch door).</summary>

@@ -58,6 +58,7 @@ namespace DeadCells.Core
         public string armoryFilter = "";
         public bool jumpTest;
         public bool blockTest;
+        public bool fxTest;
         public bool blockInBiome;
         public int runSeed;
         public Vector2Int climbAt = new Vector2Int(-1, -1);
@@ -133,6 +134,7 @@ namespace DeadCells.Core
                     case "-autoplayArmoryFilter": d.armoryFilter = next ?? ""; break;
                     case "-autoplayJumpTest": d.jumpTest = true; break;
                     case "-autoplayBlockTest": d.blockTest = true; break;
+                    case "-autoplayFxTest": d.fxTest = true; break;
                     case "-autoplayBlockBiome": d.blockTest = true; d.blockInBiome = true; break;
                     case "-autoplayRunSeed": int.TryParse(next, out d.runSeed); break;
                     case "-autoplayClimbAt":
@@ -265,6 +267,12 @@ namespace DeadCells.Core
                         skipEvery = 0f;
                         StartCoroutine(ClimbAt(rm, climbAt));
                         climbAt = new Vector2Int(-1, -1);
+                    }
+                    if (fxTest && rm.InPassage)
+                    {
+                        fxTest = false;
+                        skipEvery = 0f;
+                        StartCoroutine(FxTest(rm));
                     }
                     if (blockTest && rm.InPassage != blockInBiome)
                     {
@@ -760,6 +768,52 @@ namespace DeadCells.Core
             log.WriteLine($"[{Elapsed:F1}] block test frames otherwise: {Stats(far)}");
             log.WriteLine($"[{Elapsed:F1}] block test screen {Screen.width}x{Screen.height}");
             log.WriteLine($"[{Elapsed:F1}] block test ({blockShield}): blocks={blocks} parries={parries} frames={frames} frozenFrames={frozen} frozen={frozenTime * 1000f:F0}ms slowFrames={slow} worst={worst * 1000f:F1}ms");
+        }
+
+        /// <summary>Visual check of the particle work: statuses on a dummy, item glows, rings and streaks.</summary>
+        System.Collections.IEnumerator FxTest(RunManager rm)
+        {
+            yield return new WaitForSecondsRealtime(2f);
+            var p = PlayerController.Main;
+            Cheats.SetGodMode(true);
+            overrideInput = new InputFrame();
+            var zombie = rm.biomes[0].ground.Select(e => e.prefab).FirstOrDefault(g => g != null && g.name.Contains("Zombie"));
+            var go = Instantiate(zombie, p.transform.position + Vector3.right * 3f, Quaternion.identity, rm.EntityParent);
+            var enemy = go.GetComponent<EnemyBase>();
+            enemy.Configure(0, false);
+            enemy.Health.maxHealth = 1e6f;
+            enemy.Health.SetCurrent(1e6f);
+            var status = go.GetComponent<Combat.StatusEffects>();
+            foreach (var e in new[] { Items.SkillEffect.Fire, Items.SkillEffect.Poison, Items.SkillEffect.Bleed, Items.SkillEffect.Ice, Items.SkillEffect.Oil })
+            {
+                status.Apply(e, 3f);
+                if (e == Items.SkillEffect.Poison || e == Items.SkillEffect.Bleed)
+                    for (int k = 0; k < 4; k++)
+                        status.Apply(e, 3f);
+                yield return new WaitForSeconds(0.9f);
+                Capture("fx_status_" + e.ToString().ToLowerInvariant());
+                yield return new WaitForSeconds(2.4f);
+            }
+            var juice = FX.JuiceEngine.Instance;
+            Vector3 c = go.transform.position + Vector3.up;
+            juice.ImpactStreaks(c, new Color(3f, 2.4f, 1f), 14);
+            juice.Ring(c, new Color(3f, 2.4f, 0.9f), 3.5f);
+            juice.Smoke(c, 5);
+            juice.Debris(c, Vector2.up, 10, new Color(0.38f, 0.4f, 0.46f));
+            yield return new WaitForSeconds(0.08f);
+            Capture("fx_impact");
+            Destroy(go);
+            var db = Items.ItemDatabase.Instance;
+            var rusty = db.Get("melee_rusty");
+            for (int q = 0; q <= 3; q++)
+            {
+                var drop = Instantiate(WorldPrefabs.Instance.itemDrop, p.transform.position + new Vector3(2f + 2.2f * q, 0f, 0.3f), Quaternion.identity, rm.EntityParent);
+                drop.GetComponent<ItemPickup>().Setup(Items.ItemForge.Build(rusty, q, q > 0 ? new[] { Items.Affix.Damage } : new Items.Affix[0]), 0);
+            }
+            yield return new WaitForSeconds(1.5f);
+            Capture("fx_item_quality");
+            log.WriteLine($"[{Elapsed:F1}] fx test done");
+            overrideInput = null;
         }
 
         /// <summary>Test hook: measure single and double jump heights from flat floor.</summary>

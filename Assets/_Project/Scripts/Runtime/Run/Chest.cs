@@ -115,7 +115,7 @@ namespace DeadCells.Run
                 juice?.Embers(shroud.transform.position + Vector3.up * 0.4f, 60, new Color(2.2f, 0.9f, 3.4f));
                 Destroy(shroud);
             }
-            Audio.Sfx.Play("hazard.sorrow", transform.position);
+            Audio.Sfx.Play("curse", transform.position);
             int depth = rm != null ? rm.BiomeDepth : 0;
             Loot.DropGold(mouth, Mathf.RoundToInt(Random.Range(120, 180) * (1f + 0.6f * depth) * Difficulty.RewardMultiplier));
             Loot.DropRandomItem(mouth + Vector3.right * 0.8f, depth + 2);

@@ -1,3 +1,14 @@
+# 0.6.1 | 2026-10-11 | Sound, particles and feel fixes
+- New soundtrack closer to the original's Celtic-folk-meets-rock style: all 9 tracks rewritten with synthesised distorted and acoustic guitars, picked bass, fiddle, tin whistle, piano, spiccato strings and a full drum kit (Oubliette, Promenade, Ossuary, a 6/8 jig for the Stilt Village, Clock Lung, passage, boss, menu, death)
+- Combat sounds rebuilt: swings with a metallic edge; hits layered from a low thump, crunch and a wet splat; crits ring; blocks clang; parries sing; new kills, hurts, jumps, landings, rolls, gold, cells, bows and explosions
+- New sounds for secret walls, runes, curses, the timed door chime, mutations, vines, malaise, and for catching fire, freezing, poison and bleeding
+- New particles: speed lines and rings on crits and kills, explosion smoke and debris, flames on burning enemies, poison bubbles, blood and oil drips, frost crystals, shock sparks, ground-pound rings, a double-jump ring, red lines when hurt
+- Dropped gear glows and sparkles in its quality colour (legendaries shed gold motes); gold and cells leave a glittering trail as they fly to you
+- Area ambience: drips in the Oubliette and passages, fireflies in the Promenade and Stilt Village, spores in the Ossuary and Toxic Sewers, drifting ash in the Clock Lung and Ramparts, stardust in the Observatory
+- Fix: zombie attacks looked like dropped frames - the swing now moves over several frames and the wind-up trembles instead of freezing; getting hit or blocking no longer freezes the frame, parries keep a short one
+- Fix: tapped jumps were too short to climb shafts; a tap now clears a 3-tile step
+- Fix: shots parried back by the shield could be bounced back again by monks
+
 # 0.6 | 2026-10-10 | The original's systems
 - Three-colour scrolls: Brutality (red) / Tactics (purple) / Survival (green), pick one of two; every weapon has a colour and scales with that level; Survival gives the most health
 - Item quality: normal, +, ++ and Legendary, with 21 random affixes (bleed, oil, ignite, freeze, crit damage, lifesteal, extra projectile, kill bursts...); the item card shows quality colour and affixes
