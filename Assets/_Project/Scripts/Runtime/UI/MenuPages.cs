@@ -100,6 +100,30 @@ namespace DeadCells.UI
             return page;
         }
 
+        /// <summary>Update log: versions on the left, the selected version's notes on the right.</summary>
+        public static MenuPage Changelog(MenuPanel panel)
+        {
+            var page = new MenuPage
+            {
+                title = () => Loc.Get("changelog.title"),
+                body = () => Loc.Get("changelog.body"),
+                visibleRows = 9,
+                sideDescription = true,
+            };
+            foreach (var e in Meta.Changelog.Entries())
+            {
+                var entry = e;
+                page.Add(new MenuItem
+                {
+                    label = () => $"v{entry.version}  {entry.title}",
+                    value = () => entry.date.Length >= 10 ? entry.date.Substring(5) : entry.date,
+                    description = () => $"v{entry.version}  {entry.title}\n{entry.date}\n\n{entry.notes}",
+                });
+            }
+            page.Add(MenuItem.Button(() => Loc.Get("menu.back"), panel.Pop));
+            return page;
+        }
+
         public static MenuPage Cheats(MenuPanel panel)
         {
             bool inRun = RunManager.Instance != null;

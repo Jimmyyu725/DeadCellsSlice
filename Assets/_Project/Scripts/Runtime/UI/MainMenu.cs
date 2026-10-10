@@ -22,6 +22,7 @@ namespace DeadCells.UI
         int newBossCells;
 
         static SaveData Data => SaveSystem.Data;
+        string version = "";
 
         void Start()
         {
@@ -29,6 +30,7 @@ namespace DeadCells.UI
             GamePause.Set(false);
             GameInput.GameplayEnabled = true;
             Loc.Current = Data.settings.language;
+            version = Changelog.Latest;
             MenuPages.ApplyDisplay();
             Audio.Music.Play("music.menu", 1.2f);
             Audio.Music.Ambience(null, 1.2f);
@@ -58,6 +60,7 @@ namespace DeadCells.UI
             page.Add(MenuItem.Button(() => Loc.Get("menu.continue"), Continue, ContinueInfo, () => Data.run.active));
             page.Add(MenuItem.Button(() => Loc.Get("menu.new_game"), () => menu.Push(NewGamePage())));
             page.Add(MenuItem.Button(() => Loc.Get("menu.achievements"), () => menu.Push(MenuPages.Achievements(menu))));
+            page.Add(MenuItem.Button(() => Loc.Get("menu.changelog"), () => menu.Push(MenuPages.Changelog(menu))));
             page.Add(MenuItem.Button(() => Loc.Get("menu.options"), () => menu.Push(MenuPages.Options(menu))));
             page.Add(MenuItem.Button(() => Loc.Get("menu.cheats"), () => menu.Push(MenuPages.Cheats(menu)), () => Loc.Get("menu.cheat_code_hint"), () => Cheats.Unlocked));
             page.Add(MenuItem.Button(() => Loc.Get("menu.quit"), Quit));
@@ -153,7 +156,7 @@ namespace DeadCells.UI
         void Update()
         {
             var s = Data.stats;
-            info.Text = Loc.Get("menu.save_info", s.runs, s.wins, s.deaths, Achievements.Count, Achievements.All.Length);
+            info.Text = Loc.Get("menu.save_info", s.runs, s.wins, s.deaths, Achievements.Count, Achievements.All.Length) + "   v" + version;
             if (!Cheats.Unlocked && MenuInput.Typed.EndsWith(Cheats.Code))
             {
                 Cheats.UnlockMenu();
@@ -183,6 +186,10 @@ namespace DeadCells.UI
                 menu.Push(MenuPages.Achievements(menu));
                 yield return new WaitForSecondsRealtime(0.6f);
                 ap.Capture("menu_achievements");
+                menu.Pop();
+                menu.Push(MenuPages.Changelog(menu));
+                yield return new WaitForSecondsRealtime(0.6f);
+                ap.Capture("menu_changelog");
                 menu.Pop();
                 menu.Push(MenuPages.Cheats(menu));
                 yield return new WaitForSecondsRealtime(0.6f);

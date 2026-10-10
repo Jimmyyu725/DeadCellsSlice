@@ -1,0 +1,45 @@
+# 0.4.1 | 2026-10-10 | Update log
+- New "Update log" entry in the main menu and the pause menu, listing every version's changes
+- The current version is shown in the bottom-right corner of the main menu
+
+# 0.4 | 2026-10-10 | Double jump and sound
+- Double jump: press jump again in mid-air for a forward flip; air attack recovery can cancel into it
+- Sound system: 80 synthesized effects for footsteps, jumps, rolls, swings, hits, crits, enemy warnings, pickups, chests, teleports and menus
+- 8 looping music tracks: main menu, five areas, the sluice passage and the boss fight, plus a death theme
+- 6 ambience beds: dripping water, wind, the ossuary drone, waves and rain, clockwork ticking, the passage stream
+- Boss music starts behind the boss gate and hands back to the area music after the win
+- Separate music and sound effect volume in Options; music ducks while paused
+
+# 0.3 | 2026-10-10 | Six new weapons
+- New weapons: Bell-Breaker, Pendulum Rapier, Tide Scythe, Chain Flail, Gravedigger's Shovel and Fishbone Crossbow, each with its own model, moveset and pixel icon
+- New crit rules: within 1.5 s after a roll; targets below 35% health
+- The camera sits further back, showing about 30% more of the level
+- Longer enemy warnings (!): melee enemies hold their wind-up, fishers crouch before leaping, enemies hesitate when they first spot you
+- Hold the attack button to keep attacking; bows keep firing too
+- A newly picked-up weapon is ready at once instead of inheriting the old cooldown
+
+# 0.2.1 | 2026-10-10 | Level and stability fixes
+- Removed one-way platforms that could trap you in pits
+- Jump height raised to 3.7 m so three-tile steps are reliable
+- Shaft platforms are evenly spaced and no longer stack on the floor
+- Fixed the frozen screen after choosing Retry on the death screen
+- The prologue plays on the first run or a menu New Game only, never on Retry
+- "Back to nearest teleporter" in the pause menu gets you out if you are stuck
+
+# 0.2 | 2026-10-10 | The full game
+- Main menu: Continue, New Game, Achievements, Options, Cheats, Quit; switch between Chinese and English at any time
+- Five areas: the Oubliette, the Promenade, the Ossuary, the Drowned-Bell Stilt Village and the Clockmaker's Lung, linked by sluice passages
+- Two bosses: the Royal Guardian; the Time Keeper (three phases and "Rewind Sixty Seconds")
+- Levels assembled from 46 room templates; a fog-of-war map and teleport statues
+- Difficulty: Easy / Normal / Hard, with Boss Cells unlocked by winning
+- Saves, the merchant, the Collector and blueprints, 21 achievements, a cheat menu (type CHURN in the main menu)
+- Story: prologue, area introductions, 13 broken tablets, NPC and boss lines, an ending
+- Gear: cleaver, rusty sword, broadsword, tide spear, twin daggers, frontline shield, spiked bow and three skills
+
+# 0.1 | 2026-10-10 | Vertical slice
+- The Beheaded: modelled, rigged and animated (11 clips) by Blender scripts
+- Toon shading and pixelation with pixel-grid camera snapping for smooth scrolling
+- Combat feel: hit-stop, screen shake, squash and stretch, slash trails and sparks
+- Three-hit combos, dodge roll with invincibility, ground slam, automatic ledge climb
+- The first enemies and a playable dungeon
+- A test bot that pathfinds, fights, captures frames and logs frame rates

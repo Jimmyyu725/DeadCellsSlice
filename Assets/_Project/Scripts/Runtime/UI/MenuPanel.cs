@@ -39,6 +39,8 @@ namespace DeadCells.UI
         public bool canBack = true;
         public int visibleRows = 9;
         public Action<MenuPage> onUpdate;
+        [Tooltip("Show the selected item's description in a large panel on the right instead of the footer.")]
+        public bool sideDescription;
 
         public MenuPage Add(MenuItem item)
         {
@@ -59,7 +61,8 @@ namespace DeadCells.UI
         readonly List<MenuPage> stack = new List<MenuPage>();
         Canvas canvas;
         Image dim, column;
-        UILabel title, body, footer, hint, scrollUp, scrollDown;
+        UILabel title, body, footer, hint, scrollUp, scrollDown, side;
+        Image sidePanel;
         RectTransform rowsRoot;
         readonly List<(RectTransform rt, Image bar, UILabel label, UILabel value)> rows = new List<(RectTransform, Image, UILabel, UILabel)>();
         int scroll;
@@ -102,6 +105,10 @@ namespace DeadCells.UI
             scrollDown = UIKit.Label("ScrollDown", rowsRoot, new Vector2(0f, 1f), new Vector2(330f, 0f), new Vector2(60f, 30f), TextAnchor.MiddleCenter, UIKit.TextDim, 3f);
             scrollDown.Text = "v";
             footer = UIKit.Label("Footer", root, new Vector2(0f, 0f), new Vector2(120f, 120f), new Vector2(680f, 160f), TextAnchor.LowerLeft, UIKit.TextDim, UIKit.U, UILabel.Style.Body, 26);
+            sidePanel = UIKit.Box("SidePanel", root, new Vector2(1f, 1f), new Vector2(-70f, -230f), new Vector2(960f, 790f), UIKit.Panel, new Vector2(1f, 1f));
+            UIKit.Box("SideEdge", sidePanel.transform, new Vector2(0f, 0.5f), Vector2.zero, new Vector2(3f, 790f), new Color(0.35f, 0.22f, 0.55f, 0.8f), new Vector2(0f, 0.5f));
+            side = UIKit.Label("Side", sidePanel.transform, new Vector2(0f, 1f), new Vector2(50f, -40f), new Vector2(870f, 720f), TextAnchor.UpperLeft, UIKit.TextBright, UIKit.U, UILabel.Style.Body, 27, new Vector2(0f, 1f));
+            sidePanel.gameObject.SetActive(false);
             hint = UIKit.Label("Hint", root, new Vector2(0f, 0f), new Vector2(120f, 50f), new Vector2(700f, 30f), TextAnchor.MiddleLeft, new Color(0.5f, 0.55f, 0.62f), 2f);
         }
 
@@ -320,7 +327,11 @@ namespace DeadCells.UI
             scrollDown.gameObject.SetActive(scroll + visible < n);
             scrollDown.RectTransform.anchoredPosition = new Vector2(330f, -visible * RowH - 6f);
             var selItem = n > 0 ? page.items[Mathf.Clamp(page.selected, 0, n - 1)] : null;
-            footer.Text = selItem?.description != null ? selItem.description() : "";
+            string desc = selItem?.description != null ? selItem.description() : "";
+            sidePanel.gameObject.SetActive(page.sideDescription);
+            footer.Text = page.sideDescription ? "" : desc;
+            if (page.sideDescription)
+                side.Text = desc;
             hint.Text = Loc.Get("menu.nav_hint");
         }
     }

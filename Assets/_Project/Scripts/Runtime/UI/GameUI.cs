@@ -172,6 +172,7 @@ namespace DeadCells.UI
             }));
             page.Add(MenuItem.Button(() => Loc.Get("menu.options"), () => menu.Push(MenuPages.Options(menu))));
             page.Add(MenuItem.Button(() => Loc.Get("menu.achievements"), () => menu.Push(MenuPages.Achievements(menu))));
+            page.Add(MenuItem.Button(() => Loc.Get("menu.changelog"), () => menu.Push(MenuPages.Changelog(menu))));
             if (Cheats.Unlocked)
                 page.Add(MenuItem.Button(() => Loc.Get("menu.cheats"), () => menu.Push(MenuPages.Cheats(menu))));
             page.Add(MenuItem.Button(() => Loc.Get("menu.unstuck"), () =>
