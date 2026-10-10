@@ -129,6 +129,7 @@ namespace DeadCells.UI
         void Begin()
         {
             RunManager.NewRun(newDifficulty, newBossCells);
+            RunManager.PrologueRequested = !Data.settings.skipIntro;
             SceneFlow.LoadGame();
         }
 

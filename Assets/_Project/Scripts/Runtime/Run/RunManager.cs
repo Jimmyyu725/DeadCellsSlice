@@ -72,6 +72,9 @@ namespace DeadCells.Run
             EnemyBase.Killed -= OnEnemyKilled;
         }
 
+        /// <summary>Set by the main menu's New Game so the next run opens with the prologue.</summary>
+        public static bool PrologueRequested;
+
         public static void NewRun(BaseDifficulty difficulty, int bossCells)
         {
             var d = SaveSystem.Data;
@@ -110,7 +113,12 @@ namespace DeadCells.Run
         {
             bool fresh = Run.time <= 0.01f && Run.biome == 0 && !Run.inPassage;
             var ui = GameUI.Instance;
-            if (fresh && ui != null && !AutoplayDirector.Active && (!SaveSystem.Data.settings.skipIntro || !SaveSystem.Data.meta.introSeen))
+            bool autoplaySkips = AutoplayDirector.Active && !AutoplayDirector.Instance.allowPrologue;
+            // The prologue plays on the very first run, and again only when the
+            // player starts a New Game from the menu with "skip intro" off; never on Retry.
+            bool wantPrologue = !SaveSystem.Data.meta.introSeen || PrologueRequested;
+            PrologueRequested = false;
+            if (fresh && ui != null && !autoplaySkips && wantPrologue)
             {
                 player.Freeze(true);
                 yield return ui.PlayPrologue();

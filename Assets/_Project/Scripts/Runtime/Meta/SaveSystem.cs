@@ -97,7 +97,10 @@ namespace DeadCells.Meta
     {
         static SaveData data;
 
-        public static string FilePath => Path.Combine(Application.persistentDataPath, "save.json");
+        // Test-bot runs keep their own file so they never touch the player's progress.
+        static readonly bool autoplay = System.Array.IndexOf(System.Environment.GetCommandLineArgs(), "-autoplay") >= 0;
+
+        public static string FilePath => Path.Combine(Application.persistentDataPath, autoplay ? "save_autoplay.json" : "save.json");
 
         public static SaveData Data
         {

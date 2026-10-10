@@ -121,5 +121,8 @@ zsh Tools/build_and_capture.sh check --seconds 120 -- -autoplayMenu -autoplayGod
 | `-autoplayWarpBoss` | 直接传送到 Boss 场地 |
 | `-autoplayUiTour`、`-autoplayDie` | 依次打开暂停、地图、收藏家、传送、商店购买、石板并截图；最后测试死亡画面 |
 | `-autoplayLang en\|zh`、`-autoplayNoVsync` | 语言、关闭垂直同步（测真实帧率） |
+| `-autoplayDieAfter N`、`-autoplayRetry`、`-autoplayPrologue` | 第 N 秒强制死亡、死亡画面选「重试」、允许播放序章（测试重开流程） |
+| `-autoplayShaftTest` | 每个区域把角色放到竖井底部，只靠跳跃爬出，记录成败 |
+| `-autoplayBreakPost` | 故意清空后处理配置，验证运行时自动重建 |
 
-日志 `autoplay_log.txt` 记录每个区域的房间数和敌人数、报错计数、平均帧率、最差帧、CPU/GPU 帧时间。
+测试机器人使用单独的存档 `save_autoplay.json`，不会改动玩家自己的 `save.json`。日志 `autoplay_log.txt` 记录每个区域的房间数和敌人数、报错计数、平均帧率、最差帧、CPU/GPU 帧时间。

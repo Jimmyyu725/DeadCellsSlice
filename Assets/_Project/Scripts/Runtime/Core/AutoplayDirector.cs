@@ -42,6 +42,15 @@ namespace DeadCells.Core
         public bool uiTour;
         public bool dieTest;
         public bool noVsync;
+        public bool shaftTest;
+        public bool retryOnDeath;
+        public bool allowPrologue;
+        public float dieAfter;
+        public bool breakPost;
+        bool diedOnce;
+        bool scripted;
+        float scriptJumpAt, scriptHoldUntil;
+        int shaftAreas;
         bool uiTourDone;
         string warpedArea = "";
 
@@ -89,6 +98,11 @@ namespace DeadCells.Core
                     case "-autoplayUiTour": d.uiTour = true; break;
                     case "-autoplayDie": d.dieTest = true; break;
                     case "-autoplayNoVsync": d.noVsync = true; break;
+                    case "-autoplayShaftTest": d.shaftTest = true; break;
+                    case "-autoplayRetry": d.retryOnDeath = true; break;
+                    case "-autoplayPrologue": d.allowPrologue = true; break;
+                    case "-autoplayDieAfter": float.TryParse(next, out d.dieAfter); break;
+                    case "-autoplayBreakPost": d.breakPost = true; break;
                     case "-autoplayDifficulty":
                         d.difficulty = next == "easy" ? BaseDifficulty.Easy : next == "hard" ? BaseDifficulty.Hard : BaseDifficulty.Normal;
                         break;
@@ -180,6 +194,13 @@ namespace DeadCells.Core
                     path.Clear();
                     log.WriteLine($"[{Elapsed:F1}] area {area} rooms={rm.Level.data.rooms.Count} size={rm.Level.data.width}x{rm.Level.data.height} enemies={rm.Level.enemies.Count} hp={player?.Health.Current:F0}");
                     Invoke(nameof(CaptureArea), 2.5f);
+                    if (breakPost)
+                        Invoke(nameof(BreakPost), 1.5f);
+                    if (shaftTest && !rm.InPassage && shaftAreas < 3)
+                    {
+                        shaftAreas++;
+                        StartCoroutine(ShaftTest(rm));
+                    }
                     if (uiTour && !uiTourDone && !rm.InPassage)
                     {
                         uiTourDone = true;
@@ -191,6 +212,16 @@ namespace DeadCells.Core
                     warpedArea = area;
                     WarpToBoss(rm);
                 }
+                if (dieAfter > 0f && !diedOnce && Elapsed > dieAfter && player != null)
+                {
+                    diedOnce = true;
+                    skipEvery = 0f;
+                    god = false;
+                    Cheats.SetGodMode(false);
+                    player.Health.InvulnerableUntil = 0f;
+                    log.WriteLine($"[{Elapsed:F1}] scripted death in {area}");
+                    player.Health.TakeDamage(new Combat.DamageInfo { amount = 99999f, source = gameObject, effect = -1 });
+                }
                 if (skipEvery > 0f && Elapsed - lastSkip > skipEvery && !rm.Transitioning)
                 {
                     lastSkip = Elapsed;
@@ -201,6 +232,66 @@ namespace DeadCells.Core
         }
 
         void CaptureArea() => Capture("area_" + lastArea.Replace('/', '_'));
+
+        /// <summary>Test hook: wipe the post profile's component list the way a bad reload did.</summary>
+        void BreakPost()
+        {
+            foreach (var v in FindObjectsByType<UnityEngine.Rendering.Volume>())
+                if (v.sharedProfile != null)
+                    v.sharedProfile.components = null;
+            log.WriteLine($"[{Elapsed:F1}] post profile components wiped");
+        }
+
+        /// <summary>Physics test: stand at the bottom of each shaft and climb out using jumps only.</summary>
+        System.Collections.IEnumerator ShaftTest(RunManager rm)
+        {
+            yield return new WaitForSecondsRealtime(2f);
+            var shafts = new List<RectInt>(rm.Level.data.shafts);
+            int tested = 0, passed = 0;
+            foreach (var r in shafts)
+            {
+                if (tested >= 5)
+                    break;
+                tested++;
+                var p = PlayerController.Main;
+                p.Teleport(new Vector3(r.xMin + 1.5f, r.yMin + 0.05f, 0f));
+                if (rm.vcam != null)
+                    rm.vcam.PreviousStateIsValid = false;
+                float best = p.transform.position.y;
+                float target = r.yMax + 0.9f;
+                float t0 = Time.time;
+                scripted = true;
+                scriptJumpAt = Time.time + 0.3f;
+                while (Time.time - t0 < 8f)
+                {
+                    best = Mathf.Max(best, p.transform.position.y);
+                    if (p.Grounded && p.transform.position.y >= target)
+                        break;
+                    yield return null;
+                }
+                scripted = false;
+                bool ok = p.Grounded && p.transform.position.y >= target;
+                if (ok)
+                    passed++;
+                log.WriteLine($"[{Elapsed:F1}] shaft x={r.xMin} y={r.yMin}..{r.yMax} climb {(ok ? "OK" : "FAIL")} best={best:F2} target={target:F2}");
+                Capture($"shaft_{rm.Current.id}_{tested}_{(ok ? "ok" : "fail")}");
+                yield return new WaitForSecondsRealtime(0.3f);
+            }
+            log.WriteLine($"[{Elapsed:F1}] shaft test {rm.Current.id}: {passed}/{tested}");
+        }
+
+        InputFrame ScriptedClimb(PlayerController player)
+        {
+            var f = new InputFrame();
+            if (player.Grounded && Time.time >= scriptJumpAt)
+            {
+                f.jumpPressed = true;
+                scriptHoldUntil = Time.time + 0.75f;
+                scriptJumpAt = Time.time + 0.95f;
+            }
+            f.jumpHeld = Time.time < scriptHoldUntil;
+            return f;
+        }
 
         /// <summary>Test hook: put the player at the entrance of this area's boss arena.</summary>
         void WarpToBoss(RunManager rm)
@@ -364,6 +455,8 @@ namespace DeadCells.Core
             var rm = RunManager.Instance;
             if (player == null || rm == null || rm.Level == null || rm.Transitioning)
                 return f;
+            if (scripted)
+                return ScriptedClimb(player);
             float dt = Time.deltaTime;
             attackTimer -= dt;
             skillTimer -= dt;

@@ -519,7 +519,7 @@ namespace DeadCells.UI
                 {
                     chosen = true;
                     menu.CloseAll();
-                    choose(false);
+                    choose(AutoplayDirector.Instance != null && AutoplayDirector.Instance.retryOnDeath);
                 }
                 yield return null;
             }

@@ -70,6 +70,7 @@ namespace DeadCells.EditorTools
             volume.isGlobal = true;
             volume.priority = 1;
             volume.sharedProfile = AssetDatabase.LoadAssetAtPath<VolumeProfile>(DCProjectSetup.PostProfilePath);
+            volume.gameObject.AddComponent<PostFx>();
 
             RenderSettings.ambientMode = AmbientMode.Flat;
             RenderSettings.ambientLight = new Color(0.06f, 0.11f, 0.14f);
