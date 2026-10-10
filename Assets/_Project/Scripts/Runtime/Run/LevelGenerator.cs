@@ -289,11 +289,20 @@ namespace DeadCells.Run
                 for (int sx = r.xMin; sx < r.xMax; sx++)
                 for (int sy = r.yMin; sy < r.yMax; sy++)
                     level.tiles[sx, sy] = Tile.Air;
-                // Climbing platforms every 3 rows below the upper opening.
-                for (int py = top + shift.y - 3; py > bottom + shift.y; py -= 3)
+                // Climbing platforms between the two openings, evenly spaced 2-3 rows
+                // apart (never adjacent: a platform one row up sits inside the body).
+                int low = bottom + shift.y, high = top + shift.y;
+                int gap = high - low;
+                int steps = Mathf.Max(1, Mathf.CeilToInt(gap / 3f));
+                int py = low;
+                for (int i = 0; i < steps - 1; i++)
+                {
+                    int remaining = high - py;
+                    py += Mathf.CeilToInt(remaining / (float)(steps - i));
                     for (int sx = r.xMin; sx < r.xMax; sx++)
                         if (py >= r.yMin && py < r.yMax)
                             level.tiles[sx, py] = Tile.OneWay;
+                }
             }
             ThinTeleporters(level, rng);
             return level;

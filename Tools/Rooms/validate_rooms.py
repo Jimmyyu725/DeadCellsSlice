@@ -212,6 +212,12 @@ def check(room):
             errs.append(f"'v' not on bottom row at {x},{y}")
         if ch in MARKERS_ON_FLOOR and not g.floor(x, y - 1):
             errs.append(f"marker {ch} at {x},{y} not on a floor")
+    # A one-way platform right on top of a floor/platform cuts through a
+    # standing player's chest and breaks the climb.
+    for (x, y), ch in g.c.items():
+        if ch in ONEWAY and g.at(x, y - 1) in SOLID | ONEWAY:
+            errs.append(f"platform at {x},{y} sits directly on a floor")
+            break
     if errs:
         return errs
 
