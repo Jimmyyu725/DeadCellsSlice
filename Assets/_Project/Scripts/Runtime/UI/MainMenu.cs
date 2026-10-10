@@ -78,7 +78,7 @@ namespace DeadCells.UI
             var run = Data.run;
             if (!run.active)
                 return "";
-            string area = run.inPassage ? Loc.Get("biome.passage.name") : AreaName(run.biome);
+            string area = run.inPassage ? Loc.Get("biome.passage.name") : run.trueEndRoute ? Loc.Get("biome.observatory.name") : AreaName(run.biome);
             return Loc.Get("menu.continue_info", area, Difficulty.Label(run.difficulty), UIKit.FormatTime(run.time));
         }
 
@@ -115,6 +115,12 @@ namespace DeadCells.UI
                 description = () => Data.meta.bossCellsUnlocked <= 0 ? Loc.Get("newgame.bosscells_locked") : BossCellText(),
                 enabled = () => Data.meta.bossCellsUnlocked > 0,
             });
+            page.Add(MenuItem.Option(() => Loc.Get("newgame.mode"), () => Loc.Get("mode." + newMode.ToString().ToLowerInvariant()), d =>
+            {
+                newMode = (RunMode)(((int)newMode + d + 4) % 4);
+            }, ModeText));
+            page.Add(MenuItem.Button(() => Loc.Get("newgame.custom"), () => menu.Push(CustomPage()), () => Loc.Get("newgame.custom.desc"),
+                () => newMode == RunMode.Custom));
             page.Add(MenuItem.Button(() => Loc.Get("newgame.start"), () =>
             {
                 if (Data.run.active)
@@ -126,16 +132,72 @@ namespace DeadCells.UI
             return page;
         }
 
+        RunMode newMode = RunMode.Normal;
+
+        string ModeText()
+        {
+            string desc = Loc.Get("mode." + newMode.ToString().ToLowerInvariant() + ".desc");
+            if (newMode == RunMode.Daily)
+            {
+                string today = System.DateTime.Now.ToString("yyyyMMdd");
+                float best = RunManager.DailyBest(today);
+                desc += "\n" + (best > 0f ? Loc.Get("mode.daily.best", UIKit.FormatTime(best)) : Loc.Get("mode.daily.none"));
+            }
+            if (newMode == RunMode.BossRush && !Achievements.Has("true_end"))
+                desc += "\n" + Loc.Get("mode.bossrush.locked_collector");
+            return desc;
+        }
+
+        MenuPage CustomPage()
+        {
+            var st = Data.settings;
+            var page = new MenuPage { title = () => Loc.Get("custom.title"), body = () => Loc.Get("custom.body") };
+            page.Add(MenuItem.Option(() => Loc.Get("custom.start_biome"), () => AreaName(st.customStartBiome), d =>
+            {
+                st.customStartBiome = (st.customStartBiome + d + 5) % 5;
+                SaveSystem.Save();
+            }));
+            page.Add(MenuItem.Option(() => Loc.Get("custom.all_items"), () => Loc.Get(st.customAllItems ? "options.on" : "options.off"), _ =>
+            {
+                st.customAllItems = !st.customAllItems;
+                SaveSystem.Save();
+            }, () => Loc.Get("custom.all_items.desc")));
+            page.Add(MenuItem.Option(() => Loc.Get("custom.enemy_health"), () => Mathf.RoundToInt(st.customEnemyHealth * 100f) + "%", d =>
+            {
+                float[] steps = { 0.5f, 0.75f, 1f, 1.5f, 2f, 3f };
+                int i = System.Array.IndexOf(steps, st.customEnemyHealth);
+                st.customEnemyHealth = steps[((i < 0 ? 2 : i) + d + steps.Length) % steps.Length];
+                SaveSystem.Save();
+            }));
+            page.Add(MenuItem.Option(() => Loc.Get("custom.gold"), () => st.customStartGold.ToString(), d =>
+            {
+                st.customStartGold = Mathf.Clamp(st.customStartGold + d * 250, 0, 5000);
+                SaveSystem.Save();
+            }));
+            page.Add(MenuItem.Option(() => Loc.Get("custom.scrolls"), () => Loc.Get(st.customScrolls ? "options.on" : "options.off"), _ =>
+            {
+                st.customScrolls = !st.customScrolls;
+                SaveSystem.Save();
+            }, () => Loc.Get("custom.scrolls.desc")));
+            page.Add(MenuItem.Button(() => Loc.Get("menu.back"), menu.Pop));
+            return page;
+        }
+
         string BossCellText()
         {
             int bc = newBossCells;
             string refill = bc switch { 0 => "100", 1 => newDifficulty == BaseDifficulty.Hard ? "50" : "100", 2 => "50", _ => "0" };
-            return Loc.Get("bosscells.desc", bc, 15 * bc, 20 * bc, refill);
+            string text = Loc.Get("bosscells.desc", bc, 15 * bc, 20 * bc, refill);
+            if (bc >= Difficulty.TrueEndBossCells)
+                text += "\n" + Loc.Get("bosscells.true_end");
+            if (bc >= Difficulty.MalaiseBossCells)
+                text += "\n" + Loc.Get("bosscells.malaise");
+            return text;
         }
 
         void Begin()
         {
-            RunManager.NewRun(newDifficulty, newBossCells);
+            RunManager.NewRun(newDifficulty, newBossCells, newMode);
             RunManager.PrologueRequested = !Data.settings.skipIntro;
             SceneFlow.LoadGame();
         }
@@ -180,22 +242,32 @@ namespace DeadCells.UI
                 menu.Push(NewGamePage());
                 yield return new WaitForSecondsRealtime(0.6f);
                 ap.Capture("menu_newgame");
+                yield return null;
+                yield return null;
                 menu.Pop();
                 menu.Push(MenuPages.Options(menu));
                 yield return new WaitForSecondsRealtime(0.6f);
                 ap.Capture("menu_options");
+                yield return null;
+                yield return null;
                 menu.Pop();
                 menu.Push(MenuPages.Achievements(menu));
                 yield return new WaitForSecondsRealtime(0.6f);
                 ap.Capture("menu_achievements");
+                yield return null;
+                yield return null;
                 menu.Pop();
                 menu.Push(MenuPages.Changelog(menu));
                 yield return new WaitForSecondsRealtime(0.6f);
                 ap.Capture("menu_changelog");
+                yield return null;
+                yield return null;
                 menu.Pop();
                 menu.Push(MenuPages.Cheats(menu));
                 yield return new WaitForSecondsRealtime(0.6f);
                 ap.Capture("menu_cheats");
+                yield return null;
+                yield return null;
                 menu.Pop();
                 yield return new WaitForSecondsRealtime(0.3f);
             }

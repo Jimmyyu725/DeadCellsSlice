@@ -28,6 +28,8 @@ namespace DeadCells.Run
         /// <summary>Branch routes: variants[i] replaces biomes[i] when taken from the passage before it (null = none).</summary>
         public BiomeDef[] variants = new BiomeDef[0];
         public BiomeDef passage;
+        /// <summary>The hidden area past the Time Keeper (2+ Boss Cells): the Collector waits there.</summary>
+        public BiomeDef observatory;
         public PlayerController player;
         public Transform levelRoot;
         public Camera cam;
@@ -88,11 +90,28 @@ namespace DeadCells.Run
         public Transform EntityParent => level != null ? level.root.transform.Find("Entities") : null;
         public int BiomeDepth => current != null ? current.depth : 0;
 
+        /// <summary>Boss Rush order: the three bosses' arenas.</summary>
+        BiomeDef[] RushBiomes => observatory != null && Achievements.Has("true_end")
+            ? new[] { biomes[2], biomes[4], observatory }
+            : new[] { biomes[2], biomes[4] };
+
+        /// <summary>The run's last step (after it: the ending).</summary>
+        bool FinalStep => Run.mode switch
+        {
+            RunMode.Daily => Run.biome >= 2,
+            RunMode.BossRush => Run.biome >= RushBiomes.Length - 1,
+            _ => Run.trueEndRoute || Run.biome >= biomes.Length - 1,
+        };
+
         /// <summary>The biome of the current story step (the variant when the branch was taken).</summary>
         public BiomeDef CurrentBiome
         {
             get
             {
+                if (Run.mode == RunMode.BossRush)
+                    return RushBiomes[Mathf.Clamp(Run.biome, 0, RushBiomes.Length - 1)];
+                if (Run.trueEndRoute && observatory != null)
+                    return observatory;
                 int i = Mathf.Clamp(Run.biome, 0, biomes.Length - 1);
                 return Run.variantRoute && i < variants.Length && variants[i] != null ? variants[i] : biomes[i];
             }
@@ -125,7 +144,7 @@ namespace DeadCells.Run
         /// <summary>Set by the main menu's New Game so the next run opens with the prologue.</summary>
         public static bool PrologueRequested;
 
-        public static void NewRun(BaseDifficulty difficulty, int bossCells)
+        public static void NewRun(BaseDifficulty difficulty, int bossCells, RunMode mode = RunMode.Normal)
         {
             var d = SaveSystem.Data;
             d.run = new RunState
@@ -142,10 +161,66 @@ namespace DeadCells.Run
             d.run.flaskCharges = MaxFlaskCharges;
             d.run.gold = d.meta.keptGold;
             d.meta.keptGold = 0;
+            d.run.mode = mode;
+            SetupMode(d.run, d.settings);
+            if (d.settings.assist)
+                d.run.cheatsUsed = true;   // assist runs do not earn achievements
             d.stats.runs++;
             Cheats.ResetToggles();
             Mutations.ResetRunState();
             SaveSystem.Save();
+        }
+
+        /// <summary>Mode-specific starting state (seed, gear, scrolls, start area).</summary>
+        static void SetupMode(RunState run, Settings settings)
+        {
+            var db = ItemDatabase.Instance;
+            switch (run.mode)
+            {
+                case RunMode.Daily:
+                {
+                    // Everyone gets the same levels and the same kit today.
+                    run.dailyDate = System.DateTime.Now.ToString("yyyyMMdd");
+                    run.seed = Mathf.Abs(run.dailyDate.GetHashCode() % 1000000007) + 1;
+                    run.bossCells = 0;
+                    run.difficulty = BaseDifficulty.Normal;
+                    var rng = new System.Random(run.seed);
+                    run.primary = PickId(db, rng, i => i.kind == ItemKind.Melee) ?? run.primary;
+                    run.secondary = PickId(db, rng, i => i.kind == ItemKind.Bow || i.kind == ItemKind.Shield) ?? "";
+                    run.skill1 = PickId(db, rng, i => i.kind == ItemKind.Skill) ?? "";
+                    run.cheatsUsed = false;
+                    break;
+                }
+                case RunMode.BossRush:
+                {
+                    // Straight to the arenas with a strong kit and scrolls already read.
+                    var rng = new System.Random(run.seed);
+                    run.primary = PickId(db, rng, i => i.kind == ItemKind.Melee && i.tier >= 2) ?? run.primary;
+                    run.primaryRoll = "2:0";
+                    run.secondary = PickId(db, rng, i => i.kind == ItemKind.Shield) ?? "";
+                    run.skill1 = PickId(db, rng, i => i.kind == ItemKind.Skill) ?? "";
+                    run.skill2 = PickId(db, rng, i => i.kind == ItemKind.Skill && i.id != run.skill1) ?? "";
+                    run.brutality = run.tactics = run.survival = 4;
+                    run.flaskCharges += 2;
+                    run.gold = 0;
+                    break;
+                }
+                case RunMode.Custom:
+                    run.biome = Mathf.Clamp(settings.customStartBiome, 0, 4);
+                    run.gold += Mathf.Max(0, settings.customStartGold);
+                    if (settings.customScrolls)
+                        run.brutality = run.tactics = run.survival = 2 * run.biome;
+                    run.cheatsUsed = true;   // custom runs do not earn achievements
+                    break;
+            }
+        }
+
+        static string PickId(ItemDatabase db, System.Random rng, System.Func<ItemDef, bool> filter)
+        {
+            if (db == null)
+                return null;
+            var pool = db.items.Where(i => i != null && i.kind != ItemKind.Amulet && filter(i)).ToList();
+            return pool.Count > 0 ? pool[rng.Next(pool.Count)].id : null;
         }
 
         void Start()
@@ -188,9 +263,30 @@ namespace DeadCells.Run
             {
                 Run.time += Time.unscaledDeltaTime;
                 SaveSystem.Data.stats.playTime += Time.unscaledDeltaTime;
+                UpdateMalaise(Time.deltaTime);
             }
             Interactable.Scan(player);
         }
+
+        /// <summary>Malaise (4+ Boss Cells): builds while you linger in a biome; at full it eats your health.</summary>
+        void UpdateMalaise(float dt)
+        {
+            if (!Difficulty.MalaiseActive || current == null || current.isPassage || player == null || player.Health.IsDead)
+                return;
+            int before = Difficulty.MalaiseStacks;
+            Run.malaise = Mathf.Min(Difficulty.MalaiseMax, Run.malaise + dt / Difficulty.MalaiseInterval);
+            int after = Difficulty.MalaiseStacks;
+            if (after > before)
+            {
+                GameHUD.Instance?.Toast(Loc.Get(after >= Difficulty.MalaiseMax ? "hud.malaise_full" : "hud.malaise_up", after), new Color(0.75f, 1f, 0.4f));
+                FX.JuiceEngine.Instance?.Embers(player.transform.position + Vector3.up, 16, new Color(1.2f, 2.6f, 0.4f));
+            }
+            if (Run.malaise >= Difficulty.MalaiseMax && !Cheats.GodMode)
+                player.Health.SetCurrent(Mathf.Max(1f, player.Health.Current - player.Health.maxHealth * 0.006f * dt));
+        }
+
+        /// <summary>Drinking the flask cures some Malaise.</summary>
+        public void CureMalaise(float stacks) => Run.malaise = Mathf.Max(0f, Run.malaise - stacks);
 
         void OnApplicationQuit()
         {
@@ -240,12 +336,16 @@ namespace DeadCells.Run
                 if (p != null)
                     Destroy(p.gameObject);
             current = def;
+            Run.assistReviveUsed = false;
             if (def.isPassage)
+            {
                 Run.mutationPicked = false; // a fresh mutation choice in every passage
+                Run.malaise = Mathf.Max(0f, Run.malaise - 2f);
+            }
             int index = def.isPassage ? 100 + Run.biome : Run.biome;
             int seed = Run.seed + index * 7919;
             LevelSeed = seed;
-            var data = LevelGenerator.Generate(def, seed);
+            var data = LevelGenerator.Generate(def, seed, Run.mode == RunMode.BossRush && !def.isPassage && !string.IsNullOrEmpty(def.bossTag) ? def.bossTag : null);
             level = LevelBuilder.Build(data, def, levelRoot, seed);
             ApplyAtmosphere(def);
             Audio.Music.ForBiome(def.id);
@@ -343,8 +443,19 @@ namespace DeadCells.Run
             Run.variantRoute = false;
             if (!Run.tookDamageThisBiome)
                 Achievements.Unlock("no_hit_biome");
-            if (Run.biome >= biomes.Length - 1)
+            if (FinalStep)
             {
+                // With enough Boss Cells the Time Keeper is not the end: the Observatory opens.
+                bool story = Run.mode == RunMode.Normal || Run.mode == RunMode.Custom;
+                if (story && !Run.trueEndRoute && observatory != null && Run.bossCells >= Difficulty.TrueEndBossCells)
+                {
+                    Run.trueEndRoute = true;
+                    Run.inPassage = true;
+                    Run.health = player.Health.Current;
+                    GameHUD.Instance?.Toast(Loc.Get("hud.observatory_open"), new Color(0.6f, 0.9f, 1f));
+                    StartCoroutine(Enter(passage, false));
+                    return;
+                }
                 StartCoroutine(Ending());
                 return;
             }
@@ -488,7 +599,27 @@ namespace DeadCells.Run
             transitioning = true;
             player.Freeze(true);
             var d = SaveSystem.Data;
-            Achievements.Unlock("timekeeper");
+            string kind = Run.mode == RunMode.Daily ? "daily" : Run.mode == RunMode.BossRush ? "rush" : Run.trueEndRoute ? "true" : "";
+            if (Run.mode == RunMode.Daily)
+            {
+                RecordDaily(Run.dailyDate, Run.time);
+                Achievements.Unlock("daily");
+                Outfits.Grant("daily");
+            }
+            else if (Run.mode == RunMode.BossRush)
+            {
+                Achievements.Unlock("boss_rush");
+                Outfits.Grant("boss_rush");
+            }
+            else
+                Achievements.Unlock("timekeeper");
+            if (Run.trueEndRoute)
+            {
+                Achievements.Unlock("true_end");
+                Outfits.Grant("true_end");
+                d.meta.trueEndSeen = true;
+            }
+            if (Run.bossCells >= 5 && Run.mode == RunMode.Normal) Achievements.Unlock("bc5");
             if (Run.bossCells >= 1) Achievements.Unlock("bc1");
             if (Run.bossCells >= 4) Achievements.Unlock("bc4");
             if (Run.bossCells >= 1) Outfits.Grant("bc1");
@@ -498,11 +629,14 @@ namespace DeadCells.Run
             // Beating the highest unlocked level unlocks the next Boss Cell.
             bool newCell = false;
             int next = Mathf.Min(Difficulty.MaxBossCells, Run.bossCells + 1);
-            if (Run.bossCells >= d.meta.bossCellsUnlocked && next > d.meta.bossCellsUnlocked)
+            // Boss Cells are earned by story wins (from 2 Boss Cells on, the Collector must fall).
+            bool earns = Run.mode == RunMode.Normal && (Run.bossCells < Difficulty.TrueEndBossCells || Run.trueEndRoute);
+            if (earns && Run.bossCells >= d.meta.bossCellsUnlocked && next > d.meta.bossCellsUnlocked)
             {
                 d.meta.bossCellsUnlocked = next;
                 newCell = true;
             }
+            Debug.Log($"[DC] ending kind='{kind}' mode={Run.mode} bc={Run.bossCells} newCell={newCell} unlocked={d.meta.bossCellsUnlocked} achievements={d.achievements.Count}");
             d.stats.wins++;
             if (d.stats.bestTime <= 0f || Run.time < d.stats.bestTime)
                 d.stats.bestTime = Run.time;
@@ -513,8 +647,32 @@ namespace DeadCells.Run
             Audio.Music.Play("music.menu", 2f);
             Audio.Music.Ambience(null, 2f);
             if (ui != null)
-                yield return ui.PlayEnding(newCell, summary.time, summary.kills, summary.gold, summary.diff, summary.cells);
+                yield return ui.PlayEnding(newCell, summary.time, summary.kills, summary.gold, summary.diff, summary.cells, kind);
             SceneFlow.LoadMenu();
+        }
+
+        static void RecordDaily(string date, float seconds)
+        {
+            var list = SaveSystem.Data.meta.dailyResults;
+            int i = list.FindIndex(e => e.StartsWith(date + ":"));
+            if (i >= 0)
+            {
+                if (float.TryParse(list[i].Substring(date.Length + 1), System.Globalization.NumberStyles.Float,
+                        System.Globalization.CultureInfo.InvariantCulture, out float best) && best <= seconds)
+                    return;
+                list.RemoveAt(i);
+            }
+            list.Add(date + ":" + seconds.ToString("0.0", System.Globalization.CultureInfo.InvariantCulture));
+        }
+
+        /// <summary>Best Daily Challenge time for a date (0 = not finished).</summary>
+        public static float DailyBest(string date)
+        {
+            foreach (var e in SaveSystem.Data.meta.dailyResults)
+                if (e.StartsWith(date + ":") && float.TryParse(e.Substring(date.Length + 1), System.Globalization.NumberStyles.Float,
+                        System.Globalization.CultureInfo.InvariantCulture, out float t))
+                    return t;
+            return 0f;
         }
 
         // --------------------------------------------------------------- death

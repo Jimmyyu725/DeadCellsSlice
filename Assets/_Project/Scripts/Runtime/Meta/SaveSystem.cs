@@ -5,6 +5,15 @@ using UnityEngine;
 
 namespace DeadCells.Meta
 {
+    /// <summary>Normal story run, the date-seeded Daily Challenge, a Custom run or the Boss Rush.</summary>
+    public enum RunMode
+    {
+        Normal,
+        Daily,
+        Custom,
+        BossRush,
+    }
+
     public enum BaseDifficulty
     {
         Easy,
@@ -25,6 +34,16 @@ namespace DeadCells.Meta
         [Range(0f, 1f)] public float sfxVolume = 0.85f;
         [Tooltip("Show area / seed / room / tile X-Y on the HUD and under the map cursor (bug reports).")]
         public bool showCoords;
+        // Assist mode (disables achievements while on).
+        public bool assist;
+        [Range(0.25f, 1f)] public float assistDamage = 0.5f;
+        public bool assistRevive = true;
+        // Custom mode options.
+        public int customStartBiome;
+        public bool customAllItems = true;
+        public float customEnemyHealth = 1f;
+        public int customStartGold = 500;
+        public bool customScrolls;
     }
 
     /// <summary>Survives death: unlocks bought from the Collector and boss-cell progress.</summary>
@@ -43,7 +62,9 @@ namespace DeadCells.Meta
         public string outfit = "prisoner";
         public List<string> outfitsUnlocked = new List<string>();
         public int vitalityLevel;         // +10% max HP per level (0..5)
-        public int bossCellsUnlocked;     // highest boss-cell level selectable (0..4)
+        public int bossCellsUnlocked;     // highest boss-cell level selectable (0..5)
+        public List<string> dailyResults = new List<string>();   // "yyyyMMdd:seconds" best per day
+        public bool trueEndSeen;
         public bool introSeen;
         public List<string> loreRead = new List<string>();
     }
@@ -58,6 +79,11 @@ namespace DeadCells.Meta
         public int biome;                 // index into the story biome order
         public bool inPassage;            // between biomes (Collector room)
         public bool variantRoute;         // the current biome is the branch (variant) route
+        public RunMode mode;
+        public bool trueEndRoute;         // past the Time Keeper with enough Boss Cells: the Observatory
+        public float malaise;             // 0..10 stacks (4+ Boss Cells)
+        public string dailyDate = "";
+        public bool assistReviveUsed;     // once per area
         public int seed;
         public float health = -1f;
         public int gold;

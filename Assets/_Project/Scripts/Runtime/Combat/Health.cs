@@ -69,6 +69,8 @@ namespace DeadCells.Combat
 
         /// <summary>Asked when a hit would kill; return true after restoring health to survive.</summary>
         public System.Func<bool> LethalSave;
+        /// <summary>Scales incoming damage (the player: assist mode and malaise).</summary>
+        public System.Func<float> IncomingMultiplier;
 
         public DamageResult TakeDamage(DamageInfo info)
         {
@@ -90,6 +92,7 @@ namespace DeadCells.Combat
                     info.amount *= blockMultiplier;
             }
 
+            info.amount *= IncomingMultiplier != null ? IncomingMultiplier() : 1f;
             current = Mathf.Max(0f, current - info.amount);
             if (current <= 0f && LethalSave != null && LethalSave())
             {

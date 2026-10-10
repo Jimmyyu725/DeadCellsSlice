@@ -163,7 +163,7 @@ namespace DeadCells.UI
             statB = UIKit.Label("StatB", root, bl, new Vector2(18 * u, 46 * u), new Vector2(20 * u, 7 * u), TextAnchor.MiddleLeft, ScrollPickup.Tint(ItemColor.Brutality), 2.5f);
             statT = UIKit.Label("StatT", root, bl, new Vector2(38 * u, 46 * u), new Vector2(20 * u, 7 * u), TextAnchor.MiddleLeft, ScrollPickup.Tint(ItemColor.Tactics), 2.5f);
             statS = UIKit.Label("StatS", root, bl, new Vector2(58 * u, 46 * u), new Vector2(20 * u, 7 * u), TextAnchor.MiddleLeft, ScrollPickup.Tint(ItemColor.Survival), 2.5f);
-            curseText = UIKit.Label("Curse", root, bl, new Vector2(80 * u, 46 * u), new Vector2(80 * u, 7 * u), TextAnchor.MiddleLeft, new Color(0.85f, 0.45f, 1f), 2.5f);
+            curseText = UIKit.Label("Curse", root, bl, new Vector2(80 * u, 46 * u), new Vector2(160 * u, 7 * u), TextAnchor.MiddleLeft, new Color(0.85f, 0.45f, 1f), 2.5f);
             mutationText = UIKit.Label("Mutations", root, bl, new Vector2(18 * u, 54 * u), new Vector2(200 * u, 7 * u), TextAnchor.MiddleLeft, new Color(0.75f, 0.85f, 0.75f, 0.85f), 2f, UILabel.Style.Body, 22);
 
             // Gold + cells (bottom-right).
@@ -361,7 +361,11 @@ namespace DeadCells.UI
             statB.Text = run.brutality.ToString();
             statT.Text = run.tactics.ToString();
             statS.Text = run.survival.ToString();
-            curseText.Text = run.curse > 0 ? Loc.Get("hud.curse", run.curse) : "";
+            string curse = run.curse > 0 ? Loc.Get("hud.curse", run.curse) : "";
+            int malaise = Difficulty.MalaiseStacks;
+            string sick = Difficulty.MalaiseActive ? Loc.Get("hud.malaise", malaise, Mathf.RoundToInt(Difficulty.MalaiseMax)) : "";
+            curseText.Text = curse.Length > 0 && sick.Length > 0 ? curse + "   " + sick : curse + sick;
+            curseText.Color = curse.Length > 0 ? new Color(0.85f, 0.45f, 1f) : new Color(0.7f, 1f, 0.35f);
             mutationText.Text = MutationLine(run);
             flaskText.Text = $"x{run.flaskCharges}";
 

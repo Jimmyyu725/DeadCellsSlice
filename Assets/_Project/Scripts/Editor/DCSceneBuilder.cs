@@ -215,6 +215,7 @@ namespace DeadCells.EditorTools
             rm.biomes = new[] { Biome("Oubliette"), Biome("Promenade"), Biome("Ossuary"), Biome("StiltVillage"), Biome("ClockLung") };
             rm.passage = Biome("Passage");
             rm.variants = new[] { null, Biome("ToxicSewers"), null, Biome("Ramparts"), null };
+            rm.observatory = Biome("Observatory");
             rm.player = player;
             rm.levelRoot = levelRoot;
             rm.cam = cam;

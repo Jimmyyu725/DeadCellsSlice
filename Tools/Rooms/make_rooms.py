@@ -344,7 +344,7 @@ r.put(13, 2, "P").put(20, 2, "W").put(24, 2, "W").put(30, 2, "T").put(35, 2, "Y"
 r.plat(15, 19, 4).plat(21, 25, 7)
 r.puts(9, [(17, "t"), (33, "t")])
 
-r = add("rooms_special", Room("start_gate", 32, 14, "start", "Promenade,Ossuary,StiltVillage,ClockLung,ToxicSewers,Ramparts", nomirror=True))
+r = add("rooms_special", Room("start_gate", 32, 14, "start", "Promenade,Ossuary,StiltVillage,ClockLung,ToxicSewers,Ramparts,Observatory", nomirror=True))
 r.floor(1).door_r(2)
 r.box(1, 2, 5, 4)
 r.put(8, 2, "P").put(15, 2, "T")
@@ -394,6 +394,19 @@ r.plat(30, 39, 11)
 r.box(60, 2, 69, 3)
 r.put(45, 2, "B").put(64, 4, "D").put(62, 4, "T")
 r.puts(14, [(14, "t"), (34, "t"), (56, "t")])
+
+
+# The Observatory's arena: the Collector floats between three tiers of platforms.
+r = add("rooms_special", Room("boss_collector", 72, 24, "boss_collector", "Observatory", nomirror=True))
+r.floor(1).door_l(2)
+r.box(1, 9, 8, 23)
+r.put(11, 2, "G")
+r.plat(16, 22, 5).plat(50, 56, 5)
+r.plat(24, 30, 9).plat(42, 48, 9)
+r.plat(32, 40, 13)
+r.box(62, 2, 71, 3)
+r.put(46, 2, "B").put(66, 4, "D").put(64, 4, "T")
+r.puts(16, [(14, "t"), (36, "t"), (58, "t")])
 
 
 # ===================================================== biome-flavoured rooms

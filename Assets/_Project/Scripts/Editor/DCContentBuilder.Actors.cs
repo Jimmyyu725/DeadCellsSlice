@@ -1,3 +1,4 @@
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using DeadCells.Combat;
@@ -645,6 +646,30 @@ namespace DeadCells.EditorTools
                 PointLight(root.transform, new Vector3(0f, 2.6f, -0.8f), new Color(1f, 0.85f, 0.55f), 2.4f, 6f, "Starlight");
                 root.GetComponent<Rigidbody2D>().mass = 25f;
                 Save(root, "Enemies/TimeKeeper");
+            }
+            // The Collector (true ending, the Observatory): his NPC model, floating.
+            if (File.Exists($"{PropsDir}/Collector.fbx"))
+            {
+                var (root, anim, flash, sq, model) = EnemyRig("CollectorBoss", $"{PropsDir}/Collector.fbx", null, 1.35f, "M_Props", new Vector2(1.4f, 3f), true);
+                // The prop faces away from the camera at rest; turn it three-quarters toward the right.
+                model.transform.parent.localRotation = Quaternion.Euler(0f, 145f, 0f);
+                var e = root.AddComponent<CollectorBoss>();
+                Wire(e, anim, flash, sq, model, "enemy.collector", 5200f, 30f, 0);
+                e.isBoss = true;
+                e.flying = true;
+                e.model = model.transform;
+                e.orbPrefab = ProjectilePrefab("E_Orb");
+                e.starPrefab = ProjectilePrefab("E_Star");
+                e.minions = new[] { LoadPrefab("Enemies/Zombie"), LoadPrefab("Enemies/Sentinel"), LoadPrefab("Enemies/Monk") };
+                e.aggroRange = 34f;
+                e.verticalAggro = 12f;
+                e.burstColor = new Color(0.8f, 2.6f, 3.4f);
+                e.ichorColor = new Color(0.3f, 0.7f, 0.9f);
+                PointLight(root.transform, new Vector3(0f, 2.4f, -0.9f), new Color(0.55f, 0.9f, 1f), 2.6f, 6f, "Lamp");
+                var col = root.GetComponent<CapsuleCollider2D>();
+                col.offset = new Vector2(0f, 1.5f);
+                root.GetComponent<Rigidbody2D>().mass = 25f;
+                Save(root, "Enemies/CollectorBoss");
             }
         }
 

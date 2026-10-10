@@ -239,7 +239,9 @@ namespace DeadCells.Run
             if (singleRoomTag != null || biome.isPassage)
             {
                 string tag = singleRoomTag ?? "passage";
-                var t = Choose(lib, tag, biome.isPassage ? "Passage" : biome.id, rng, false, false);
+                // Boss arenas (Boss Rush) keep their entrance on the left.
+                bool arena = singleRoomTag != null && singleRoomTag.StartsWith("boss");
+                var t = Choose(lib, tag, biome.isPassage ? "Passage" : biome.id, rng, arena, false);
                 placed.Add(new Placed { t = t, o = Vector2Int.zero, main = true, kind = tag });
             }
             else

@@ -626,6 +626,7 @@ namespace DeadCells.Player
             {
                 released = true;
                 Run.flaskCharges = Mathf.Max(0, Run.flaskCharges - 1);
+                DeadCells.Run.RunManager.Instance?.CureMalaise(3f);
                 float amount = health.maxHealth * flaskHealFraction * (1f + 0.3f * ItemForge.AmuletCount(Affix.FlaskPower));
                 health.Heal(amount);
                 var juice = JuiceEngine.Instance;

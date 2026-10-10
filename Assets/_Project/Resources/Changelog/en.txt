@@ -1,3 +1,25 @@
+# 0.6 | 2026-10-10 | The original's systems
+- Three-colour scrolls: Brutality (red) / Tactics (purple) / Survival (green), pick one of two; every weapon has a colour and scales with that level; Survival gives the most health
+- Item quality: normal, +, ++ and Legendary, with 21 random affixes (bleed, oil, ignite, freeze, crit damage, lifesteal, extra projectile, kill bursts...); the item card shows quality colour and affixes
+- Amulet slot: 4 new amulets with max health, all damage, gold, recoverable health, move speed and flask affixes
+- Backpack: unlock it at the Collector to carry a spare weapon; press C to swap it with your primary
+- Recoverable health: a hit leaves an orange part of the bar; hit enemies within a few seconds to win it back
+- New statuses: Bleed (stacking damage over time), Oil (fire makes it explode onto neighbours), Root
+- The Mutator (passages): 16 mutations, 3 slots, one pick per passage; some are unlocked with cells at the Collector
+- The Blacksmith (passages): spend gold to raise an item's quality with a new affix, or reroll its affixes
+- The Tailor (start): 10 outfits recolouring the body and head flame; some unlocked by Boss Cells, the Daily Challenge, the Boss Rush and the true ending
+- New at the Collector: forge level (better drops), backpack, gold retention (keep some gold through death), mutation unlocks
+- Timed doors: vaults near the exit that only open if you arrive in time - gold, cells, high-quality gear and a scroll inside
+- Cursed chests: better loot, but any hit is fatal until you kill 10 enemies
+- Runes: Vine (grow climbable vines), Ram (slam through ram floors), Spider (wall slide and wall jump), carried by rune guardians in the Promenade, Ossuary and Stilt Village
+- Hidden rooms: every area has cracked walls (any attack) and ram floors (Ram rune) hiding a chest and a scroll
+- Branching routes: a second, high door in the passage leads to the Toxic Sewers (Vine rune, instead of the Promenade) and the Sunset Ramparts (Spider rune, instead of the Stilt Village)
+- Boss Cells go up to 5; with 2 or more the Observatory opens past the Time Keeper and the run is won only by beating the Collector (true ending)
+- Malaise: at 4+ Boss Cells, the longer you stay in an area the more damage you take, and at full it drains your health; the flask pushes it back
+- New modes: Daily Challenge (the same levels and weapons for everyone that day, best time recorded), Custom mode, Boss Rush
+- Assist mode: adjustable damage taken and one revive per area (no achievements while on)
+- 11 new achievements; new models: Mutator, Blacksmith, Tailor, timed door, curse chains, 4 amulets, 3 rune tablets, cracked wall, ram floor, vines
+
 # 0.5 | 2026-10-10 | Sixty new weapons
 - 20 melee: Ember Fang, Moonsickle Twins, Leviathan Rib, Pendulum Axe, Lavender Bottle, Drowned Anchor, Moonsilk Whip, Gearsaw, Candelabra Trident, Clock-Hand Lance, Eelwhip, Ossuary Scepter, Furnace Tongs, Moonherd Crook, Starsand Katana, Sawshark Blade, Warden's Key, Ferryman's Oar, Maestro's Baton, Ember Knuckles
 - 20 ranged: Crescent Longbow, Triple Repeater, Blunderbuss, Tick Blowpipe, Frostsling, Moon Chakram, Knife Fan, Thunderstring Harp, Bell Horn, Ink Squirter, Bone Flute, Stardust Wand, Harpoon Gun, Steam Nailer, Ember Mortar, Bubble Gun, Chrono Crossbow, Gravel Slingshot, Lantern Beam, Sextant Rifle

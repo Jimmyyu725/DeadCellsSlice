@@ -36,6 +36,10 @@ namespace DeadCells.Core
         public float burstInterval = 1f / 30f;
         public int startBiome;
         public BaseDifficulty difficulty = BaseDifficulty.Normal;
+        public int bossCells;
+        public RunMode mode = RunMode.Normal;
+        public bool modesTest;
+        public bool assist;
         public bool captureMenu;
         public bool god;
         public float skipEvery;
@@ -101,6 +105,10 @@ namespace DeadCells.Core
                     case "-autoplaySeconds": float.TryParse(next, out d.duration); break;
                     case "-captureInterval": float.TryParse(next, out d.captureInterval); break;
                     case "-autoplayBiome": int.TryParse(next, out d.startBiome); break;
+                    case "-autoplayBossCells": int.TryParse(next, out d.bossCells); break;
+                    case "-autoplayMode": d.mode = next == "daily" ? RunMode.Daily : next == "rush" ? RunMode.BossRush : next == "custom" ? RunMode.Custom : RunMode.Normal; break;
+                    case "-autoplayModesTest": d.modesTest = true; break;
+                    case "-autoplayAssist": d.assist = true; break;
                     case "-autoplaySkip": float.TryParse(next, out d.skipEvery); break;
                     case "-autoplayMenu": d.captureMenu = true; break;
                     case "-autoplayGod": d.god = true; break;
@@ -172,8 +180,12 @@ namespace DeadCells.Core
         /// <summary>Main menu asks this to start the run the bot will play.</summary>
         public void StartRun()
         {
-            RunManager.NewRun(difficulty, 0);
-            SaveSystem.Data.run.biome = Mathf.Clamp(startBiome, 0, 4);
+            SaveSystem.Data.meta.bossCellsUnlocked = Mathf.Max(SaveSystem.Data.meta.bossCellsUnlocked, bossCells);
+            SaveSystem.Data.settings.assist = assist;
+            SaveSystem.Data.settings.assistDamage = 0.5f;
+            RunManager.NewRun(difficulty, bossCells, mode);
+            if (mode == RunMode.Normal)
+                SaveSystem.Data.run.biome = Mathf.Clamp(startBiome, 0, 4);
             SaveSystem.Save();
             SceneFlow.LoadGame();
         }
@@ -269,7 +281,7 @@ namespace DeadCells.Core
                 if (skipEvery > 0f && Elapsed - lastSkip > skipEvery && !rm.Transitioning)
                 {
                     lastSkip = Elapsed;
-                    log.WriteLine($"[{Elapsed:F1}] skip from {area} kills={SaveSystem.Data.run.kills}");
+                    log.WriteLine($"[{Elapsed:F1}] skip from {area} kills={SaveSystem.Data.run.kills} mode={SaveSystem.Data.run.mode} bc={SaveSystem.Data.run.bossCells} malaise={SaveSystem.Data.run.malaise:F2} dmgTaken={Difficulty.PlayerDamageTaken:F2} trueEnd={SaveSystem.Data.run.trueEndRoute}");
                     rm.CheatSkipBiome();
                 }
             }
@@ -593,14 +605,21 @@ namespace DeadCells.Core
                 yield return new WaitForSeconds(1.2f);
                 Capture("sys_secret_room");
             }
-            var ramBlock = Object.FindObjectsByType<Breakable>(FindObjectsSortMode.None).FirstOrDefault(b => b.ram);
+            var ramBlock = Object.FindObjectsByType<Breakable>(FindObjectsSortMode.None).Where(b => b.ram).OrderByDescending(b => b.transform.position.y).FirstOrDefault();
             if (ramBlock != null)
             {
                 foreach (bool hasRune in new[] { false, true })
                 {
                     if (hasRune)
                         Runes.Grant(Runes.Ram);
-                    p.Teleport(ramBlock.transform.position + new Vector3(0.5f, 4.5f, 0f));
+                    // Highest clear spot (up to 5 tiles) straight above the slab.
+                    var rb = ramBlock.transform.position;
+                    int bx = Mathf.FloorToInt(rb.x), by = Mathf.FloorToInt(rb.y + 0.1f) + 1;
+                    int top = by;
+                    var tiles = rm.Level.data;
+                    while (top - by < 5 && tiles.At(bx, top + 2) == Tile.Air && tiles.At(bx, top + 1) == Tile.Air)
+                        top++;
+                    p.Teleport(new Vector3(rb.x, top, 0f));
                     if (rm.vcam != null)
                         rm.vcam.PreviousStateIsValid = false;
                     yield return new WaitForSeconds(0.15f);

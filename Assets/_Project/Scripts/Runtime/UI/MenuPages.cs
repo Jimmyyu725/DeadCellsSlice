@@ -53,6 +53,35 @@ namespace DeadCells.UI
                 S.showCoords = !S.showCoords;
                 SaveSystem.Save();
             }, () => Loc.Get("options.coords.desc")));
+            page.Add(MenuItem.Option(() => Loc.Get("options.assist"), () => Loc.Get(S.assist ? "options.on" : "options.off"), _ =>
+            {
+                S.assist = !S.assist;
+                if (S.assist && SaveSystem.Data.run.active)
+                    SaveSystem.Data.run.cheatsUsed = true;
+                SaveSystem.Save();
+            }, () => Loc.Get("options.assist.desc")));
+            page.Add(new MenuItem
+            {
+                label = () => Loc.Get("options.assist_damage"),
+                value = () => Mathf.RoundToInt(S.assistDamage * 100f) + "%",
+                change = d =>
+                {
+                    S.assistDamage = Mathf.Clamp(Mathf.Round((S.assistDamage + d * 0.25f) * 4f) / 4f, 0.25f, 1f);
+                    SaveSystem.Save();
+                },
+                confirm = () =>
+                {
+                    S.assistDamage = S.assistDamage <= 0.25f ? 1f : S.assistDamage - 0.25f;
+                    SaveSystem.Save();
+                },
+                description = () => Loc.Get("options.assist_damage.desc"),
+                enabled = () => S.assist,
+            });
+            page.Add(MenuItem.Option(() => Loc.Get("options.assist_revive"), () => Loc.Get(S.assistRevive ? "options.on" : "options.off"), _ =>
+            {
+                S.assistRevive = !S.assistRevive;
+                SaveSystem.Save();
+            }, () => Loc.Get("options.assist_revive.desc")));
             page.Add(MenuItem.Option(() => Loc.Get("options.skip_intro"), () => Loc.Get(S.skipIntro ? "options.on" : "options.off"), _ =>
             {
                 S.skipIntro = !S.skipIntro;

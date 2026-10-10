@@ -789,14 +789,17 @@ namespace DeadCells.UI
                 Subtitles(new[] { $"biome.{def.locKey}.intro" }, 5f);
         }
 
-        public IEnumerator PlayEnding(bool newBossCell, float time, int kills, int gold, BaseDifficulty diff, int bossCells)
+        public IEnumerator PlayEnding(bool newBossCell, float time, int kills, int gold, BaseDifficulty diff, int bossCells, string kind = "")
         {
             storyBack.color = Color.black;
             var pages = new List<(string, string)>();
-            for (int i = 1; i <= 4; i++)
-                pages.Add(P("story.ending.title", "story.ending." + i));
+            // kind: "" story ending, "true" the Collector's end, "daily" / "rush" challenge results.
+            string prefix = kind switch { "true" => "story.true_end", "daily" => "story.daily_end", "rush" => "story.rush_end", _ => "story.ending" };
+            int count = kind == "true" ? 4 : kind == "" ? 4 : 1;
+            for (int i = 1; i <= count; i++)
+                pages.Add(P(prefix + ".title", prefix + "." + i));
             string stats = Loc.Get("story.ending.stats", UIKit.FormatTime(time), kills, gold, Difficulty.Label(diff), bossCells);
-            pages.Add((Loc.Get("story.ending.title"), (newBossCell ? Loc.Get("story.ending.bc") + "\n\n" : "") + stats + "\n\n" + Loc.Get("ending.credits")));
+            pages.Add((Loc.Get(prefix + ".title"), (newBossCell ? Loc.Get("story.ending.bc") + "\n\n" : "") + stats + "\n\n" + Loc.Get("ending.credits")));
             yield return Pages(pages, false);
         }
 

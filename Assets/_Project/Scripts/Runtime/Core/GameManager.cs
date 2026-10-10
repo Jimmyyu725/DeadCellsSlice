@@ -69,6 +69,8 @@ namespace DeadCells.Core
                 smokeMaterial.SetColor(GlowId, p.glow * 1.4f);
             if (flameLight != null)
                 flameLight.color = p.glow;
+            if (Player.PlayerController.Main != null)
+                Meta.Outfits.Apply(Player.PlayerController.Main);
         }
 
         void OnDestroy()

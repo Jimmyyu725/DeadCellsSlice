@@ -86,17 +86,22 @@ namespace DeadCells.Meta
             {
                 if (r.name.EndsWith("_Flame"))
                 {
+                    // The prisoner keeps the flame colour picked in Options.
+                    var m = r.sharedMaterial;
+                    bool keep = o.id == "prisoner" && m != null;
                     r.GetPropertyBlock(block);
-                    block.SetColor(CoreId, o.core);
-                    block.SetColor(FlameId, o.flame);
-                    block.SetColor(TipId, o.tip);
+                    block.SetColor(CoreId, keep ? m.GetColor(CoreId) : o.core);
+                    block.SetColor(FlameId, keep ? m.GetColor(FlameId) : o.flame);
+                    block.SetColor(TipId, keep ? m.GetColor(TipId) : o.tip);
                     r.SetPropertyBlock(block);
                 }
                 else if (r.name.EndsWith("_Body"))
                 {
+                    var m = r.sharedMaterial;
+                    bool keep = o.id == "prisoner" && m != null;
                     r.GetPropertyBlock(block);
                     block.SetColor(BaseColorId, o.tint);
-                    block.SetColor(EmissionId, o.glow);
+                    block.SetColor(EmissionId, keep ? m.GetColor(EmissionId) : o.glow);
                     r.SetPropertyBlock(block);
                 }
                 block.Clear();

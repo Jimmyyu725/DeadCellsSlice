@@ -189,7 +189,8 @@ namespace DeadCells.Player
             body.interpolation = RigidbodyInterpolation2D.Interpolate;
             body.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
             health.Damaged += OnDamaged;
-            health.LethalSave = () => Mutations.TryRevive(this);
+            health.LethalSave = () => Mutations.TryRevive(this) || AssistRevive();
+            health.IncomingMultiplier = () => Difficulty.PlayerDamageTaken;
             health.Died += OnDied;
             if (InputSource == null)
                 InputSource = GetComponent<IInputSource>();
@@ -540,6 +541,21 @@ namespace DeadCells.Player
                     JuiceEngine.Instance?.Dust(transform.position + new Vector3(wall * 0.4f, 1.2f, 0f), Vector2.up, 1);
             }
             return v;
+        }
+
+        /// <summary>Assist mode: once per area a killing blow leaves half health instead.</summary>
+        bool AssistRevive()
+        {
+            var settings = SaveSystem.Data.settings;
+            var run = SaveSystem.Data.run;
+            if (!settings.assist || !settings.assistRevive || run.assistReviveUsed)
+                return false;
+            run.assistReviveUsed = true;
+            health.SetCurrent(health.maxHealth * 0.5f);
+            health.InvulnerableUntil = Time.time + 2f;
+            JuiceEngine.Instance?.Embers(transform.position + Vector3.up, 40, new Color(0.8f, 2.6f, 3.2f));
+            UI.GameHUD.Instance?.Toast(Loc.Get("hud.assist_revive"), new Color(0.6f, 0.9f, 1f));
+            return true;
         }
 
         /// <summary>Solid wall touching the body's side: +1 right, -1 left, 0 none.</summary>

@@ -42,7 +42,9 @@ namespace DeadCells.Run
             if (db == null)
                 return Enumerable.Empty<ItemDef>();
             int maxTier = Mathf.Clamp(1 + depth / 2 + 1, 1, 3);
-            return db.Unlocked().Where(i => i.tier <= maxTier && i.kind != ItemKind.Amulet && (skills ? i.kind == ItemKind.Skill : i.kind != ItemKind.Skill));
+            var data = SaveSystem.Data;
+            var source = data.run.mode == RunMode.Custom && data.settings.customAllItems ? db.items.Where(i => i != null) : db.Unlocked();
+            return source.Where(i => i.tier <= maxTier && i.kind != ItemKind.Amulet && (skills ? i.kind == ItemKind.Skill : i.kind != ItemKind.Skill));
         }
 
         public static ItemDef RandomItem(int depth, System.Random rng = null)

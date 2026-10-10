@@ -1024,6 +1024,37 @@ namespace DeadCells.EditorTools
             ramparts.hazardDensity = 0f;
             EditorUtility.SetDirty(ramparts);
 
+            // ---- The Observatory (2+ Boss Cells, past the Time Keeper): the Clock Lung's
+            // kit turned to the night sky, a short climb to the Collector's arena.
+            var obs = Asset<BiomeDef>($"{ContentDir}/Biomes/Observatory.asset");
+            EditorUtility.CopySerialized(lung, obs);
+            obs.name = "Observatory";
+            obs.id = "Observatory";
+            obs.locKey = "observatory";
+            obs.depth = 5;
+            obs.mainRooms = 5;
+            obs.treasureRooms = 1;
+            obs.eliteRooms = 1;
+            obs.lore = new string[0];
+            obs.bossTag = "boss_collector";
+            obs.rune = "";
+            obs.requiredRune = "";
+            obs.enemyDensity = 1f;
+            Atmosphere(obs, new Color(0.04f, 0.07f, 0.18f), 0.1f, new Color(0.02f, 0.03f, 0.07f), new Color(0.06f, 0.08f, 0.16f),
+                new Color(0.7f, 0.85f, 1f), 0.8f, new Color(0.45f, 0.8f, 1f), 1f, new Color(0.55f, 0.85f, 1f), 3.8f,
+                new Color(0.8f, 1f, 1.4f, 0.6f), new Color(1.1f, 1.3f, 1.6f, 0.9f), new Color(1f, 2f, 3.4f), new Color(1.4f, 2.6f, 3.6f), new Color(0.6f, 0.9f, 1f));
+            obs.shaftColor = new Color(0.55f, 0.85f, 1f);
+            obs.lightShafts = 4f;
+            obs.liquid = BiomeDef.LiquidKind.Void;
+            obs.liquidMaterial = LoadMat("M_Liquid_Void");
+            obs.hazardPrefab = null;
+            obs.hazardDensity = 0f;
+            obs.ground = new List<BiomeDef.EnemyEntry> { E("Sentinel", 2f), E("Monk", 2f), E("Fisher", 1f) };
+            obs.flying = new List<BiomeDef.EnemyEntry> { E("Tick", 2f) };
+            obs.turrets = new List<BiomeDef.EnemyEntry> { E("Obelisk", 2f) };
+            obs.boss = LoadPrefab("Enemies/CollectorBoss");
+            EditorUtility.SetDirty(obs);
+
             foreach (var b in new[] { oub, prom, oss, stilt, lung })
                 EditorUtility.SetDirty(b);
         }
