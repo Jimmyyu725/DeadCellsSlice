@@ -31,6 +31,7 @@ namespace DeadCells.Run
         public GameObject timedDoor, curseShroud;
         public GameObject crackedBlock, ramSlab, vineBulb, variantDoor;
         public GameObject runeVine, runeRam, runeSpider;
+        public GameObject runeModelVine, runeModelRam, runeModelSpider;
         public Material deepMaterial;
         public Material shaftMaterial;
         public Material liquidWater, liquidWine, liquidVoid, liquidBrass;

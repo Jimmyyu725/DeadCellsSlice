@@ -25,6 +25,8 @@ namespace DeadCells.Run
     public class RunManager : MonoBehaviour
     {
         public BiomeDef[] biomes = new BiomeDef[0];
+        /// <summary>Branch routes: variants[i] replaces biomes[i] when taken from the passage before it (null = none).</summary>
+        public BiomeDef[] variants = new BiomeDef[0];
         public BiomeDef passage;
         public PlayerController player;
         public Transform levelRoot;
@@ -85,6 +87,19 @@ namespace DeadCells.Run
         public bool InPassage => Run.inPassage;
         public Transform EntityParent => level != null ? level.root.transform.Find("Entities") : null;
         public int BiomeDepth => current != null ? current.depth : 0;
+
+        /// <summary>The biome of the current story step (the variant when the branch was taken).</summary>
+        public BiomeDef CurrentBiome
+        {
+            get
+            {
+                int i = Mathf.Clamp(Run.biome, 0, biomes.Length - 1);
+                return Run.variantRoute && i < variants.Length && variants[i] != null ? variants[i] : biomes[i];
+            }
+        }
+
+        /// <summary>In a passage: the branch biome reachable from here (null if none).</summary>
+        public BiomeDef VariantAhead => Run.inPassage && Run.biome >= 0 && Run.biome < variants.Length ? variants[Run.biome] : null;
         public bool Transitioning => transitioning;
 
         static RunState Run => SaveSystem.Data.run;
@@ -164,7 +179,7 @@ namespace DeadCells.Run
                 SaveSystem.Data.meta.introSeen = true;
                 SaveSystem.Save();
             }
-            yield return Enter(Run.inPassage ? passage : biomes[Mathf.Clamp(Run.biome, 0, biomes.Length - 1)], fresh);
+            yield return Enter(Run.inPassage ? passage : CurrentBiome, fresh);
         }
 
         void Update()
@@ -310,18 +325,22 @@ namespace DeadCells.Run
             ambient?.Apply(def.motesA, def.motesB, def.embersA, def.embersB, def.rainUp);
         }
 
-        /// <summary>Exit door used.</summary>
-        public void ExitReached()
+        /// <summary>Exit door used (`variant`: the passage's branch door).</summary>
+        public void ExitReached(bool variant = false)
         {
             if (transitioning || ended)
                 return;
             if (current != null && current.isPassage)
             {
+                Run.variantRoute = variant && VariantAhead != null;
+                if (Run.variantRoute)
+                    Achievements.Unlock("variant_route");
                 Run.inPassage = false;
                 Run.health = player.Health.Current;
-                StartCoroutine(Enter(biomes[Mathf.Clamp(Run.biome, 0, biomes.Length - 1)], false));
+                StartCoroutine(Enter(CurrentBiome, false));
                 return;
             }
+            Run.variantRoute = false;
             if (!Run.tookDamageThisBiome)
                 Achievements.Unlock("no_hit_biome");
             if (Run.biome >= biomes.Length - 1)

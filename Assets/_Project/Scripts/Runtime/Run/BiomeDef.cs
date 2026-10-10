@@ -65,6 +65,8 @@ namespace DeadCells.Run
         public bool merchant = true;
         public string[] lore = new string[0];
         public string bossTag = "";
+        public string rune = "";            // rune carried by this biome's rune guardian
+        public string requiredRune = "";    // variant biomes: rune needed to open the branch door
         [Range(0f, 1.5f)] public float enemyDensity = 0.8f;
 
         [Header("Kit")]

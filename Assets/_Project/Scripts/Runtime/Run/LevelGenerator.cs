@@ -304,8 +304,131 @@ namespace DeadCells.Run
                             level.tiles[sx, py] = Tile.OneWay;
                 }
             }
+            if (!biome.isPassage && singleRoomTag == null)
+                CarveSecrets(level, rng);
             ThinTeleporters(level, rng);
             return level;
+        }
+
+        // ------------------------------------------------------------ secrets
+
+        /// <summary>
+        /// Hidden pockets carved into solid rock next to main rooms: up to two
+        /// behind cracked walls ('b', any attack breaks them) and one under a
+        /// Ram-rune floor ('R', ground pound with the rune), each with treasure.
+        /// </summary>
+        static void CarveSecrets(LevelData level, System.Random rng)
+        {
+            var order = new List<int>();
+            for (int i = 0; i < level.rooms.Count; i++)
+            {
+                var r = level.rooms[i];
+                if (r.main && r.kind != "start" && r.kind != "exit" && !r.kind.StartsWith("boss"))
+                    order.Add(i);
+            }
+            for (int i = order.Count - 1; i > 0; i--)
+            {
+                int j = rng.Next(i + 1);
+                (order[i], order[j]) = (order[j], order[i]);
+            }
+            int walls = 0, floors = 0;
+            foreach (int index in order)
+            {
+                if (walls < 2 && WallSecret(level, rng, index))
+                    walls++;
+                else if (floors < 1 && FloorSecret(level, rng, index))
+                    floors++;
+                if (walls >= 2 && floors >= 1)
+                    break;
+            }
+        }
+
+        static bool AllSolid(LevelData l, RectInt r)
+        {
+            if (r.xMin < 2 || r.yMin < 2 || r.xMax > l.width - 2 || r.yMax > l.height - 2)
+                return false;
+            for (int x = r.xMin; x < r.xMax; x++)
+            for (int y = r.yMin; y < r.yMax; y++)
+                if (l.tiles[x, y] != Tile.Solid)
+                    return false;
+            return true;
+        }
+
+        static bool Air(LevelData l, int x, int y) => l.At(x, y) == Tile.Air;
+
+        static void Fill(LevelData l, RectInt r, Tile t)
+        {
+            for (int x = r.xMin; x < r.xMax; x++)
+            for (int y = r.yMin; y < r.yMax; y++)
+                l.tiles[x, y] = t;
+        }
+
+        static bool WallSecret(LevelData level, System.Random rng, int index)
+        {
+            var rect = level.rooms[index].rect;
+            var options = new List<(int x, int y, int dir)>();
+            for (int x = rect.xMin + 1; x < rect.xMax - 1; x++)
+            for (int y = rect.yMin + 1; y < rect.yMax - 3; y++)
+            {
+                if (!Air(level, x, y) || !Air(level, x, y + 1) || !Air(level, x, y + 2) || !level.Solid(x, y - 1))
+                    continue;
+                foreach (int dir in new[] { -1, 1 })
+                {
+                    int wx = x + dir;
+                    if (!level.Solid(wx, y) || !level.Solid(wx, y + 1) || !level.Solid(wx, y + 2))
+                        continue;
+                    // Pocket 6 x 4 beyond a one-tile wall, with solid rock all around it.
+                    var pocket = dir > 0 ? new RectInt(x + 2, y, 6, 4) : new RectInt(x - 7, y, 6, 4);
+                    var shell = new RectInt(pocket.xMin - 1, pocket.yMin - 1, pocket.width + 2, pocket.height + 2);
+                    if (AllSolid(level, shell))
+                        options.Add((x, y, dir));
+                }
+            }
+            if (options.Count == 0)
+                return false;
+            var (sx, sy, d) = options[rng.Next(options.Count)];
+            var pk = d > 0 ? new RectInt(sx + 2, sy, 6, 4) : new RectInt(sx - 7, sy, 6, 4);
+            Fill(level, pk, Tile.Air);
+            for (int k = 0; k < 3; k++)
+            {
+                level.tiles[sx + d, sy + k] = Tile.Air;
+                level.spawns.Add(new SpawnPoint { code = 'b', cell = new Vector2Int(sx + d, sy + k), room = index });
+            }
+            int far = d > 0 ? pk.xMax - 2 : pk.xMin + 1;
+            level.spawns.Add(new SpawnPoint { code = 'C', cell = new Vector2Int(far, sy), room = index });
+            level.spawns.Add(new SpawnPoint { code = rng.NextDouble() < 0.5 ? 's' : '$', cell = new Vector2Int((pk.xMin + pk.xMax) / 2, sy), room = index });
+            return true;
+        }
+
+        static bool FloorSecret(LevelData level, System.Random rng, int index)
+        {
+            var rect = level.rooms[index].rect;
+            var options = new List<(int x, int y)>();
+            for (int x = rect.xMin + 2; x < rect.xMax - 3; x++)
+            for (int y = rect.yMin + 1; y < rect.yMax - 2; y++)
+            {
+                // Two tiles of standing room over a two-thick floor, a 6 x 3 pocket below.
+                if (!Air(level, x, y) || !Air(level, x + 1, y) || !Air(level, x, y + 1) || !Air(level, x + 1, y + 1))
+                    continue;
+                var slab = new RectInt(x, y - 2, 2, 2);
+                var shell = new RectInt(x - 3, y - 6, 8, 4);
+                if (AllSolid(level, slab) && AllSolid(level, shell) && AllSolid(level, new RectInt(x - 3, y - 2, 8, 1))
+                    && level.Solid(x - 1, y - 1) && level.Solid(x + 2, y - 1))
+                    options.Add((x, y));
+            }
+            if (options.Count == 0)
+                return false;
+            var (fx, fy) = options[rng.Next(options.Count)];
+            Fill(level, new RectInt(fx - 2, fy - 5, 6, 3), Tile.Air);
+            for (int dx = 0; dx < 2; dx++)
+            for (int dy = 1; dy <= 2; dy++)
+            {
+                level.tiles[fx + dx, fy - dy] = Tile.Air;
+                level.spawns.Add(new SpawnPoint { code = 'R', cell = new Vector2Int(fx + dx, fy - dy), room = index });
+            }
+            level.spawns.Add(new SpawnPoint { code = 'C', cell = new Vector2Int(fx - 2, fy - 5), room = index });
+            level.spawns.Add(new SpawnPoint { code = 's', cell = new Vector2Int(fx + 3, fy - 5), room = index });
+            return true;
         }
 
         static List<string> Plan(BiomeDef biome, System.Random rng)

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using DeadCells.Core;
 using DeadCells.Enemies;
 using DeadCells.Meta;
 using DeadCells.Player;
@@ -119,6 +120,7 @@ namespace DeadCells.Core
                     case "-autoplayJumpTest": d.jumpTest = true; break;
                     case "-autoplayCancelTest": d.cancelTest = true; break;
                     case "-autoplaySystems": d.systemsTest = true; break;
+                    case "-autoplayClearRunes": SaveSystem.Data.meta.runes.Clear(); break;
                     case "-autoplayDifficulty":
                         d.difficulty = next == "easy" ? BaseDifficulty.Easy : next == "hard" ? BaseDifficulty.Hard : BaseDifficulty.Normal;
                         break;
@@ -208,7 +210,9 @@ namespace DeadCells.Core
                     lastArea = area;
                     lastSkip = Elapsed;
                     path.Clear();
-                    log.WriteLine($"[{Elapsed:F1}] area {area} rooms={rm.Level.data.rooms.Count} size={rm.Level.data.width}x{rm.Level.data.height} enemies={rm.Level.enemies.Count} hp={player?.Health.Current:F0}");
+                    log.WriteLine($"[{Elapsed:F1}] area {area} rooms={rm.Level.data.rooms.Count} size={rm.Level.data.width}x{rm.Level.data.height} enemies={rm.Level.enemies.Count} hp={player?.Health.Current:F0}"
+                        + $" secrets={Object.FindObjectsByType<Breakable>(FindObjectsSortMode.None).Length} guardians={Object.FindObjectsByType<RuneGuardian>(FindObjectsSortMode.None).Length}"
+                        + $" timed={Object.FindObjectsByType<TimedDoor>(FindObjectsSortMode.None).Length} cursed={Object.FindObjectsByType<Chest>(FindObjectsSortMode.None).Count(c => c.cursed)}");
                     Invoke(nameof(CaptureArea), 2.5f);
                     if (breakPost)
                         Invoke(nameof(BreakPost), 1.5f);
@@ -469,7 +473,151 @@ namespace DeadCells.Core
             yield return new WaitForSecondsRealtime(0.5f);
             log.WriteLine($"[{Elapsed:F1}] sys: cursed hit -> dead={p.Health.IsDead} hp={p.Health.Current:F0} yoloLeft={Mutations.Has("yolo")} curse={run.curse}");
             Capture("sys_after_curse");
+            Cheats.SetGodMode(true);
+            god = true;
+            yield return StartCoroutine(ExplorationTest(rm));
             overrideInput = null;
+        }
+
+        /// <summary>Stage-3 checks in the passage, then in the branch biome.</summary>
+        System.Collections.IEnumerator ExplorationTest(RunManager rm)
+        {
+            var p = PlayerController.Main;
+            var meta = SaveSystem.Data.meta;
+            meta.runes.Clear();
+            var bulb = Object.FindFirstObjectByType<VineBulb>();
+            var branch = Object.FindObjectsByType<ExitDoor>(FindObjectsSortMode.None).FirstOrDefault(d => d.variant);
+            log.WriteLine($"[{Elapsed:F1}] sys3: variantAhead={rm.VariantAhead?.id} bulb={(bulb != null)} branchDoor={(branch != null)} prompts '{bulb?.Prompt}' / '{branch?.Prompt}'");
+
+            // Vine: grow it, then stand on the top leaf.
+            if (bulb != null)
+            {
+                Runes.Grant(Runes.Vine);
+                bulb.GrowNow();
+                yield return new WaitForSeconds(2f);
+                var leaves = bulb.GetComponentsInChildren<BoxCollider2D>().Where(c => c.gameObject.name == "LeafPlatform").OrderBy(c => c.transform.position.y).ToList();
+                p.Teleport(bulb.transform.position + Vector3.left * 1.5f);
+                yield return new WaitForSeconds(0.3f);
+                Capture("sys_vine");
+                if (leaves.Count > 0)
+                {
+                    var top = leaves[leaves.Count - 1];
+                    p.Teleport(top.bounds.center + Vector3.up * 0.6f);
+                    yield return new WaitForSeconds(0.8f);
+                    log.WriteLine($"[{Elapsed:F1}] sys3: vine leaves={leaves.Count} topY={top.bounds.max.y:F1} player y={p.transform.position.y:F2} grounded={p.Grounded}");
+                }
+            }
+
+            // Spider rune: wall-jump up the shaft beside the high ledge.
+            Runes.Grant(Runes.Spider);
+            var data = rm.Level.data;
+            int shaftX = -1, floorY = -1;
+            for (int x = data.width - 3; x > 2 && shaftX < 0; x--)
+                for (int y = 2; y < data.height - 12; y++)
+                    if (data.tiles[x, y] == Tile.Air && data.tiles[x, y - 1] == Tile.Solid && data.tiles[x - 1, y + 4] == Tile.Solid
+                        && data.tiles[x + 1, y + 4] == Tile.Air && data.tiles[x + 2, y + 4] == Tile.Air && data.tiles[x + 3, y + 4] == Tile.Solid
+                        && data.tiles[x, y + 10] == Tile.Air)
+                    {
+                        shaftX = x;
+                        floorY = y;
+                        break;
+                    }
+            if (shaftX > 0)
+            {
+                p.Teleport(new Vector3(shaftX + 1.5f, floorY + 0.05f, 0f));
+                yield return new WaitForSeconds(0.4f);
+                float startY = p.transform.position.y, maxY = startY;
+                int dir = 1;
+                overrideInput = new InputFrame { jumpPressed = true, jumpHeld = true, moveX = dir };
+                yield return null;
+                float until = Time.time + 6f;
+                int before = p.WallJumps;
+                while (Time.time < until)
+                {
+                    maxY = Mathf.Max(maxY, p.transform.position.y);
+                    bool touching = Physics2D.OverlapBox((Vector2)p.transform.position + new Vector2(dir * 0.55f, 1f), new Vector2(0.2f, 1f), 0f, DCLayers.SolidMask) != null;
+                    if (touching && !p.Grounded && p.Body.linearVelocity.y < 1.5f)
+                    {
+                        overrideInput = new InputFrame { jumpPressed = true, jumpHeld = true, moveX = dir };
+                        yield return null;
+                        dir = -dir;
+                    }
+                    overrideInput = new InputFrame { jumpHeld = true, moveX = dir };
+                    yield return null;
+                }
+                overrideInput = new InputFrame();
+                log.WriteLine($"[{Elapsed:F1}] sys3: wall jumps={p.WallJumps - before} climbed {startY:F1}->{maxY:F1} (shaft x={shaftX})");
+                Capture("sys_walljump");
+            }
+
+            // Branch door: open with the rune, into the variant biome.
+            if (branch != null)
+            {
+                log.WriteLine($"[{Elapsed:F1}] sys3: branch prompt with rune '{branch.Prompt}'");
+                branch.Interact(p);
+                float wait = Time.time + 8f;
+                while ((rm.Transitioning || rm.InPassage) && Time.time < wait)
+                    yield return null;
+                yield return new WaitForSeconds(1.5f);
+                log.WriteLine($"[{Elapsed:F1}] sys3: entered {rm.Current?.id} variantRoute={SaveSystem.Data.run.variantRoute}");
+                Capture("sys_variant_biome");
+            }
+
+            // Secrets: break a cracked wall with a swing, a ram floor with a pound.
+            var blocks = Object.FindObjectsByType<Breakable>(FindObjectsSortMode.None);
+            log.WriteLine($"[{Elapsed:F1}] sys3: secrets cracked={blocks.Count(b => !b.ram)} ram={blocks.Count(b => b.ram)}");
+            var wallBlock = blocks.FirstOrDefault(b => !b.ram);
+            if (wallBlock != null)
+            {
+                var c = wallBlock.transform.position;
+                bool fromLeft = rm.Level.data.At(Mathf.FloorToInt(c.x) - 1, Mathf.FloorToInt(c.y + 0.1f)) == Tile.Air;
+                p.Teleport(c + new Vector3(fromLeft ? -1.3f : 1.3f, 0.05f, 0f));
+                p.anim.SetFacing(fromLeft ? 1 : -1);
+                if (rm.vcam != null)
+                    rm.vcam.PreviousStateIsValid = false;
+                yield return new WaitForSeconds(1.2f);
+                Capture("sys_cracked_wall");
+                for (int k = 0; k < 6 && wallBlock != null; k++)
+                {
+                    overrideInput = new InputFrame { primaryPressed = true, primaryHeld = true };
+                    yield return null;
+                    overrideInput = new InputFrame { primaryHeld = true };
+                    yield return new WaitForSeconds(0.35f);
+                }
+                overrideInput = new InputFrame();
+                yield return new WaitForSeconds(0.4f);
+                log.WriteLine($"[{Elapsed:F1}] sys3: cracked wall broken={(wallBlock == null)}");
+                p.Teleport(c + new Vector3(fromLeft ? 3.5f : -3.5f, 0.05f, 0f));
+                if (rm.vcam != null)
+                    rm.vcam.PreviousStateIsValid = false;
+                yield return new WaitForSeconds(1.2f);
+                Capture("sys_secret_room");
+            }
+            var ramBlock = Object.FindObjectsByType<Breakable>(FindObjectsSortMode.None).FirstOrDefault(b => b.ram);
+            if (ramBlock != null)
+            {
+                foreach (bool hasRune in new[] { false, true })
+                {
+                    if (hasRune)
+                        Runes.Grant(Runes.Ram);
+                    p.Teleport(ramBlock.transform.position + new Vector3(0.5f, 4.5f, 0f));
+                    if (rm.vcam != null)
+                        rm.vcam.PreviousStateIsValid = false;
+                    yield return new WaitForSeconds(0.15f);
+                    if (!hasRune)
+                        Capture("sys_ram_slab");
+                    overrideInput = new InputFrame { down = true, jumpPressed = true };
+                    yield return null;
+                    overrideInput = new InputFrame { down = true };
+                    yield return new WaitForSeconds(1.2f);
+                    overrideInput = new InputFrame();
+                    log.WriteLine($"[{Elapsed:F1}] sys3: ram pound rune={hasRune} broken={(ramBlock == null)}");
+                    if (ramBlock == null)
+                        break;
+                }
+                yield return new WaitForSeconds(1.2f);
+                Capture("sys_ram_floor");
+            }
         }
 
         /// <summary>Test hook: measure single and double jump heights from flat floor.</summary>

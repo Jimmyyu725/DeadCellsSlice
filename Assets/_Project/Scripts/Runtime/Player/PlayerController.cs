@@ -57,6 +57,12 @@ namespace DeadCells.Player
         [Tooltip("Jumps available in mid-air, refilled on landing.")]
         public int airJumps = 1;
         public float doubleJumpHeight = 2.7f;
+        [Header("Wall jump (Spider rune)")]
+        public float wallSlideSpeed = 3f;
+        public float wallJumpLock = 0.16f;
+        float lastWallTime = -10f, wallJumpLockUntil;
+        int lastWallSide, wallJumpDir;
+        public int WallJumps { get; private set; }
         public float jumpBufferTime = 0.15f;
 
         [Header("Dodge roll / air dash")]
@@ -441,7 +447,17 @@ namespace DeadCells.Player
         Vector2 Locomotion(Vector2 v, float dt)
         {
             var input = Input;
+            bool spider = !Grounded && Runes.Has(Runes.Spider);
+            int wall = spider ? WallContact() : 0;
+            if (wall != 0)
+            {
+                lastWallTime = Time.time;
+                lastWallSide = wall;
+            }
             float target = input.moveX * runSpeed * SpeedMultiplier;
+            // Kicking off a wall pushes away for a moment whatever the stick says.
+            if (Time.time < wallJumpLockUntil)
+                target = wallJumpDir * runSpeed * SpeedMultiplier;
             float rate;
             if (Grounded)
                 rate = Mathf.Abs(target) > 0.01f ? groundAcceleration : groundDeceleration;
@@ -473,6 +489,26 @@ namespace DeadCells.Player
                 anim.Restart("Jump_Rise", 0.02f);
                 Audio.Sfx.Play("player.jump", FeetPosition);
             }
+            else if (buffered && !Grounded && Runes.Has(Runes.Spider) && Time.time - lastWallTime <= 0.12f)
+            {
+                // Wall jump: up and away from the wall; the double jump comes back.
+                v.y = jumpVelocity * 0.92f;
+                v.x = -lastWallSide * runSpeed * 1.1f;
+                wallJumpDir = -lastWallSide;
+                wallJumpLockUntil = Time.time + wallJumpLock;
+                lastWallTime = -10f;
+                airJumpsLeft = airJumps;
+                isJumping = true;
+                jumpCutApplied = false;
+                lastJumpPressedTime = -10f;
+                WallJumps++;
+                anim.SetFacing(wallJumpDir);
+                squash.Punch(new Vector2(0.8f, 1.25f));
+                JuiceEngine.Instance?.Dust(transform.position + new Vector3(lastWallSide * 0.4f, 0.8f, 0f), new Vector2(wallJumpDir, 0.3f), 5);
+                JuiceEngine.Instance?.Embers(transform.position + Vector3.up * 0.8f, 6, Runes.ColorOf(Runes.Spider));
+                anim.Restart("Jump_Rise", 0.02f);
+                Audio.Sfx.Play("player.jump", FeetPosition);
+            }
             else if (buffered && !Grounded && airJumpsLeft > 0 && !input.down)
             {
                 // Double jump: a fresh, slightly lower jump with a forward flip.
@@ -496,7 +532,28 @@ namespace DeadCells.Player
                 jumpCutApplied = true;
             }
             v.y = ApplyGravity(v.y, dt, 1f);
+            // Wall slide: holding into a wall while falling (Spider rune).
+            if (wall != 0 && v.y < -wallSlideSpeed && input.moveX == wall)
+            {
+                v.y = -wallSlideSpeed;
+                if (Random.value < dt * 12f)
+                    JuiceEngine.Instance?.Dust(transform.position + new Vector3(wall * 0.4f, 1.2f, 0f), Vector2.up, 1);
+            }
             return v;
+        }
+
+        /// <summary>Solid wall touching the body's side: +1 right, -1 left, 0 none.</summary>
+        int WallContact()
+        {
+            var b = capsule.bounds;
+            for (int side = 1; side >= -1; side -= 2)
+            {
+                var c = new Vector2(side > 0 ? b.max.x + 0.06f : b.min.x - 0.06f, b.center.y + 0.1f);
+                var col = Physics2D.OverlapBox(c, new Vector2(0.1f, b.size.y * 0.5f), 0f, DCLayers.SolidMask);
+                if (col != null && col.GetComponentInParent<DeadCells.Run.Breakable>() == null)
+                    return side;
+            }
+            return 0;
         }
 
         float ApplyGravity(float vy, float dt, float scale)
@@ -713,6 +770,7 @@ namespace DeadCells.Player
                 juice.Shake(Vector2.down, 0.9f);
                 juice.HitStop(0.07f);
             }
+            DeadCells.Run.Breakable.HitArea(FeetPosition + Vector3.down * 0.5f, new Vector2(1.4f, 0.8f), true);
             var hits = Physics2D.OverlapCircleAll(FeetPosition + Vector3.up * 0.5f, poundRadius, DCLayers.EnemyMask);
             foreach (var h in hits)
             {

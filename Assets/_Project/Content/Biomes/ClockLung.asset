@@ -24,6 +24,8 @@ MonoBehaviour:
   - lung1
   - lung2
   bossTag: boss_keeper
+  rune: 
+  requiredRune: 
   enemyDensity: 0.9
   tiles:
   - role: Fill_A

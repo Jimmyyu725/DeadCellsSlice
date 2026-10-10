@@ -25,6 +25,8 @@ MonoBehaviour:
   - oss2
   - oss3
   bossTag: boss_guardian
+  rune: spider
+  requiredRune: 
   enemyDensity: 0.8
   tiles:
   - role: Fill_A

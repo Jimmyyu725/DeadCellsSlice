@@ -123,6 +123,8 @@ namespace DeadCells.Items
             var wall = boomerang ? default : Physics2D.Raycast(pos, step.normalized, step.magnitude + hitRadius * 0.5f, DCLayers.SolidMask);
             if (wall.collider != null)
             {
+                if (fromPlayer)
+                    wall.collider.GetComponentInParent<DeadCells.Run.Breakable>()?.Hit(false);
                 if (bounces > 0)
                 {
                     bounces--;

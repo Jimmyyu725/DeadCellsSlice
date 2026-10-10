@@ -24,6 +24,8 @@ MonoBehaviour:
   - stilt1
   - stilt2
   bossTag: 
+  rune: ram
+  requiredRune: 
   enemyDensity: 0.85
   tiles:
   - role: Fill_A

@@ -214,6 +214,7 @@ namespace DeadCells.EditorTools
             var rm = runGo.AddComponent<RunManager>();
             rm.biomes = new[] { Biome("Oubliette"), Biome("Promenade"), Biome("Ossuary"), Biome("StiltVillage"), Biome("ClockLung") };
             rm.passage = Biome("Passage");
+            rm.variants = new[] { null, Biome("ToxicSewers"), null, Biome("Ramparts"), null };
             rm.player = player;
             rm.levelRoot = levelRoot;
             rm.cam = cam;

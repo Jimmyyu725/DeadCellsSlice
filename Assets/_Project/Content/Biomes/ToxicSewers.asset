@@ -1,0 +1,344 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 92368f4fffbd54ac3b45192866cbd065, type: 3}
+  m_Name: ToxicSewers
+  m_EditorClassIdentifier: DeadCells.Runtime::DeadCells.Run.BiomeDef
+  id: ToxicSewers
+  locKey: sewers
+  depth: 1
+  isPassage: 0
+  mainRooms: 12
+  treasureRooms: 3
+  eliteRooms: 1
+  merchant: 1
+  lore: []
+  bossTag: 
+  rune: 
+  requiredRune: vine
+  enemyDensity: 0.9
+  tiles:
+  - role: Fill_A
+    mesh: {fileID: -3383626547735094772, guid: 52173206d0ad74dbbbf01c6ab5e0286d, type: 3}
+    matrix:
+      e00: 1
+      e01: 0
+      e02: 0
+      e03: 0
+      e10: 0
+      e11: 1
+      e12: 0
+      e13: 0
+      e20: 0
+      e21: 0
+      e22: 1
+      e23: 0
+      e30: 0
+      e31: 0
+      e32: 0
+      e33: 1
+  - role: Fill_B
+    mesh: {fileID: -3064277316074185860, guid: 3db2a37693ee74b03b5bb7cc29207768, type: 3}
+    matrix:
+      e00: 1
+      e01: 0
+      e02: 0
+      e03: 0
+      e10: 0
+      e11: 1
+      e12: 0
+      e13: 0
+      e20: 0
+      e21: 0
+      e22: 1
+      e23: 0
+      e30: 0
+      e31: 0
+      e32: 0
+      e33: 1
+  - role: Fill_C
+    mesh: {fileID: 6082933470169582600, guid: e25fa25e9728d460da8f895c13bf7469, type: 3}
+    matrix:
+      e00: 1
+      e01: 0
+      e02: 0
+      e03: 0
+      e10: 0
+      e11: 1
+      e12: 0
+      e13: 0
+      e20: 0
+      e21: 0
+      e22: 1
+      e23: 0
+      e30: 0
+      e31: 0
+      e32: 0
+      e33: 1
+  - role: Top_A
+    mesh: {fileID: -8256330850576068267, guid: df7dfd70c353147fca3c7f636133816b, type: 3}
+    matrix:
+      e00: 1
+      e01: 0
+      e02: 0
+      e03: 0
+      e10: 0
+      e11: 1
+      e12: 0
+      e13: 0
+      e20: 0
+      e21: 0
+      e22: 1
+      e23: 0
+      e30: 0
+      e31: 0
+      e32: 0
+      e33: 1
+  - role: Top_B
+    mesh: {fileID: -6243616518229801100, guid: 1608645c9b5ce43fe8913c18086043f1, type: 3}
+    matrix:
+      e00: 1
+      e01: 0
+      e02: 0
+      e03: 0
+      e10: 0
+      e11: 1
+      e12: 0
+      e13: 0
+      e20: 0
+      e21: 0
+      e22: 1
+      e23: 0
+      e30: 0
+      e31: 0
+      e32: 0
+      e33: 1
+  - role: Edge_L
+    mesh: {fileID: -2391376281803636393, guid: e97c77b206f4744df82f583452593da1, type: 3}
+    matrix:
+      e00: 1
+      e01: 0
+      e02: 0
+      e03: 0
+      e10: 0
+      e11: 1
+      e12: 0
+      e13: 0
+      e20: 0
+      e21: 0
+      e22: 1
+      e23: 0
+      e30: 0
+      e31: 0
+      e32: 0
+      e33: 1
+  - role: Edge_R
+    mesh: {fileID: -1045658988995383859, guid: 07cb8106190f04910bd2d737a3de7c13, type: 3}
+    matrix:
+      e00: 1
+      e01: 0
+      e02: 0
+      e03: 0
+      e10: 0
+      e11: 1
+      e12: 0
+      e13: 0
+      e20: 0
+      e21: 0
+      e22: 1
+      e23: 0
+      e30: 0
+      e31: 0
+      e32: 0
+      e33: 1
+  - role: Platform
+    mesh: {fileID: -2622003339892545474, guid: 31bcd1fb707d14a0a88db2c39a598285, type: 3}
+    matrix:
+      e00: 1
+      e01: 0
+      e02: 0
+      e03: 0
+      e10: 0
+      e11: 1
+      e12: 0
+      e13: 0
+      e20: 0
+      e21: 0
+      e22: 1
+      e23: 0
+      e30: 0
+      e31: 0
+      e32: 0
+      e33: 1
+  - role: BackWall
+    mesh: {fileID: 1769127907335813300, guid: e401145b6ee5f4af6b801b4b4818771c, type: 3}
+    matrix:
+      e00: 1
+      e01: 0
+      e02: 0
+      e03: 0
+      e10: 0
+      e11: 1
+      e12: 0
+      e13: 0
+      e20: 0
+      e21: 0
+      e22: 1
+      e23: 0
+      e30: 0
+      e31: 0
+      e32: 0
+      e33: 1
+  kitMaterial: {fileID: 2100000, guid: 7f9cda3b87360442b8295ecbac463a90, type: 2}
+  wallMaterial: {fileID: 2100000, guid: 78847b90257264f7c94c7cc93b57b0d8, type: 2}
+  deepMaterial: {fileID: 2100000, guid: 3287d021a0ce64d318c5bf7ddf285504, type: 2}
+  platformMaterial: {fileID: 2100000, guid: 7f9cda3b87360442b8295ecbac463a90, type: 2}
+  backWallScale: 0.5
+  backWallHeight: {x: 4.5, y: 8}
+  lightSpacing: 8
+  lightPrefab: {fileID: 3787266004672010654, guid: f1ad0ae5dd6c0425a962bdcf98937da7, type: 3}
+  doorPrefab: {fileID: 0}
+  decor:
+  - prefab: {fileID: 1532774396033458544, guid: 29980b974dfd84e809e7e943b04f3ed6, type: 3}
+    placement: 4
+    density: 7
+    scale: {x: 1, y: 1}
+    z: {x: 1.7, y: 1.8}
+    spinSpeed: 0
+    bob: 0
+  - prefab: {fileID: 9001409659227717501, guid: 290ece092ee704b639995fa6ad43c599, type: 3}
+    placement: 4
+    density: 2.5
+    scale: {x: 1, y: 1}
+    z: {x: 1.7, y: 1.75}
+    spinSpeed: 0
+    bob: 0
+  - prefab: {fileID: 6834311283115415706, guid: 126dafb30de2c4ee09559caa347f4993, type: 3}
+    placement: 4
+    density: 5
+    scale: {x: 1, y: 1}
+    z: {x: 1.6, y: 1.65}
+    spinSpeed: 0
+    bob: 0
+  - prefab: {fileID: 6775706595243770244, guid: da71dc13e68a448daaca3024c8b2b903, type: 3}
+    placement: 5
+    density: 6
+    scale: {x: 0.8, y: 1.3}
+    z: {x: 0.6, y: 1.2}
+    spinSpeed: 0
+    bob: 0
+  - prefab: {fileID: 5662797843396790166, guid: 987e5ed4239b749ad91966c3736c2e94, type: 3}
+    placement: 5
+    density: 2
+    scale: {x: 1, y: 1}
+    z: {x: 0.9, y: 1.3}
+    spinSpeed: 0
+    bob: 0
+  - prefab: {fileID: 1022270608899326020, guid: 46808650bcb5847d4887c343297c48fd, type: 3}
+    placement: 3
+    density: 3
+    scale: {x: 1, y: 1}
+    z: {x: 2.3, y: 2.3}
+    spinSpeed: 0
+    bob: 0
+  - prefab: {fileID: 6219085944735949824, guid: 76bbd529c3aab4117bcb78fc0bd303ca, type: 3}
+    placement: 3
+    density: 3
+    scale: {x: 1, y: 1}
+    z: {x: 2.38, y: 2.38}
+    spinSpeed: 0
+    bob: 0
+  - prefab: {fileID: 4922950018610648636, guid: 376f5e847151041c99ed2463cf329d91, type: 3}
+    placement: 4
+    density: 6
+    scale: {x: 1, y: 1}
+    z: {x: 0.8, y: 1.2}
+    spinSpeed: 0
+    bob: 0
+  - prefab: {fileID: 3492296395697147123, guid: e498f7924513948a4b0bef940e55cb71, type: 3}
+    placement: 4
+    density: 5
+    scale: {x: 1, y: 1}
+    z: {x: 0.8, y: 1.2}
+    spinSpeed: 0
+    bob: 0
+  - prefab: {fileID: 8930344933848134521, guid: 6b0030bca980942e6b74816816fe705b, type: 3}
+    placement: 4
+    density: 6
+    scale: {x: 1, y: 1}
+    z: {x: 0.6, y: 1}
+    spinSpeed: 0
+    bob: 0
+  - prefab: {fileID: 5158880918710383957, guid: b40de003005b2480480e99bfe34d24ed, type: 3}
+    placement: 1
+    density: 7
+    scale: {x: 1, y: 1}
+    z: {x: 5, y: 5.5}
+    spinSpeed: 0
+    bob: 0
+  - prefab: {fileID: 2174150548409567510, guid: cbaa62762aeec4c1c8ff0f282dce9e46, type: 3}
+    placement: 0
+    density: 2
+    scale: {x: 1, y: 1.5}
+    z: {x: 10, y: 16}
+    spinSpeed: 0
+    bob: 0
+  - prefab: {fileID: 7912008781218367067, guid: 0f67b6923a94b420dbe0ae775144cf3e, type: 3}
+    placement: 0
+    density: 2
+    scale: {x: 1, y: 1.5}
+    z: {x: 10, y: 16}
+    spinSpeed: 0
+    bob: 0
+  - prefab: {fileID: 2075431941014029214, guid: cc35fe572b6864c238a56d3a516cbee7, type: 3}
+    placement: 0
+    density: 2
+    scale: {x: 1, y: 1.6}
+    z: {x: 10, y: 16}
+    spinSpeed: 0
+    bob: 0
+  fogColor: {r: 0.08, g: 0.2, b: 0.06, a: 1}
+  fogDensity: 0.2
+  ambient: {r: 0.03, g: 0.06, b: 0.02, a: 1}
+  ambientLight: {r: 0.07, g: 0.13, b: 0.05, a: 1}
+  keyColor: {r: 0.75, g: 1, b: 0.55, a: 1}
+  keyIntensity: 0.6
+  keyEuler: {x: 20, y: 24, z: 0}
+  rimColor: {r: 0.6, g: 1, b: 0.35, a: 1}
+  rimIntensity: 0.9
+  torchColor: {r: 0.7, g: 1, b: 0.3, a: 1}
+  torchIntensity: 3.8
+  motesA: {r: 0.6, g: 1.2, b: 0.4, a: 0.5}
+  motesB: {r: 0.8, g: 1.3, b: 0.6, a: 0.9}
+  embersA: {r: 1, g: 3, b: 0.5, a: 1}
+  embersB: {r: 1.4, g: 3.2, b: 0.7, a: 1}
+  rainUp: 0
+  lightShafts: 3
+  shaftColor: {r: 0.6, g: 1, b: 0.4, a: 1}
+  liquid: 1
+  liquidMaterial: {fileID: 2100000, guid: 10387122a398b4dc1bd89bf41b687c5d, type: 2}
+  titleColor: {r: 0.7, g: 1, b: 0.5, a: 1}
+  ground:
+  - prefab: {fileID: 536087265018073594, guid: 1060752829bd940f9af449ff7444512e, type: 3}
+    weight: 3
+  - prefab: {fileID: 3344672336446067070, guid: fd73a2d52f90c4b67bff72696cf20a60, type: 3}
+    weight: 2
+  - prefab: {fileID: 2835823747596937486, guid: c5dd2b1fd05964391b65ff5d1c1cb3fa, type: 3}
+    weight: 2
+  flying:
+  - prefab: {fileID: 6964243700632904550, guid: 4c96ef289a20743c1b29754b64b58ab5, type: 3}
+    weight: 1.5
+  turrets:
+  - prefab: {fileID: 7191476254461571223, guid: f2881e83e8e844c5aafcf7bd5dbc0208, type: 3}
+    weight: 0.5
+  boss: {fileID: 0}
+  hazardPrefab: {fileID: 8169639922582547076, guid: e631cb065815b404ebc80df1d9d8b227, type: 3}
+  hazardDensity: 2.5

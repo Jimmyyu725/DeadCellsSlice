@@ -389,6 +389,7 @@ namespace DeadCells.EditorTools
             Unlit("M_Liquid_Void", new Color(0.02f, 0.025f, 0.08f), 0.3f, 0.8f);
             Unlit("M_Liquid_Brass", new Color(3.4f, 1.5f, 0.35f), 0.25f, 3f);
             Unlit("M_Liquid_Tallow", new Color(0.7f, 1.9f, 0.35f), 0.2f, 1.8f);
+            Unlit("M_Liquid_Toxic", new Color(0.45f, 1.7f, 0.12f), 0.25f, 1.6f);
 
             // FX.
             Mat("M_SlashArc", "DeadCells/SlashArc", m => { });

@@ -57,6 +57,7 @@ namespace DeadCells.Meta
         public int bossCells;
         public int biome;                 // index into the story biome order
         public bool inPassage;            // between biomes (Collector room)
+        public bool variantRoute;         // the current biome is the branch (variant) route
         public int seed;
         public float health = -1f;
         public int gold;

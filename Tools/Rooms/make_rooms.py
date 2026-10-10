@@ -344,7 +344,7 @@ r.put(13, 2, "P").put(20, 2, "W").put(24, 2, "W").put(30, 2, "T").put(35, 2, "Y"
 r.plat(15, 19, 4).plat(21, 25, 7)
 r.puts(9, [(17, "t"), (33, "t")])
 
-r = add("rooms_special", Room("start_gate", 32, 14, "start", "Promenade,Ossuary,StiltVillage,ClockLung", nomirror=True))
+r = add("rooms_special", Room("start_gate", 32, 14, "start", "Promenade,Ossuary,StiltVillage,ClockLung,ToxicSewers,Ramparts", nomirror=True))
 r.floor(1).door_r(2)
 r.box(1, 2, 5, 4)
 r.put(8, 2, "P").put(15, 2, "T")

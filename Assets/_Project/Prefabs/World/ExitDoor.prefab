@@ -141,6 +141,8 @@ MonoBehaviour:
   leaf: {fileID: 7895036396728184310}
   leafRight: {fileID: 2568446252586838}
   locked: 0
+  variant: 0
+  requiredRune: 
 --- !u!1 &1668692657740837856
 GameObject:
   m_ObjectHideFlags: 0

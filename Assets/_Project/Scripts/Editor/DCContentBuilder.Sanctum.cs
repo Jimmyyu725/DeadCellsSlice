@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using DeadCells.Core;
 using DeadCells.Items;
 using DeadCells.Run;
 using UnityEditor;
@@ -108,6 +109,80 @@ namespace DeadCells.EditorTools
             shVis.name = "Visual";
             PointLight(sh.transform, new Vector3(0f, 0.6f, -0.7f), new Color(0.75f, 0.4f, 1f), 2.4f, 3.5f, "CurseGlow");
             wp.curseShroud = Save(sh, "World/CurseShroud");
+
+            // Secret blocks: one tile, solid, breakable.
+            GameObject Block(string name, bool ram)
+            {
+                var vis = SanctumProp("Relics", name);
+                var root = Wrap(name, vis);
+                vis.name = "Visual";
+                root.layer = DCLayers.Ground;
+                var col = root.AddComponent<BoxCollider2D>();
+                col.size = new Vector2(1f, 1f);
+                col.offset = new Vector2(0f, 0.5f);
+                var b = root.AddComponent<Breakable>();
+                b.ram = ram;
+                b.hits = ram ? 1 : 2;
+                return Save(root, "World/" + name);
+            }
+            wp.crackedBlock = Block("CrackedBlock", false);
+            wp.ramSlab = Block("RamSlab", true);
+
+            // Vine bulb (models for the stalk / leaves are kept inactive inside the prefab).
+            var bulbVis = SanctumProp("Relics", "VineBulb");
+            var bulb = Wrap("VineBulb", bulbVis);
+            bulbVis.name = "Visual";
+            var vb = bulb.AddComponent<VineBulb>();
+            vb.range = 1.8f;
+            var stalk = SanctumProp("Relics", "VineStalk");
+            stalk.transform.SetParent(bulb.transform, false);
+            stalk.SetActive(false);
+            vb.stalkModel = stalk;
+            var leaf = SanctumProp("Relics", "VineLeaf");
+            leaf.transform.SetParent(bulb.transform, false);
+            leaf.SetActive(false);
+            vb.leafModel = leaf;
+            PointLight(bulb.transform, new Vector3(0f, 0.8f, -0.6f), new Color(0.6f, 1f, 0.4f), 1.6f, 3f, "Glow");
+            wp.vineBulb = Save(bulb, "World/VineBulb");
+
+            // Branch door: the exit door in a cooler light, a rune tablet over it (added at spawn).
+            var vdVis = Prop("ExitDoor", "Visual");
+            var vd = Wrap("VariantDoor", vdVis);
+            var ved = vd.AddComponent<ExitDoor>();
+            ved.leaf = Find(vdVis.transform, "Door_Left");
+            ved.leafRight = Find(vdVis.transform, "Door_Right");
+            ved.variant = true;
+            var vdl = Find(vdVis.transform, "ExitDoor_Light");
+            if (vdl != null)
+                foreach (var r in vdl.GetComponentsInChildren<Renderer>())
+                {
+                    r.sharedMaterial = LoadMat("M_FX_Crystal");
+                    r.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+                }
+            PointLight(vd.transform, new Vector3(0f, 1.8f, -0.4f), new Color(0.55f, 1f, 0.75f), 2.2f, 5f, "DoorLight");
+            ved.range = 2.2f;
+            wp.variantDoor = Save(vd, "World/VariantDoor");
+
+            // Rune tablets: pickups dropped by guardians, plus bare models for the branch doors.
+            GameObject RunePrefab(string name)
+            {
+                var root = new GameObject(name + "Pickup");
+                var display = new GameObject("Display").transform;
+                display.SetParent(root.transform, false);
+                PrefabUtility.InstantiatePrefab(ItemPrefab(name), display);
+                var rp = root.AddComponent<RunePickup>();
+                rp.display = display;
+                rp.range = 1.8f;
+                PointLight(root.transform, new Vector3(0f, 1.2f, -0.6f), name == "RuneVine" ? new Color(0.6f, 1f, 0.4f)
+                    : name == "RuneRam" ? new Color(1f, 0.6f, 0.3f) : new Color(0.75f, 0.5f, 1f), 2.4f, 3.5f, "Glow");
+                return Save(root, "World/" + name + "Pickup");
+            }
+            wp.runeVine = RunePrefab("RuneVine");
+            wp.runeRam = RunePrefab("RuneRam");
+            wp.runeSpider = RunePrefab("RuneSpider");
+            wp.runeModelVine = ItemPrefab("RuneVine");
+            wp.runeModelRam = ItemPrefab("RuneRam");
+            wp.runeModelSpider = ItemPrefab("RuneSpider");
             EditorUtility.SetDirty(wp);
         }
 

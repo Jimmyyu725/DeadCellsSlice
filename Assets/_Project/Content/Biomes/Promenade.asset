@@ -25,6 +25,8 @@ MonoBehaviour:
   - prom2
   - prom3
   bossTag: 
+  rune: vine
+  requiredRune: 
   enemyDensity: 0.8
   tiles:
   - role: Fill_A

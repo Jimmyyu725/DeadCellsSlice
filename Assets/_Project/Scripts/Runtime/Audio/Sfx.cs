@@ -36,6 +36,8 @@ namespace DeadCells.Audio
                 case "Ossuary": track = "music.ossuary"; bed = "amb.ossuary"; break;
                 case "StiltVillage": track = "music.stilt"; bed = "amb.sea"; break;
                 case "ClockLung": track = "music.lung"; bed = "amb.clock"; break;
+                case "ToxicSewers": track = "music.oubliette"; bed = "amb.dungeon"; break;
+                case "Ramparts": track = "music.promenade"; bed = "amb.wind"; break;
                 default: track = "music.passage"; bed = "amb.passage"; break;
             }
             Play(track, fade);

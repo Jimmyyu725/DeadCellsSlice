@@ -67,6 +67,7 @@ namespace DeadCells.Player
         readonly float[] lastComboEnd = { -10f, -10f, -10f, -10f };
         readonly float[] lastPressed = { -10f, -10f, -10f, -10f };
         readonly HashSet<Health> hitThisSwing = new HashSet<Health>();
+        bool blockHitThisSwing;
 
         PlayerController player;
         Health health;
@@ -485,6 +486,7 @@ namespace DeadCells.Player
             waveFired = false;
             clock = 0f;
             hitThisSwing.Clear();
+            blockHitThisSwing = false;
             arcStarted = arcEnded = false;
             if (player.Input.moveX != 0f)
                 player.anim.SetFacing((int)player.Input.moveX);
@@ -744,6 +746,8 @@ namespace DeadCells.Player
             int facing = player.Facing;
             Vector2 origin = transform.position;
             Vector2 center = origin + new Vector2(step.hitboxOffset.x * facing, step.hitboxOffset.y);
+            if (!blockHitThisSwing && DeadCells.Run.Breakable.HitArea(center, step.hitboxSize, false))
+                blockHitThisSwing = true;
             var cols = Physics2D.OverlapBoxAll(center, step.hitboxSize, 0f, DCLayers.EnemyMask);
             foreach (var col in cols)
             {

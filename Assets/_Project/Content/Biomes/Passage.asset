@@ -22,6 +22,8 @@ MonoBehaviour:
   merchant: 0
   lore: []
   bossTag: 
+  rune: 
+  requiredRune: 
   enemyDensity: 0.75
   tiles:
   - role: Fill_A

@@ -1667,6 +1667,8 @@ MonoBehaviour:
   coyoteTime: 0.12
   airJumps: 1
   doubleJumpHeight: 2.7
+  wallSlideSpeed: 3
+  wallJumpLock: 0.16
   jumpBufferTime: 0.15
   dodgeDuration: 0.33333334
   dodgeDistance: 4.6

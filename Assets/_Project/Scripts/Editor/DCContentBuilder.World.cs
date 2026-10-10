@@ -960,7 +960,71 @@ namespace DeadCells.EditorTools
             passage.liquidMaterial = LoadMat("M_Liquid_Wine");
             EditorUtility.SetDirty(passage);
 
-            foreach (var b in new[] { prom, oss, stilt, lung })
+            // ---- Rune guardians: the Promenade carries the Vine rune, the Ossuary the
+            // Spider rune, the Stilt Village the Ram rune.
+            oub.rune = "";
+            prom.rune = Meta.Runes.Vine;
+            oss.rune = Meta.Runes.Spider;
+            stilt.rune = Meta.Runes.Ram;
+            lung.rune = "";
+            foreach (var b in new[] { oub, prom, oss, stilt, lung })
+                b.requiredRune = "";
+
+            // ---- Branch routes, opened from the passage's high door by a rune.
+            // Toxic Sewers (instead of the Promenade, Vine rune): the dungeon kit drowned in green.
+            var sewers = Asset<BiomeDef>($"{ContentDir}/Biomes/ToxicSewers.asset");
+            EditorUtility.CopySerialized(oub, sewers);
+            sewers.name = "ToxicSewers";
+            sewers.id = "ToxicSewers";
+            sewers.locKey = "sewers";
+            sewers.depth = 1;
+            sewers.mainRooms = 12;
+            sewers.treasureRooms = 3;
+            sewers.eliteRooms = 1;
+            sewers.lore = new string[0];
+            sewers.rune = "";
+            sewers.requiredRune = Meta.Runes.Vine;
+            sewers.enemyDensity = 0.9f;
+            Atmosphere(sewers, new Color(0.08f, 0.2f, 0.06f), 0.2f, new Color(0.03f, 0.06f, 0.02f), new Color(0.07f, 0.13f, 0.05f),
+                new Color(0.75f, 1f, 0.55f), 0.6f, new Color(0.6f, 1f, 0.35f), 0.9f, new Color(0.7f, 1f, 0.3f), 3.8f,
+                new Color(0.6f, 1.2f, 0.4f, 0.5f), new Color(0.8f, 1.3f, 0.6f, 0.9f), new Color(1f, 3f, 0.5f), new Color(1.4f, 3.2f, 0.7f), new Color(0.7f, 1f, 0.5f));
+            sewers.shaftColor = new Color(0.6f, 1f, 0.4f);
+            sewers.liquid = BiomeDef.LiquidKind.Water;
+            sewers.liquidMaterial = LoadMat("M_Liquid_Toxic");
+            sewers.ground = new List<BiomeDef.EnemyEntry> { E("MossBlob", 3f), E("Zombie", 2f), E("Vermin", 2f) };
+            sewers.flying = new List<BiomeDef.EnemyEntry> { E("Tick", 1.5f) };
+            sewers.turrets = new List<BiomeDef.EnemyEntry> { E("Obelisk", 0.5f) };
+            sewers.hazardPrefab = LoadPrefab("World/SorrowCloud");
+            sewers.hazardDensity = 2.5f;
+            EditorUtility.SetDirty(sewers);
+
+            // Ramparts (instead of the Stilt Village, Spider rune): the Promenade's towers at sunset.
+            var ramparts = Asset<BiomeDef>($"{ContentDir}/Biomes/Ramparts.asset");
+            EditorUtility.CopySerialized(prom, ramparts);
+            ramparts.name = "Ramparts";
+            ramparts.id = "Ramparts";
+            ramparts.locKey = "ramparts";
+            ramparts.depth = 3;
+            ramparts.mainRooms = 13;
+            ramparts.treasureRooms = 3;
+            ramparts.eliteRooms = 1;
+            ramparts.lore = new string[0];
+            ramparts.rune = "";
+            ramparts.requiredRune = Meta.Runes.Spider;
+            ramparts.enemyDensity = 0.9f;
+            Atmosphere(ramparts, new Color(0.3f, 0.14f, 0.08f), 0.12f, new Color(0.07f, 0.04f, 0.03f), new Color(0.16f, 0.09f, 0.06f),
+                new Color(1f, 0.7f, 0.45f), 0.85f, new Color(1f, 0.55f, 0.35f), 1f, new Color(1f, 0.6f, 0.3f), 4f,
+                new Color(1.4f, 0.9f, 0.6f, 0.5f), new Color(1.6f, 1.2f, 0.9f, 0.9f), new Color(3.4f, 1.6f, 0.5f), new Color(3.8f, 2.2f, 0.8f), new Color(1f, 0.75f, 0.5f));
+            ramparts.shaftColor = new Color(1f, 0.7f, 0.45f);
+            ramparts.lightShafts = 5f;
+            ramparts.ground = new List<BiomeDef.EnemyEntry> { E("Sentinel", 2f), E("Fisher", 1.5f), E("Monk", 1f) };
+            ramparts.flying = new List<BiomeDef.EnemyEntry> { E("Tick", 3f) };
+            ramparts.turrets = new List<BiomeDef.EnemyEntry> { E("Obelisk", 2f) };
+            ramparts.hazardPrefab = null;
+            ramparts.hazardDensity = 0f;
+            EditorUtility.SetDirty(ramparts);
+
+            foreach (var b in new[] { oub, prom, oss, stilt, lung })
                 EditorUtility.SetDirty(b);
         }
 

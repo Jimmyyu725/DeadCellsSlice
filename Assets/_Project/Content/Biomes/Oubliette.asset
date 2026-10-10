@@ -25,6 +25,8 @@ MonoBehaviour:
   - oub2
   - oub3
   bossTag: 
+  rune: 
+  requiredRune: 
   enemyDensity: 0.75
   tiles:
   - role: Fill_A

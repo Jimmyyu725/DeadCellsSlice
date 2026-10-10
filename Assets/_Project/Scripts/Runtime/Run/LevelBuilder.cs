@@ -753,6 +753,40 @@ namespace DeadCells.Run
                         built.treasures.Add(pos);
                         break;
                     }
+                    case 'b':
+                    case 'R':
+                    {
+                        var prefab = s.code == 'b' ? w.crackedBlock : w.ramSlab;
+                        if (prefab == null)
+                            break;
+                        Place(prefab, parent, new Vector3(s.cell.x + 0.5f, s.cell.y, 0f));
+                        break;
+                    }
+                    case 'V':
+                    {
+                        if (w.vineBulb == null || RunManager.Instance == null || RunManager.Instance.VariantAhead == null)
+                            break;
+                        Place(w.vineBulb, parent, pos + new Vector3(0f, 0f, 0.2f));
+                        break;
+                    }
+                    case 'd':
+                    {
+                        var ahead = RunManager.Instance != null ? RunManager.Instance.VariantAhead : null;
+                        if (ahead == null || w.variantDoor == null)
+                            break;
+                        var go = Place(w.variantDoor, parent, pos + new Vector3(0f, 0f, 1.6f));
+                        var door = go.GetComponent<ExitDoor>();
+                        door.variant = true;
+                        door.requiredRune = ahead.requiredRune;
+                        var model = ahead.requiredRune == Runes.Vine ? w.runeModelVine : ahead.requiredRune == Runes.Ram ? w.runeModelRam : w.runeModelSpider;
+                        if (model != null)
+                        {
+                            var rune = Object.Instantiate(model, go.transform);
+                            rune.transform.localPosition = new Vector3(0f, 3.4f, -0.3f);
+                        }
+                        built.exits.Add(pos);
+                        break;
+                    }
                     case 'Q':
                     {
                         if (w.timedDoor == null || biome.isPassage)
@@ -858,6 +892,29 @@ namespace DeadCells.Run
             {
                 gate.boss = built.boss;
                 gate.exit = exitDoor;
+            }
+            // The biome's rune guardian: an elite near the middle of the run carries the rune.
+            if (!string.IsNullOrEmpty(biome.rune) && !Runes.Has(biome.rune))
+            {
+                EnemyBase guardian = null;
+                float best = float.MaxValue, mid = d.width * 0.55f;
+                foreach (var e in built.enemies)
+                {
+                    if (e == null || e.IsBoss || e.GetComponent<RuneGuardian>() != null)
+                        continue;
+                    float dist = Mathf.Abs(e.transform.position.x - mid);
+                    if (dist < best)
+                    {
+                        best = dist;
+                        guardian = e;
+                    }
+                }
+                if (guardian != null)
+                {
+                    if (!guardian.IsElite)
+                        guardian.Configure(biome.depth, true);
+                    RuneGuardian.Make(guardian, biome.rune);
+                }
             }
             // Biome hazards (sorrow clouds, furnace vents) over open floors.
             if (biome.hazardPrefab != null && biome.hazardDensity > 0f)

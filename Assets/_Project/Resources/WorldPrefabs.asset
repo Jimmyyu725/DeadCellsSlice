@@ -32,13 +32,16 @@ MonoBehaviour:
   tailor: {fileID: 2620526109815898672, guid: d8843f7cc70f44713b3477e0ef9d844e, type: 3}
   timedDoor: {fileID: 5976880417768635204, guid: 9dc4a026792ec40358c73924c07878e0, type: 3}
   curseShroud: {fileID: 3970413360870924265, guid: 54c07d0df1c3b41e99cabf5721f5d10f, type: 3}
-  crackedBlock: {fileID: 0}
-  ramSlab: {fileID: 0}
-  vineBulb: {fileID: 0}
-  variantDoor: {fileID: 0}
-  runeVine: {fileID: 0}
-  runeRam: {fileID: 0}
-  runeSpider: {fileID: 0}
+  crackedBlock: {fileID: 3253802968562125155, guid: 766bce267694f4863bd282397d1b5cd0, type: 3}
+  ramSlab: {fileID: 1956772650334777043, guid: e676bf42daa2f45b49519e82d78b992a, type: 3}
+  vineBulb: {fileID: 6543731960955873144, guid: cc1590bf0cc1044678dae152912c36a7, type: 3}
+  variantDoor: {fileID: 2738553128660501119, guid: 224a11ba0594044a48e78c625b53f6cb, type: 3}
+  runeVine: {fileID: 5326544996218007713, guid: df9b5fc7ddb9e49d9ad7ac4c58de847a, type: 3}
+  runeRam: {fileID: 3771729807576272826, guid: cdf6500f93fb44a6387352f8dc50ce51, type: 3}
+  runeSpider: {fileID: 9148080842769214997, guid: 134d12772d83e4fdfb84a972ef7a6139, type: 3}
+  runeModelVine: {fileID: 2540673436152500910, guid: 7215dbcef81d0452db2014d615f72949, type: 3}
+  runeModelRam: {fileID: 3296546590503659622, guid: b7a56d017ef2343f197c9fdc959303df, type: 3}
+  runeModelSpider: {fileID: 5717442441692956187, guid: 0532a56787b0042598ff7bee9951b06a, type: 3}
   deepMaterial: {fileID: 2100000, guid: 3287d021a0ce64d318c5bf7ddf285504, type: 2}
   shaftMaterial: {fileID: 2100000, guid: 624f905db3e464eeebfdd6d8bce9c256, type: 2}
   liquidWater: {fileID: 2100000, guid: 58d4c8a1d83824e26894bd7b313c05f5, type: 2}
