@@ -1,3 +1,8 @@
+# 0.6.2 | 2026-10-11 | Tablet rewards
+- Reading a Shattered Tablet for the first time drops cells (8 in the Oubliette, more the deeper you go, 24 in the Clock Lung); unread tablets say "Read (first time: +N cells)"
+- Reading every tablet in an area also gives a Scroll of Power
+- Reading all 13 unlocks the Chronicler outfit (saves that already read them all get it at the start of the next run)
+
 # 0.6.1 | 2026-10-11 | Sound, particles and feel fixes
 - New soundtrack closer to the original's Celtic-folk-meets-rock style: all 9 tracks rewritten with synthesised distorted and acoustic guitars, picked bass, fiddle, tin whistle, piano, spiccato strings and a full drum kit (Oubliette, Promenade, Ossuary, a 6/8 jig for the Stilt Village, Clock Lung, passage, boss, menu, death)
 - Combat sounds rebuilt: swings with a metallic edge; hits layered from a low thump, crunch and a wet splat; crits ring; blocks clang; parries sing; new kills, hurts, jumps, landings, rolls, gold, cells, bows and explosions

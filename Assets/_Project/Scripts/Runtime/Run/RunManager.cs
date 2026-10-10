@@ -228,6 +228,8 @@ namespace DeadCells.Run
             if (!Run.active)
                 NewRun(BaseDifficulty.Normal, 0);
             EnemyBase.Killed += OnEnemyKilled;
+            if (SaveSystem.Data.meta.loreRead.Count >= TotalLore)
+                Outfits.Grant("lore_all");
             player.Died += OnPlayerDied;
             player.Health.Damaged += (info, result) =>
             {

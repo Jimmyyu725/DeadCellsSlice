@@ -36,6 +36,8 @@ namespace DeadCells.Meta
                       core = new Color(4.4f, 4.4f, 4.6f), flame = new Color(1.8f, 1.8f, 2f), tip = new Color(0.3f, 0.3f, 0.35f) },
             new Def { id = "plague", requires = "bc3", tint = new Color(0.85f, 0.95f, 0.6f), glow = new Color(1.6f, 2.6f, 0.3f),
                       core = new Color(4f, 4.6f, 2.4f), flame = new Color(1.6f, 2.8f, 0.4f), tip = new Color(0.5f, 0.8f, 0.05f) },
+            new Def { id = "chronicler", requires = "lore_all", tint = new Color(1.15f, 1.02f, 0.82f), glow = new Color(3f, 1.9f, 0.7f),
+                      core = new Color(5f, 4.4f, 3.4f), flame = new Color(3.6f, 2.2f, 0.7f), tip = new Color(1.1f, 0.5f, 0.1f) },
             new Def { id = "daily", requires = "daily", tint = new Color(1.1f, 0.9f, 1.15f), glow = new Color(3f, 1.2f, 2.6f),
                       core = new Color(4.8f, 4f, 4.6f), flame = new Color(3.6f, 1.2f, 3f), tip = new Color(1.2f, 0.2f, 0.9f) },
             new Def { id = "rusher", requires = "boss_rush", tint = new Color(1.1f, 0.85f, 0.75f), glow = new Color(3.2f, 1.4f, 0.4f),

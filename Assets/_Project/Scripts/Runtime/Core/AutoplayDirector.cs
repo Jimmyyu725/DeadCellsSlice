@@ -59,6 +59,7 @@ namespace DeadCells.Core
         public bool jumpTest;
         public bool blockTest;
         public bool fxTest;
+        public bool loreTest;
         public bool blockInBiome;
         public int runSeed;
         public Vector2Int climbAt = new Vector2Int(-1, -1);
@@ -137,6 +138,7 @@ namespace DeadCells.Core
                     case "-autoplayJumpTest": d.jumpTest = true; break;
                     case "-autoplayBlockTest": d.blockTest = true; break;
                     case "-autoplayFxTest": d.fxTest = true; break;
+                    case "-autoplayLoreTest": d.loreTest = true; break;
                     case "-autoplayBlockBiome": d.blockTest = true; d.blockInBiome = true; break;
                     case "-autoplayRunSeed": int.TryParse(next, out d.runSeed); break;
                     case "-autoplayClimbAt":
@@ -271,6 +273,12 @@ namespace DeadCells.Core
                         skipEvery = 0f;
                         StartCoroutine(ClimbAt(rm, climbAt));
                         climbAt = new Vector2Int(-1, -1);
+                    }
+                    if (loreTest && !rm.InPassage)
+                    {
+                        loreTest = false;
+                        skipEvery = 0f;
+                        StartCoroutine(LoreTest(rm));
                     }
                     if (fxTest && rm.InPassage)
                     {
@@ -772,6 +780,38 @@ namespace DeadCells.Core
             log.WriteLine($"[{Elapsed:F1}] block test frames otherwise: {Stats(far)}");
             log.WriteLine($"[{Elapsed:F1}] block test screen {Screen.width}x{Screen.height}");
             log.WriteLine($"[{Elapsed:F1}] block test ({blockShield}): blocks={blocks} parries={parries} frames={frames} frozenFrames={frozen} frozen={frozenTime * 1000f:F0}ms slowFrames={slow} worst={worst * 1000f:F1}ms");
+        }
+
+        /// <summary>Read every tablet in this area (progress cleared first): cells, the set scroll, prompts.</summary>
+        System.Collections.IEnumerator LoreTest(RunManager rm)
+        {
+            yield return new WaitForSecondsRealtime(2f);
+            var p = PlayerController.Main;
+            var ui = UI.GameUI.Instance;
+            Cheats.SetGodMode(true);
+            overrideInput = new InputFrame();
+            SaveSystem.Data.meta.loreRead.Clear();
+            var tablets = Object.FindObjectsByType<LoreTablet>(FindObjectsSortMode.None).OrderBy(t => t.transform.position.x).ToList();
+            log.WriteLine($"[{Elapsed:F1}] lore: {tablets.Count} tablets, area set [{string.Join(",", rm.Current.lore)}]");
+            foreach (var t in tablets)
+            {
+                p.Teleport(t.transform.position + Vector3.left * 0.8f + Vector3.up * 0.1f);
+                if (rm.vcam != null)
+                    rm.vcam.PreviousStateIsValid = false;
+                yield return new WaitForSeconds(0.4f);
+                int cells0 = SaveSystem.Data.run.cells;
+                int scrolls0 = Object.FindObjectsByType<ScrollPickup>(FindObjectsSortMode.None).Length;
+                string prompt = t.Prompt;
+                t.Interact(p);
+                yield return new WaitForSecondsRealtime(0.4f);
+                ui.CloseAllForTest();
+                yield return new WaitForSeconds(2.2f);
+                int scrolls = Object.FindObjectsByType<ScrollPickup>(FindObjectsSortMode.None).Length - scrolls0;
+                log.WriteLine($"[{Elapsed:F1}] lore: read {t.loreId} prompt '{prompt}' cells +{SaveSystem.Data.run.cells - cells0} scrolls +{scrolls} reread prompt '{t.Prompt}'");
+                if (scrolls > 0)
+                    Capture("lore_set_scroll");
+            }
+            overrideInput = null;
         }
 
         /// <summary>Visual check of the particle work: statuses on a dummy, item glows, rings and streaks.</summary>
