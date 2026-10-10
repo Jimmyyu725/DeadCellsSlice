@@ -1655,8 +1655,8 @@ MonoBehaviour:
   groundDeceleration: 320
   airAcceleration: 85
   airDeceleration: 60
-  jumpHeight: 3.1
-  timeToApex: 0.36
+  jumpHeight: 3.7
+  timeToApex: 0.38
   fallGravityMultiplier: 1.45
   maxFallSpeed: 24
   jumpCutMultiplier: 0.42

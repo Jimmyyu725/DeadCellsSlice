@@ -41,8 +41,8 @@ namespace DeadCells.Player
         public float airDeceleration = 60f;
 
         [Header("Jump")]
-        public float jumpHeight = 3.1f;
-        public float timeToApex = 0.36f;
+        public float jumpHeight = 3.7f; // clears 3-tile platform steps with margin
+        public float timeToApex = 0.38f;
         public float fallGravityMultiplier = 1.45f;
         public float maxFallSpeed = 24f;
         [Tooltip("Upward velocity kept when jump is released early.")]
